@@ -18,7 +18,7 @@ apply plugin: 'maven-publish'
 
 
 def date = new Date()
-def versionString= date.format("yyy.MM.dd")
+def versionString= date.format("yyyy.MM.dd.HH.mm")
 version="${versionString}"
 
 bintray {
