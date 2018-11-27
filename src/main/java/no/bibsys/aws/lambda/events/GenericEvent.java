@@ -1,4 +1,4 @@
-package no.bibsys.aws.lambda.handlers.events;
+package no.bibsys.aws.lambda.events;
 
 /**
  * Event that does not happen inside a Pipeline deploy process.
