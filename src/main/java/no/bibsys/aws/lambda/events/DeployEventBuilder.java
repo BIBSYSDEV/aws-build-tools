@@ -1,4 +1,4 @@
-package no.bibsys.aws.lambda.handlers.events;
+package no.bibsys.aws.lambda.events;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

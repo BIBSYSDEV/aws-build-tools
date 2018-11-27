@@ -12,9 +12,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Optional;
-import no.bibsys.aws.lambda.handlers.events.CodePipelineEvent;
-import no.bibsys.aws.lambda.handlers.events.DeployEvent;
-import no.bibsys.aws.lambda.handlers.events.DeployEventBuilder;
+import no.bibsys.aws.lambda.events.CodePipelineEvent;
+import no.bibsys.aws.lambda.events.DeployEvent;
+import no.bibsys.aws.lambda.events.DeployEventBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

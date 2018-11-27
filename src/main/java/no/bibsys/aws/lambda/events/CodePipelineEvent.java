@@ -1,4 +1,4 @@
-package no.bibsys.aws.lambda.handlers.events;
+package no.bibsys.aws.lambda.events;
 
 public class CodePipelineEvent implements DeployEvent {
 
