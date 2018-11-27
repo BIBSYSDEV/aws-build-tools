@@ -1,4 +1,4 @@
-.idea
+*.idea
 build/
 out/
 .gradle
@@ -6,8 +6,8 @@ out/
 .settings
 .project
 bin/
-.iml
-.metadata/
+*.iml
+*.metadata/
 application.conf
 .project
 
