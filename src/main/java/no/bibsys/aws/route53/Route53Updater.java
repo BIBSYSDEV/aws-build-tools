@@ -29,7 +29,7 @@ public class Route53Updater {
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
     private final transient StaticUrlInfo staticUrlINfo;
 
-    private final transient BranchInfo gitInfo;
+
     private final transient String apiGatewayRestApiId;
     private final transient AmazonApiGateway apiGatewayClient;
 
@@ -40,12 +40,12 @@ public class Route53Updater {
     private transient AmazonRoute53 route53Client;
 
 
-    public Route53Updater(StaticUrlInfo staticUrlINfo, BranchInfo gitInfo, Stage stage,
+    public Route53Updater(StaticUrlInfo staticUrlINfo, Stage stage,
         String apiGatewayRestApiId,
         AmazonApiGateway apiGatewayClient) {
 
         this.staticUrlINfo = staticUrlINfo;
-        this.gitInfo = gitInfo;
+
         this.apiGatewayClient = apiGatewayClient;
 
         this.route53Client = AmazonRoute53ClientBuilder.defaultClient();
@@ -58,7 +58,7 @@ public class Route53Updater {
 
 
     public Route53Updater copy(Stage stage) {
-        return new Route53Updater(staticUrlINfo, gitInfo, stage, apiGatewayRestApiId,
+        return new Route53Updater(staticUrlINfo,  stage, apiGatewayRestApiId,
             apiGatewayClient);
     }
 
