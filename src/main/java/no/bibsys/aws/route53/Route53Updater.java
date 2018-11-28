@@ -13,7 +13,6 @@ import com.amazonaws.services.route53.model.HostedZone;
 import com.amazonaws.services.route53.model.RRType;
 import com.amazonaws.services.route53.model.ResourceRecord;
 import com.amazonaws.services.route53.model.ResourceRecordSet;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Optional;
@@ -27,15 +26,7 @@ import org.slf4j.LoggerFactory;
 public class Route53Updater {
 
 
-    /**
-     * Environment variable for reading the ROUTE 53 Hosted Zone name.
-     */
-    public static final String ZONE_NAME_ENV = "ZONE_NAME";
 
-    /**
-     * ARN of a regional certificate stored in the AWS Certficate Manager.
-     */
-    public static final String CERTIFICATE_ARN = "REGIONAL_CERTIFICATE_ARN";
 
 
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
@@ -64,6 +55,7 @@ public class Route53Updater {
 
         this.apiGatewayBasePathMapping =
                 new ApiGatewayBasePathMapping(apiGatewayClient, staticUrlINfo.getDomainName(), stage);
+
     }
 
 
@@ -72,9 +64,8 @@ public class Route53Updater {
     }
 
 
-    public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest(String certificateArn) {
+    public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest() {
 
-        apiGatewayBasePathMapping.createBasePath(apiGatewayRestApiId, certificateArn);
         Optional<String> targetDomainName = apiGatewayBasePathMapping.getTargetDomainName();
         return targetDomainName
                 .map(domainName->updateRecordSetsRequest(domainName));
@@ -84,12 +75,9 @@ public class Route53Updater {
 
 
     public Optional<ChangeResourceRecordSetsRequest> createDeleteRequest() {
-
         try {
             Optional<String> targetDomainName = apiGatewayBasePathMapping.getTargetDomainName();
-            apiGatewayBasePathMapping.deleteBasePathMappings();
-            return targetDomainName
-                    .map(domainName -> deleteRecordSetsRequest(domainName));
+            return targetDomainName.map(domainName -> deleteRecordSetsRequest(domainName));
         } catch (NotFoundException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Domain Name not found:" + apiGatewayBasePathMapping.getTargetDomainName());
@@ -100,7 +88,16 @@ public class Route53Updater {
     }
 
 
-    public ChangeResourceRecordSetsResult executeRequest(ChangeResourceRecordSetsRequest request){
+    public ChangeResourceRecordSetsResult executeUpdateRequest(ChangeResourceRecordSetsRequest request,
+        String certificateArn){
+        apiGatewayBasePathMapping.createBasePath(apiGatewayRestApiId, certificateArn);
+        return route53Client.changeResourceRecordSets(request);
+    }
+
+
+
+    public ChangeResourceRecordSetsResult executeDeleteRequest(ChangeResourceRecordSetsRequest request){
+        apiGatewayBasePathMapping.deleteBasePathMappings();
         return route53Client.changeResourceRecordSets(request);
     }
 
@@ -125,8 +122,8 @@ public class Route53Updater {
     }
 
 
-    @VisibleForTesting
-    public ChangeResourceRecordSetsRequest updateRecordSetsRequest(String serverUrl) {
+
+    private ChangeResourceRecordSetsRequest updateRecordSetsRequest(String serverUrl) {
         String hostedZoneId = getHostedZone().getId();
 
         ResourceRecordSet recordSet = createRecordSet(serverUrl);
