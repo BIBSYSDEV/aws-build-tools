@@ -89,6 +89,7 @@ public class Route53Updater {
     public ChangeResourceRecordSetsResult executeUpdateRequest(
         ChangeResourceRecordSetsRequest request,
         String certificateArn) {
+        log.info("Executing request:{}",request);
         apiGatewayBasePathMapping.awsCreateBasePath(apiGatewayRestApiId, certificateArn);
         return route53Client.changeResourceRecordSets(request);
     }
