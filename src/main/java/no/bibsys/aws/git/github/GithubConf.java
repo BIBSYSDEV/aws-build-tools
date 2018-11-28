@@ -53,7 +53,6 @@ public class GithubConf implements GitInfo {
     }
 
 
-    @Override
     public String getOwner() {
         return owner;
     }
@@ -63,7 +62,7 @@ public class GithubConf implements GitInfo {
         return repo;
     }
 
-    @Override
+
     public String getOauth() throws IOException {
         SecretsReader secretsReader = new SecretsReader(AWS_SECRET_NAME, AWS_SECRET_KEY);
         return secretsReader.readSecret();

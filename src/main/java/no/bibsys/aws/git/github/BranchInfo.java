@@ -1,25 +1,19 @@
 package no.bibsys.aws.git.github;
 
-import java.io.IOException;
-
-
 public class BranchInfo implements GitInfo {
 
-    private transient String owner;
+
     private  transient String repository;
     private  transient String branch;
 
 
-
-    public BranchInfo(String owner,String repository, String branch) {
-        this.repository = repository;
-        this.branch = branch;
-        this.owner=owner;
+    public BranchInfo(){
+        super();
     }
 
-    @Override
-    public String getOwner() {
-        return owner;
+    public BranchInfo(String repository, String branch) {
+        this.repository = repository;
+        this.branch = branch;
     }
 
     @Override
@@ -27,10 +21,7 @@ public class BranchInfo implements GitInfo {
         return repository;
     }
 
-    @Override
-    public String getOauth() throws IOException {
-        return null;
-    }
+
 
     @Override
     public String getBranch() {
@@ -45,7 +36,5 @@ public class BranchInfo implements GitInfo {
         this.branch = branch;
     }
 
-    public void  setOwner(String owner){
-        this.owner=owner;
-    }
+
 }

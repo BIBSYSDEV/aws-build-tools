@@ -1,7 +1,5 @@
 package no.bibsys.aws.git.github;
 
-import java.io.IOException;
-
 /**
  * Interface for Helper classes containing the necessary details for retrieving information from a Git repository.
  *
@@ -26,11 +24,7 @@ import java.io.IOException;
 public interface GitInfo {
 
 
-    String getOwner();
-
     String getRepository();
-
-    String getOauth() throws IOException;
 
     String getBranch();
 
