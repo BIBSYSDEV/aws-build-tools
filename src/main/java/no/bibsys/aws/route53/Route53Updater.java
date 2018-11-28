@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import no.bibsys.aws.apigateway.ApiGatewayBasePathMapping;
 import no.bibsys.aws.cloudformation.Stage;
-import no.bibsys.aws.git.github.GitInfo;
+import no.bibsys.aws.git.github.BranchInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class Route53Updater {
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
     private final transient StaticUrlInfo staticUrlINfo;
 
-    private final transient GitInfo gitInfo;
+    private final transient BranchInfo gitInfo;
     private final transient String apiGatewayRestApiId;
     private final transient AmazonApiGateway apiGatewayClient;
 
@@ -40,7 +40,7 @@ public class Route53Updater {
     private transient AmazonRoute53 route53Client;
 
 
-    public Route53Updater(StaticUrlInfo staticUrlINfo, GitInfo gitInfo, Stage stage,
+    public Route53Updater(StaticUrlInfo staticUrlINfo, BranchInfo gitInfo, Stage stage,
         String apiGatewayRestApiId,
         AmazonApiGateway apiGatewayClient) {
 

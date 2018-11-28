@@ -1,17 +1,17 @@
 package no.bibsys.aws.git.github;
 
-public class GitInfoImpl implements GitInfo {
+public class BranchInfo implements GitInfo {
 
 
     protected transient String repository;
     protected transient String branch;
 
-    public GitInfoImpl() {
+    public BranchInfo() {
 
     }
 
 
-    public GitInfoImpl(String repository, String branch) {
+    public BranchInfo(String repository, String branch) {
         this.repository = repository;
         this.branch = branch;
     }
@@ -19,7 +19,7 @@ public class GitInfoImpl implements GitInfo {
 
     @Override
     public String getOwner() {
-        throw new IllegalStateException("GitInfoImpl does not contain owener information");
+        throw new IllegalStateException("BranchInfo does not contain owener information");
     }
 
     @Override

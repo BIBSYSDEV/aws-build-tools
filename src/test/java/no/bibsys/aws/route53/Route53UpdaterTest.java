@@ -19,8 +19,8 @@ import com.amazonaws.services.route53.model.ListHostedZonesResult;
 import com.amazonaws.services.route53.model.RRType;
 import java.util.Optional;
 import no.bibsys.aws.cloudformation.Stage;
+import no.bibsys.aws.git.github.BranchInfo;
 import no.bibsys.aws.git.github.GitInfo;
-import no.bibsys.aws.git.github.GitInfoImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -35,7 +35,7 @@ public class Route53UpdaterTest {
         String zoneName = "ZoneName";
         AmazonRoute53 client = mockRoute53Client(zoneName);
         AmazonApiGateway apiGateway = mockApiGatewayClient();
-        GitInfo gitInfo = new GitInfoImpl("owner", "repository", "branch");
+        BranchInfo gitInfo = new BranchInfo( "repository", "branch");
         StaticUrlInfo staticUrlINfo = StaticUrlInfo
             .create(Stage.TEST, zoneName, "some.url.goes.here.");
 
