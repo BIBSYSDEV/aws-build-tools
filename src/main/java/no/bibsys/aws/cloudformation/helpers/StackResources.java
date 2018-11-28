@@ -16,10 +16,10 @@ import java.util.stream.Stream;
 public class StackResources {
 
 
-    private final transient String stackId;
+    private final transient String stackName;
 
-    public StackResources(String stackId) {
-        this.stackId = stackId;
+    public StackResources(String stackName) {
+        this.stackName = stackName;
     }
 
 
@@ -28,7 +28,7 @@ public class StackResources {
     private Stream<StackResource> getResourcesStream(ResourceType resourceType) {
         AmazonCloudFormation client = AmazonCloudFormationClientBuilder.defaultClient();
         DescribeStackResourcesResult result =
-                client.describeStackResources(new DescribeStackResourcesRequest().withPhysicalResourceId(stackId));
+                client.describeStackResources(new DescribeStackResourcesRequest().withStackName(stackName));
         return result.getStackResources().stream()
                 .filter(resource -> resource.getResourceType().equals(resourceType.toString()));
 
