@@ -39,11 +39,11 @@ public class Route53Updater {
     private transient AmazonRoute53 route53Client;
 
 
-    public Route53Updater(StaticUrlInfo staticUrlINfo, Stage stage,
+    public Route53Updater(StaticUrlInfo staticUrlInfo,
         String apiGatewayRestApiId,
         AmazonApiGateway apiGatewayClient) {
 
-        this.staticUrlINfo = staticUrlINfo;
+        this.staticUrlINfo = staticUrlInfo;
 
         this.apiGatewayClient = apiGatewayClient;
 
@@ -51,14 +51,14 @@ public class Route53Updater {
         this.apiGatewayRestApiId = apiGatewayRestApiId;
 
         this.apiGatewayBasePathMapping =
-            new ApiGatewayBasePathMapping(apiGatewayClient, staticUrlINfo.getDomainName(), stage);
+            new ApiGatewayBasePathMapping(apiGatewayClient, staticUrlInfo.getDomainName(), staticUrlInfo.getStage());
 
     }
 
 
     public Route53Updater copy(Stage stage) {
-        return new Route53Updater(staticUrlINfo,  stage, apiGatewayRestApiId,
-            apiGatewayClient);
+        StaticUrlInfo info=this.staticUrlINfo.copy(stage);
+        return new Route53Updater(info,  apiGatewayRestApiId,apiGatewayClient);
     }
 
 

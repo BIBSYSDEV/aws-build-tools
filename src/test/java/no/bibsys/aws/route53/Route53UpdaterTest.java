@@ -33,11 +33,9 @@ public class Route53UpdaterTest {
         String zoneName = "ZoneName";
         AmazonRoute53 client = mockRoute53Client(zoneName);
         AmazonApiGateway apiGateway = mockApiGatewayClient();
-        StaticUrlInfo staticUrlINfo = StaticUrlInfo
-            .create(Stage.TEST, zoneName, "some.url.goes.here.");
+        StaticUrlInfo staticUrlINfo = new StaticUrlInfo(zoneName, "some.url.goes.here.",Stage.TEST);
 
-        route53Updater = new Route53Updater(staticUrlINfo,  Stage.TEST,
-            "apiGatewarRestApiId",
+        route53Updater = new Route53Updater(staticUrlINfo,  "apiGatewarRestApiId",
             apiGateway);
         route53Updater.setRoute53Client(client);
 

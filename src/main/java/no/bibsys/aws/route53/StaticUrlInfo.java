@@ -15,7 +15,7 @@ import no.bibsys.aws.cloudformation.Stage;
  * fullstop (.) while the Domain entry does not.
  * </p>
  */
-public final class StaticUrlInfo {
+public  class StaticUrlInfo {
 
 
     private final transient String recordSetName;
@@ -23,31 +23,47 @@ public final class StaticUrlInfo {
     private final transient String zoneName;
 
 
-    private StaticUrlInfo(String zoneName, String recordSetName) {
+
+    private final transient Stage stage;
+
+    public StaticUrlInfo(String zoneName, String recordSetName,Stage stage) {
         this.zoneName = zoneName;
         this.recordSetName = recordSetName;
         this.domainName = recordSetName.substring(0, recordSetName.length() - 1);
+        this.stage=stage;
     }
 
-    public static StaticUrlInfo create(Stage stage, String zoneName, String recordSetName) {
-        if (stage.equals(Stage.FINAL)) {
-            return new StaticUrlInfo(zoneName, recordSetName);
-        } else {
-            return new StaticUrlInfo(zoneName, "test." + recordSetName);
+
+
+    public StaticUrlInfo copy(Stage stage){
+        return new StaticUrlInfo(zoneName,recordSetName,stage);
+    }
+
+    public String getRecordSetName() {
+        if(stage.equals(Stage.FINAL)){
+            return recordSetName;
+        }
+        else{
+            return "test."+recordSetName;
         }
 
     }
 
-    public String getRecordSetName() {
-        return recordSetName;
-    }
-
     public String getDomainName() {
-        return domainName;
+        if(stage.equals(Stage.FINAL)){
+            return domainName;
+        }
+        else{
+            return "test."+domainName;
+        }
     }
 
     public String getZoneName() {
         return zoneName;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
 
