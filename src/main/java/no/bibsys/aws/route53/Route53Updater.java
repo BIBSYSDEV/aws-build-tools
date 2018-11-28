@@ -60,26 +60,24 @@ public class Route53Updater {
     }
 
 
-    public Optional<ChangeResourceRecordSetsResult> updateServerUrl(String certificateArn) {
+    public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest(String certificateArn) {
 
         apiGatewayBasePathMapping.createBasePath(apiGatewayRestApiId, certificateArn);
-
         Optional<String> targetDomainName = apiGatewayBasePathMapping.getTargetDomainName();
         return targetDomainName
-                .map(domainName -> route53Client.changeResourceRecordSets(updateRecordSetsRequest(domainName)));
-
+                .map(domainName->updateRecordSetsRequest(domainName));
 
     }
 
 
-    public Optional<ChangeResourceRecordSetsResult> deleteServerUrl() {
+
+    public Optional<ChangeResourceRecordSetsRequest> createDeleteRequest() {
 
         try {
             Optional<String> targetDomainName = apiGatewayBasePathMapping.getTargetDomainName();
             apiGatewayBasePathMapping.deleteBasePathMappings();
-
             return targetDomainName
-                    .map(domainName -> route53Client.changeResourceRecordSets(deleteRecordSetsRequest(domainName)));
+                    .map(domainName -> deleteRecordSetsRequest(domainName));
         } catch (NotFoundException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Domain Name not found:" + apiGatewayBasePathMapping.getTargetDomainName());
@@ -87,6 +85,11 @@ public class Route53Updater {
 
         }
         return Optional.empty();
+    }
+
+
+    public ChangeResourceRecordSetsResult executeRequest(ChangeResourceRecordSetsRequest request){
+        return route53Client.changeResourceRecordSets(request);
     }
 
 

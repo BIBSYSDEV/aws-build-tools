@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class ApiGatewayBasePathMapping {
 
-    private static final Logger log = LoggerFactory.getLogger(ApiGatewayBasePathMapping.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiGatewayBasePathMapping.class);
     private final transient AmazonApiGateway apiGatewayClient;
     private final transient String domainName;
     private final transient Stage stage;
@@ -61,7 +61,7 @@ public class ApiGatewayBasePathMapping {
             DeleteDomainNameRequest deleteDomainNameRequest = new DeleteDomainNameRequest().withDomainName(domainName);
             apiGatewayClient.deleteDomainName(deleteDomainNameRequest);
         } catch (NotFoundException e) {
-            log.warn("Custom domain name not found");
+            logger.warn("Custom domain name not found");
         }
 
     }
@@ -80,6 +80,7 @@ public class ApiGatewayBasePathMapping {
                     .getRegionalDomainName();
             return Optional.ofNullable(targetname);
         } catch (NotFoundException e) {
+            logger.warn("No Custom Domain Name found for the name {}", domainName);
             return Optional.empty();
         }
 
