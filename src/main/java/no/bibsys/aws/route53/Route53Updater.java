@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import no.bibsys.aws.apigateway.ApiGatewayBasePathMapping;
 import no.bibsys.aws.cloudformation.Stage;
-import no.bibsys.aws.git.github.BranchInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
