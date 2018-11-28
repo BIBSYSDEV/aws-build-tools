@@ -65,7 +65,7 @@ public class Route53Updater {
 
     public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest() {
 
-        Optional<String> targetDomainName = apiGatewayBasePathMapping.getTargetDomainName();
+        Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
         return targetDomainName
             .map(domainName -> updateRecordSetsRequest(domainName));
 
@@ -74,12 +74,12 @@ public class Route53Updater {
 
     public Optional<ChangeResourceRecordSetsRequest> createDeleteRequest() {
         try {
-            Optional<String> targetDomainName = apiGatewayBasePathMapping.getTargetDomainName();
+            Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
             return targetDomainName.map(domainName -> deleteRecordSetsRequest(domainName));
         } catch (NotFoundException e) {
             if (log.isWarnEnabled()) {
                 log.warn(
-                    "Domain Name not found:" + apiGatewayBasePathMapping.getTargetDomainName());
+                    "Domain Name not found:" + apiGatewayBasePathMapping.awsGetTargetDomainName());
             }
 
         }
@@ -90,14 +90,14 @@ public class Route53Updater {
     public ChangeResourceRecordSetsResult executeUpdateRequest(
         ChangeResourceRecordSetsRequest request,
         String certificateArn) {
-        apiGatewayBasePathMapping.createBasePath(apiGatewayRestApiId, certificateArn);
+        apiGatewayBasePathMapping.awsCreateBasePath(apiGatewayRestApiId, certificateArn);
         return route53Client.changeResourceRecordSets(request);
     }
 
 
     public ChangeResourceRecordSetsResult executeDeleteRequest(
         ChangeResourceRecordSetsRequest request) {
-        apiGatewayBasePathMapping.deleteBasePathMappings();
+        apiGatewayBasePathMapping.awsDeleteBasePathMappings();
         return route53Client.changeResourceRecordSets(request);
     }
 
