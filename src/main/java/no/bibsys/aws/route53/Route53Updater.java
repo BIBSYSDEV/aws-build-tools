@@ -62,7 +62,9 @@ public class Route53Updater {
     }
 
 
-    public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest() {
+    public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest(String certificateArn) {
+
+        apiGatewayBasePathMapping.awsCreateBasePath(apiGatewayRestApiId, certificateArn);
 
         Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
         return targetDomainName
@@ -87,10 +89,9 @@ public class Route53Updater {
 
 
     public ChangeResourceRecordSetsResult executeUpdateRequest(
-        ChangeResourceRecordSetsRequest request,
-        String certificateArn) {
+        ChangeResourceRecordSetsRequest request) {
         log.info("Executing request:{}",request);
-        apiGatewayBasePathMapping.awsCreateBasePath(apiGatewayRestApiId, certificateArn);
+
         return route53Client.changeResourceRecordSets(request);
     }
 

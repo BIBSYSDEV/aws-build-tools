@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.apigateway.AmazonApiGateway;
+import com.amazonaws.services.apigateway.model.GetBasePathMappingsResult;
 import com.amazonaws.services.apigateway.model.GetDomainNameResult;
 import com.amazonaws.services.route53.AmazonRoute53;
 import com.amazonaws.services.route53.model.Change;
@@ -17,6 +18,7 @@ import com.amazonaws.services.route53.model.ChangeResourceRecordSetsRequest;
 import com.amazonaws.services.route53.model.HostedZone;
 import com.amazonaws.services.route53.model.ListHostedZonesResult;
 import com.amazonaws.services.route53.model.RRType;
+import java.util.Collections;
 import java.util.Optional;
 import no.bibsys.aws.cloudformation.Stage;
 import org.hamcrest.CoreMatchers;
@@ -54,6 +56,7 @@ public class Route53UpdaterTest {
         when(apiGateway.getDomainName(any()))
             .thenReturn(new GetDomainNameResult().withDomainName("DomainName")
                 .withRegionalDomainName("RegionalDomainName"));
+        when(apiGateway.getBasePathMappings(any())).thenReturn(new GetBasePathMappingsResult);
         return apiGateway;
     }
 
@@ -62,7 +65,7 @@ public class Route53UpdaterTest {
     public void updateRecorsrSetsRequest_changeBatchWithOneChange() {
 
         Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater
-            .createUpdateRequest();
+            .createUpdateRequest("certificate");
         assertTrue(requestOpt.isPresent());
         assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(1)));
 
@@ -72,7 +75,7 @@ public class Route53UpdaterTest {
     @Test
     public void updateRecorsrSetsRequest_voidf_ChangeWithChangeActionUpsert() {
 
-        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest();
+        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest("certificate");
 
         assertTrue(requestOpt.isPresent());
         ChangeResourceRecordSetsRequest request = requestOpt.get();
