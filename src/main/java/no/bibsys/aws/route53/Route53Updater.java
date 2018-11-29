@@ -63,13 +63,19 @@ public class Route53Updater {
 
 
     public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest(String certificateArn) {
-
-        apiGatewayBasePathMapping.awsCreateBasePath(apiGatewayRestApiId, certificateArn);
+        //necessary step before creating  the update request
+        prepareCustomDomainName(certificateArn);
 
         Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
         return targetDomainName
             .map(domainName -> updateRecordSetsRequest(domainName));
 
+    }
+
+    private void prepareCustomDomainName(String certificateArn) {
+        apiGatewayBasePathMapping.awsDeleteBasePathMappings();
+        apiGatewayBasePathMapping.awsCreateCustomDomainName(certificateArn);
+        apiGatewayBasePathMapping.awsCreateBasePath(apiGatewayRestApiId);
     }
 
 

@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.apigateway.AmazonApiGateway;
+import com.amazonaws.services.apigateway.model.BasePathMapping;
 import com.amazonaws.services.apigateway.model.GetBasePathMappingsResult;
 import com.amazonaws.services.apigateway.model.GetDomainNameResult;
 import com.amazonaws.services.route53.AmazonRoute53;
@@ -56,7 +57,9 @@ public class Route53UpdaterTest {
         when(apiGateway.getDomainName(any()))
             .thenReturn(new GetDomainNameResult().withDomainName("DomainName")
                 .withRegionalDomainName("RegionalDomainName"));
-        when(apiGateway.getBasePathMappings(any())).thenReturn(new GetBasePathMappingsResult);
+        when(apiGateway.getBasePathMappings(any()))
+            .thenReturn(new GetBasePathMappingsResult()
+                .withItems(new BasePathMapping().withBasePath("Basepath")));
         return apiGateway;
     }
 

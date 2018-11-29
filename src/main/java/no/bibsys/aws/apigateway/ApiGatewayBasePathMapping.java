@@ -41,11 +41,14 @@ public class ApiGatewayBasePathMapping {
     }
 
 
-    public CreateBasePathMappingResult awsCreateBasePath(String apiGatewayRestApiId,
-        String certificateArn) {
-        awsDeleteBasePathMappings();
-        awsCheckAndCreateCustomDomainName(certificateArn);
-
+    /**
+     *  Creates a BasePath mapping in an existing custom domain. Ensure that a custom domain
+     *  already exists by calling {@link ApiGatewayBasePathMapping:awsCreateCustomDomainName}.
+     *
+     * @param apiGatewayRestApiId The id of the ApiGateway Rest API.
+     * @return the result of the query.
+     */
+    public CreateBasePathMappingResult awsCreateBasePath(String apiGatewayRestApiId) {
         CreateBasePathMappingRequest createBasePathMappingRequest = newBasePathMappingRequest(
             apiGatewayRestApiId);
 
@@ -71,6 +74,13 @@ public class ApiGatewayBasePathMapping {
     }
 
 
+    /**
+     * Checks if there exists a Custom Domain with the {@link ApiGatewayBasePathMapping:domainName}
+     * and if not it creates one.
+     *
+     * @return The target name of the Custom Domain Name
+     * @throws NotFoundException
+     */
     public Optional<String> awsGetTargetDomainName() throws NotFoundException {
         try {
             String targetname = apiGatewayClient
@@ -86,18 +96,14 @@ public class ApiGatewayBasePathMapping {
     }
 
 
-
-    private void awsCheckAndCreateCustomDomainName(String certifcateArn) {
+    public  void awsCreateCustomDomainName(String certifcateArn) {
         if (!awsDomainExists()) {
             awsCreateDomainName(certifcateArn);
         }
     }
 
-
-
-
     @VisibleForTesting
-    public CreateBasePathMappingRequest newBasePathMappingRequest(String restApiId) {
+    public  CreateBasePathMappingRequest newBasePathMappingRequest(String restApiId) {
         return new CreateBasePathMappingRequest().withRestApiId(restApiId)
             .withDomainName(domainName)
             .withStage(stage.toString());
