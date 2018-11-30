@@ -15,11 +15,10 @@ public class SwaggerHubUrlFormatter {
     private final transient URI requestURL;
 
 
-    public SwaggerHubUrlFormatter(SwaggerHubInfo swaggerHubInfo, String apiVersion,
+    public SwaggerHubUrlFormatter(SwaggerHubInfo swaggerHubInfo, boolean includeApiVersion,
             Map<String, String> requestParameters) throws URISyntaxException {
 
-        URI  apiUri=apiUri(swaggerHubInfo,apiVersion);
-        this.requestURL = urlFormatter(apiUri, requestParameters);
+        this.requestURL = urlFormatter(apiUri(swaggerHubInfo, includeApiVersion), requestParameters);
 
     }
 
@@ -29,11 +28,11 @@ public class SwaggerHubUrlFormatter {
     }
 
 
-    private URI apiUri(SwaggerHubInfo info, String apiVersion) throws URISyntaxException {
-        if (apiVersion!=null) {
+    private URI apiUri(SwaggerHubInfo info, boolean includeApiVersion) throws URISyntaxException {
+        if (includeApiVersion) {
 
             URI uri = new URI(String.format("%s/%s/%s/%s", SWAGGERHUB_RESTAPI_URL, info.getSwaggerOrganization(),
-                    info.getApiId(), apiVersion));
+                    info.getApiId(), info.getApiVersion()));
             if (logger.isErrorEnabled()) {
                 logger.error("SwaggerHub URL:{}", uri);
             }

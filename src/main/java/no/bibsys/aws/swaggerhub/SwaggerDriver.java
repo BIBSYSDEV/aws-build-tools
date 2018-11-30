@@ -47,9 +47,9 @@ public class SwaggerDriver {
      *
      * @return The OpenAPI specification stored in SwaggerHub for a specific API.
      */
-    public HttpGet getSpecificationRequest(String apiKey,String apiVersion) throws URISyntaxException {
+    public HttpGet getSpecificationRequest(String apiKey) throws URISyntaxException {
         SwaggerHubUrlFormatter swaggerHubUrlFormatter =
-                new SwaggerHubUrlFormatter(swaggerHubInfo, apiVersion, Collections.emptyMap());
+                new SwaggerHubUrlFormatter(swaggerHubInfo, true, Collections.emptyMap());
         HttpGet httpGet = createGetRequest(swaggerHubUrlFormatter, apiKey);
         return httpGet;
 
@@ -67,8 +67,7 @@ public class SwaggerDriver {
     public HttpPost createUpdateRequest(String jsonSpec, String apiVersion, String apiKey) throws URISyntaxException {
 
         Map<String, String> parameters = setupRequestParametersForUpdate(apiVersion);
-        // The api version goes in the query parameters when we create a new version.
-        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, null, parameters);
+        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false, parameters);
         HttpPost postOpt = createPostRequest(formatter, jsonSpec, apiKey);
         return postOpt;
 
@@ -89,7 +88,7 @@ public class SwaggerDriver {
 
 
     public HttpDelete createDeleteApiRequest(String apiKey) throws URISyntaxException {
-        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, null, Collections.emptyMap());
+        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false, Collections.emptyMap());
         HttpDelete delete = createDeleteRequest(formatter, apiKey);
         return delete;
     }
@@ -119,9 +118,9 @@ public class SwaggerDriver {
 
 
 
-    public HttpDelete createDeleteVersionRequest(String apiKey,String apiVersion) throws URISyntaxException {
+    public HttpDelete createDeleteVersionRequest(String apiKey) throws URISyntaxException {
 
-        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, apiVersion, Collections.emptyMap());
+        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, true, Collections.emptyMap());
         HttpDelete delete = createDeleteRequest(formatter, apiKey);
         return delete;
 
