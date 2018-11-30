@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import no.bibsys.aws.tools.Environment;
 
 
 /**
@@ -20,11 +19,6 @@ public enum Stage {
 
     TEST, FINAL;
 
-
-    public static Stage currentStage() {
-        String stageString = new Environment().readEnv("STAGE");
-        return Stage.fromString(stageString);
-    }
 
     public static Stage fromString(String stage) {
         if (stage.equalsIgnoreCase(FINAL.name())) {
