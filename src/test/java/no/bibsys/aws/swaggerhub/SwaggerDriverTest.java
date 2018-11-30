@@ -22,7 +22,7 @@ public class SwaggerDriverTest {
     private final transient SwaggerDriver driver;
 
     public SwaggerDriverTest() throws IOException {
-        this.driver = new SwaggerDriver(new SwaggerHubInfo(apiId, apiVersion, organization));
+        this.driver = new SwaggerDriver(new SwaggerHubInfo(apiId, organization));
     }
 
 
@@ -106,7 +106,7 @@ public class SwaggerDriverTest {
     }
 
     private HttpDelete deleteVersionRequest() throws URISyntaxException {
-        return driver.createDeleteVersionRequest(apiKey);
+        return driver.createDeleteVersionRequest(apiKey,apiVersion);
     }
 
 
