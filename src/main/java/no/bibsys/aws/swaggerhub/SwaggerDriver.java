@@ -64,9 +64,9 @@ public class SwaggerDriver {
         return executeUpdate(post);
     }
 
-    public HttpPost createUpdateRequest(String jsonSpec, String apiVersion, String apiKey) throws URISyntaxException {
+    public HttpPost createUpdateRequest(String jsonSpec, String apiKey) throws URISyntaxException {
 
-        Map<String, String> parameters = setupRequestParametersForUpdate(apiVersion);
+        Map<String, String> parameters = setupRequestParametersForUpdate(swaggerHubInfo.getApiVersion());
         SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false, parameters);
         HttpPost postOpt = createPostRequest(formatter, jsonSpec, apiKey);
         return postOpt;
