@@ -111,7 +111,7 @@ public class SwaggerDriverTest {
 
 
     private HttpPost postRequest() throws URISyntaxException {
-        return driver.createUpdateRequest("jsonString", apiVersion, apiKey);
+        return driver.createUpdateRequest("jsonString", apiKey);
     }
 
 
