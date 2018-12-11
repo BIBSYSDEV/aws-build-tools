@@ -91,7 +91,7 @@ public class ApiGatewayApiInfo {
     }
 
 
-    private Optional<JsonNode> readOpenApiSpecFromAmazon(Map<String, String> requestParameters) throws IOException {
+    public Optional<JsonNode> readOpenApiSpecFromAmazon(Map<String, String> requestParameters) throws IOException {
 
         try {
             GetExportRequest request = new GetExportRequest().withRestApiId(restApiId).withStageName(stage.toString())

@@ -1,4 +1,4 @@
-package no.bibsys.aws.lambda.deploy.requests;
+package no.bibsys.aws.lambda.events;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
