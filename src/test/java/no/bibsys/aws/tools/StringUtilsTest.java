@@ -18,43 +18,36 @@ public class StringUtilsTest extends AmazonNamingRestrictions {
         String normalized = stringUtils.normalizeString(branchName);
         Matcher matcher = amazonPattern.matcher(normalized);
         assertThat(matcher.matches(), is(equalTo(true)));
+    }
+
+    @Test
+    public void randomString_smallMaxLength_randomStringOfLengthMaxLength() {
+        int smallLength = 5;
+        String randomString1 = stringUtils.randomString(smallLength);
+        String randomString2 = stringUtils.randomString(smallLength);
+        assertThat(randomString1.length(), is(equalTo(smallLength)));
+        assertThat(randomString2.length(), is(equalTo(smallLength)));
+        assertThat(randomString1, is(not(equalTo(randomString2))));
+
 
     }
 
     @Test
-    public void randomString_smallMaxLength_randomStringOfLengthMaxLength(){
-        int smallLength=5;
-        String randomString1=stringUtils.randomString(smallLength);
-        String randomString2=stringUtils.randomString(smallLength);
-        assertThat(randomString1.length(),is(equalTo(smallLength)));
-        assertThat(randomString2.length(),is(equalTo(smallLength)));
-        assertThat(randomString1,is(not(equalTo(randomString2))));
-
-
-    }
-
-
-    @Test
-    public void randomString_largeMaxLength_randomStringOfLengthNotGreaterThanMaxLength(){
-        int largeLegnth= 3000;
-        String randomString1=stringUtils.randomString(largeLegnth);
-        String randomString2=stringUtils.randomString(largeLegnth);
-        assertThat(randomString1.length(),is(lessThan(largeLegnth)));
-        assertThat(randomString2.length(),is(lessThan(largeLegnth)));
-        assertThat(randomString1,is(not(equalTo(randomString2))));
-
-
+    public void randomString_largeMaxLength_randomStringOfLengthNotGreaterThanMaxLength() {
+        int largeLegnth = 3000;
+        String randomString1 = stringUtils.randomString(largeLegnth);
+        String randomString2 = stringUtils.randomString(largeLegnth);
+        assertThat(randomString1.length(), is(lessThan(largeLegnth)));
+        assertThat(randomString2.length(), is(lessThan(largeLegnth)));
+        assertThat(randomString1, is(not(equalTo(randomString2))));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void randomString_zeroLength_throwsException(){
-        int zeroLength= 0;
-        String randomString1=stringUtils.randomString(zeroLength);
-        assertThat(false,is(equalTo(true)));
-
-
-
+    public void randomString_zeroLength_throwsException() {
+        int zeroLength = 0;
+        String randomString1 = stringUtils.randomString(zeroLength);
+        assertThat(false, is(equalTo(true)));
     }
 
 }
