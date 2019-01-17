@@ -1,9 +1,13 @@
 package no.bibsys.aws.tools;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.stream.Collectors;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class StringUtils {
 
@@ -42,6 +46,21 @@ public class StringUtils {
     private String shorten(String word, int maxLength) {
         int maxIndex = Math.min(word.length(), maxLength);
         return word.substring(0, maxIndex);
+    }
+
+
+    public String randomString(int maxLength){
+        if(maxLength<=0){
+            throw  new IllegalArgumentException("maxLength should be greater than 0");
+        }
+        Long now=System.currentTimeMillis();
+        Random random=new Random();
+        Integer randInt=random.nextInt();
+        String seedString=now.toString()+randInt.toString();
+        String randomString=DigestUtils.sha1Hex(seedString);
+        int  actualLength=Math.min(randomString.length(),maxLength);
+        return randomString.substring(0,actualLength);
+
     }
 
 
