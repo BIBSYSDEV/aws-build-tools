@@ -59,7 +59,6 @@ public class StringUtils {
         String randomString = DigestUtils.sha1Hex(seedString);
         int actualLength = Math.min(randomString.length(), maxLength);
         return randomString.substring(0, actualLength);
-
     }
 
 
