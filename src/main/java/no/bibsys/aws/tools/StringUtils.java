@@ -17,15 +17,16 @@ public class StringUtils {
      * @return The normalized String
      */
     public String normalizeString(String input) {
-        String res = input.toLowerCase(Locale.getDefault()).replaceAll("_", "-").replaceAll("[^-a-z0-9]", "");
+        String res = input.toLowerCase(Locale.getDefault()).replaceAll("_", "-")
+            .replaceAll("[^-a-z0-9]", "");
 
         return res;
     }
 
 
     /**
-     * Lowercases the input string, replaces underscores with dashes, and truncates each word (string between two
-     * dashes) to {@code maxWordLength}.
+     * Lowercases the input string, replaces underscores with dashes, and truncates each word
+     * (string between two dashes) to {@code maxWordLength}.
      *
      * @param input The string to be normalized
      * @param maxWorldLength max number of characters between two dashes
@@ -35,7 +36,7 @@ public class StringUtils {
         String[] words = normalizeString(input).split("-");
         int maxnumberOfWords = Math.min(maxWorldLength, words.length);
         List<String> wordList = Arrays.stream(words).map(word -> shorten(word, maxWorldLength))
-                .collect(Collectors.toList()).subList(0, maxnumberOfWords);
+            .collect(Collectors.toList()).subList(0, maxnumberOfWords);
 
         return String.join("-", wordList);
     }
@@ -47,18 +48,17 @@ public class StringUtils {
     }
 
 
-    public String randomString(int maxLength){
-        if(maxLength<=0){
-            throw  new IllegalArgumentException("maxLength should be greater than 0");
+    public String randomString(int maxLength) {
+        if (maxLength <= 0) {
+            throw new IllegalArgumentException("maxLength should be greater than 0");
         }
-        Long now=System.currentTimeMillis();
-        Random random=new Random();
-        Integer randInt=random.nextInt();
-        String seedString=now.toString()+randInt.toString();
-        String randomString=DigestUtils.sha1Hex(seedString);
-        int  actualLength=Math.min(randomString.length(),maxLength);
-        return randomString.substring(0,actualLength);
-
+        Long now = System.currentTimeMillis();
+        Random random = new Random();
+        Integer randInt = random.nextInt();
+        String seedString = now.toString() + randInt.toString();
+        String randomString = DigestUtils.sha1Hex(seedString);
+        int actualLength = Math.min(randomString.length(), maxLength);
+        return randomString.substring(0, actualLength);
     }
 
 
