@@ -17,8 +17,8 @@ apply plugin: 'pmd'
 apply plugin: 'maven-publish'
 
 
-def date = new Date()
-def versionString= date.format("yyyy.MM.dd.HH.mm")
+
+def versionString= "1.0"
 version="${versionString}"
 
 bintray {
