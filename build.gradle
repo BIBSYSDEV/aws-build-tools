@@ -18,7 +18,7 @@ apply plugin: 'maven-publish'
 
 
 
-def versionString= "1.0"
+def versionString= "1.0.1"
 version="${versionString}"
 
 bintray {

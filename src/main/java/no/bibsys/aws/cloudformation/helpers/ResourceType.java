@@ -6,7 +6,7 @@ package no.bibsys.aws.cloudformation.helpers;
  */
 public enum ResourceType {
 
-    REST_API;
+    REST_API, S3_BUCKET;
 
 
     public static String REST_API_RESOURCE_TYPE = "AWS::ApiGateway::RestApi";
@@ -16,7 +16,11 @@ public enum ResourceType {
     public String toString() {
         if (this.equals(REST_API)) {
             return REST_API_RESOURCE_TYPE;
-        } else {
+        }
+        else if( this.equals(S3_BUCKET)){
+            return S3_BUCKET_RESOURCE_TYPE;
+        }
+        else {
             throw new IllegalStateException("Unexpected ResourceType:" + this.name());
         }
 
