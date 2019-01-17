@@ -86,9 +86,7 @@ public class Route53UpdaterTest {
 
         assertThat(change.getAction(), is(equalTo(ChangeAction.UPSERT.toString())));
         assertThat(change.getResourceRecordSet().getType(), is(equalTo(RRType.CNAME.toString())));
-        assertThat(change.getResourceRecordSet().getName(), CoreMatchers.startsWith("test."));
-        assertThat(change.getResourceRecordSet().getName(),
-            not(CoreMatchers.startsWith("test.test.")));
+
         assertThat(change.getResourceRecordSet().getTTL(), is(equalTo(300L)));
     }
 
@@ -103,9 +101,7 @@ public class Route53UpdaterTest {
 
         assertThat(change.getAction(), is(equalTo(ChangeAction.DELETE.toString())));
         assertThat(change.getResourceRecordSet().getType(), is(equalTo(RRType.CNAME.toString())));
-        assertThat(change.getResourceRecordSet().getName(), CoreMatchers.startsWith("test."));
-        assertThat(change.getResourceRecordSet().getName(),
-            not(CoreMatchers.startsWith("test.test.")));
+
         assertThat(change.getResourceRecordSet().getTTL(), is(equalTo(300L)));
     }
 
