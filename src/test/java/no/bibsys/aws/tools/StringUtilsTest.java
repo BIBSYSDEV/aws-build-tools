@@ -28,8 +28,6 @@ public class StringUtilsTest extends AmazonNamingRestrictions {
         assertThat(randomString1.length(), is(equalTo(smallLength)));
         assertThat(randomString2.length(), is(equalTo(smallLength)));
         assertThat(randomString1, is(not(equalTo(randomString2))));
-
-
     }
 
     @Test
