@@ -10,6 +10,7 @@ public enum ResourceType {
 
 
     public static String REST_API_RESOURCE_TYPE = "AWS::ApiGateway::RestApi";
+    public static String S3_BUCKET_RESOURCE_TYPE = "AWS::S3::Bucket";
 
     @Override
     public String toString() {
