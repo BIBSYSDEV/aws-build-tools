@@ -15,6 +15,7 @@ import org.junit.Test;
 public class SwaggerDriverTest {
 
 
+    public static final String JSON_SPEC = "{\"key\":\"value\"}";
     private final transient String organization = "unit";
     private final transient String apiId = "api-id";
     private final transient String apiKey = "ApIKeY";
@@ -28,7 +29,7 @@ public class SwaggerDriverTest {
 
     @Test
     public void createUpdateRequest_apiVersionAndJsonSpec_UrlIncludesOrganizationAndApiId()
-            throws URISyntaxException, MalformedURLException {
+        throws URISyntaxException, IOException {
         HttpPost post = postRequest();
         String path = post.getURI().toURL().getPath();
         assertThat(path, (containsString(organization)));
@@ -38,7 +39,7 @@ public class SwaggerDriverTest {
 
     @Test
     public void createUpdateRequest_apiVersionAndJsonSpec_UrlDoesNotIncludeApiVersion()
-            throws URISyntaxException, MalformedURLException {
+        throws URISyntaxException, IOException {
         HttpPost post = postRequest();
         String path = post.getURI().toURL().getPath();
         assertThat(path, not(containsString(apiVersion)));
@@ -47,7 +48,7 @@ public class SwaggerDriverTest {
 
     @Test
     public void createUpdateRequest_apiVersionAndJsonSpec_requestParametersIncludeApiVersion()
-            throws URISyntaxException {
+        throws URISyntaxException, IOException {
 
         HttpPost post = postRequest();
         String parameters = post.getURI().getQuery();
@@ -59,7 +60,7 @@ public class SwaggerDriverTest {
 
     @Test
     public void createUpdateRequest_apiVersionAndJsonSpec_requestParametersIncludeForceParameter()
-            throws URISyntaxException {
+        throws URISyntaxException, IOException {
 
         HttpPost post = postRequest();
         String parameters = post.getURI().getQuery();
@@ -69,7 +70,7 @@ public class SwaggerDriverTest {
 
     @Test
     public void createUpdateRequest_apiVersionAndJsonSpec_requestParametersIncludePrivateParameter()
-            throws URISyntaxException {
+        throws URISyntaxException, IOException {
 
         HttpPost post = postRequest();
         String parameters = post.getURI().getQuery();
@@ -110,8 +111,8 @@ public class SwaggerDriverTest {
     }
 
 
-    private HttpPost postRequest() throws URISyntaxException {
-        return driver.createUpdateRequest("jsonString", apiKey);
+    private HttpPost postRequest() throws URISyntaxException, IOException {
+        return driver.createUpdateRequest(JSON_SPEC, apiKey);
     }
 
 

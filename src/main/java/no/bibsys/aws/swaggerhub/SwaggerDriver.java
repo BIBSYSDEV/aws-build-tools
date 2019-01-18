@@ -22,16 +22,22 @@ import org.slf4j.LoggerFactory;
 public class SwaggerDriver {
 
 
+    public static final String APPLICATION_JSON_HEADER = "application/json";
     private static final Logger logger = LoggerFactory.getLogger(SwaggerDriver.class);
+    public static final String ACCEPT_HEADER = "accept";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String SWAGGERHUB_RESULT_LOG = "SwaggerHubUpdateResultCode:{}";
+    public static final String IS_PRIVATE_PARAMETER = "isPrivate";
+    public static final String FORCE_PARAMETER = "force";
+    public static final String VERSION_PARAMETER = "version";
+    public static final String OAS_VERSION_PARAMETER = "oasVersion";
     private final transient SwaggerHubInfo swaggerHubInfo;
 
 
     public SwaggerDriver(SwaggerHubInfo swaggerHubInfo) {
         this.swaggerHubInfo = swaggerHubInfo;
-
-
     }
-
 
     public String executeGet(HttpGet get) throws IOException {
         CloseableHttpClient client = newRestClient();
@@ -40,73 +46,21 @@ public class SwaggerDriver {
         return output;
     }
 
+    private CloseableHttpClient newRestClient() {
+        return HttpClients.createMinimal();
+    }
 
     /**
-     * It retrieves the OpenAPI specification stored in SwaggerHub for the API specified in the {@code swaggerHubInfo}
-     * field.
+     * It retrieves the OpenAPI specification stored in SwaggerHub for the API specified in the
+     * {@code swaggerHubInfo} field.
      *
      * @return The OpenAPI specification stored in SwaggerHub for a specific API.
      */
     public HttpGet getSpecificationRequest(String apiKey) throws URISyntaxException {
-        SwaggerHubUrlFormatter swaggerHubUrlFormatter =
-                new SwaggerHubUrlFormatter(swaggerHubInfo, true, Collections.emptyMap());
+        SwaggerHubUrlFormatter swaggerHubUrlFormatter = new SwaggerHubUrlFormatter(swaggerHubInfo,
+            true, Collections.emptyMap());
         HttpGet httpGet = createGetRequest(swaggerHubUrlFormatter, apiKey);
         return httpGet;
-
-    }
-
-
-    public int executeDelete(HttpDelete delete) throws IOException {
-        return executeUpdate(delete);
-    }
-
-    public int executePost(HttpPost post) throws IOException {
-        return executeUpdate(post);
-    }
-
-    public HttpPost createUpdateRequest(String jsonSpec, String apiKey) throws URISyntaxException {
-
-        Map<String, String> parameters = setupRequestParametersForUpdate(swaggerHubInfo.getApiVersion());
-        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false, parameters);
-        HttpPost postOpt = createPostRequest(formatter, jsonSpec, apiKey);
-        return postOpt;
-
-
-    }
-
-
-    private int executeUpdate(HttpUriRequest request) throws IOException {
-        CloseableHttpClient client = newRestClient();
-        CloseableHttpResponse response = client.execute(request);
-        int result = response.getStatusLine().getStatusCode();
-        if (logger.isInfoEnabled()) {
-            logger.info("SwaggerHubUpdateResultCode:{}", result);
-        }
-
-        return result;
-    }
-
-
-    public HttpDelete createDeleteApiRequest(String apiKey) throws URISyntaxException {
-        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false, Collections.emptyMap());
-        HttpDelete delete = createDeleteRequest(formatter, apiKey);
-        return delete;
-    }
-
-
-    private HttpPost createPostRequest(SwaggerHubUrlFormatter formatter, String jsonSpec, String apiKey) {
-        HttpPost post = new HttpPost();
-        post.setURI(formatter.getRequestURL());
-        addHeaders(post, apiKey);
-        addBody(post, jsonSpec);
-        return post;
-
-    }
-
-    private HttpDelete createDeleteRequest(SwaggerHubUrlFormatter formatter, String apiKey) {
-        HttpDelete delete = new HttpDelete(formatter.getRequestURL());
-        addHeaders(delete, apiKey);
-        return delete;
     }
 
     private HttpGet createGetRequest(SwaggerHubUrlFormatter swaggerHubUrlFormatter, String apiKey) {
@@ -116,31 +70,50 @@ public class SwaggerDriver {
         return get;
     }
 
-
-
-    public HttpDelete createDeleteVersionRequest(String apiKey) throws URISyntaxException {
-
-        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, true, Collections.emptyMap());
-        HttpDelete delete = createDeleteRequest(formatter, apiKey);
-        return delete;
-
-    }
-
-
-
-    private Map<String, String> setupRequestParametersForUpdate(String version) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("isPrivate", "false");
-        parameters.put("force", "true");
-        parameters.put("version", version);
-        return parameters;
-    }
-
-
     private void addHeaders(HttpUriRequest post, String apiKey) {
-        post.addHeader("accept", "application/json");
-        post.addHeader("Content-Type", "application/json");
-        post.addHeader("Authorization", apiKey);
+        post.addHeader(ACCEPT_HEADER, APPLICATION_JSON_HEADER);
+        post.addHeader(CONTENT_TYPE, APPLICATION_JSON_HEADER);
+        post.addHeader(AUTHORIZATION, apiKey);
+    }
+
+    public int executeDelete(HttpDelete delete) throws IOException {
+        return executeUpdate(delete);
+    }
+
+    private int executeUpdate(HttpUriRequest request) throws IOException {
+        CloseableHttpClient client = newRestClient();
+        CloseableHttpResponse response = client.execute(request);
+        int result = response.getStatusLine().getStatusCode();
+        if (logger.isInfoEnabled()) {
+            logger.info(SWAGGERHUB_RESULT_LOG, result);
+        }
+
+        return result;
+    }
+
+    public int executePost(HttpPost post) throws IOException {
+        return executeUpdate(post);
+    }
+
+    public HttpPost createUpdateRequest(String jsonSpec, String apiKey)
+        throws URISyntaxException, IOException {
+
+        Map<String, String> parameters = setupRequestParametersForUpdate(
+            swaggerHubInfo.getApiVersion());
+        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false,
+            parameters);
+        HttpPost postOpt = createPostRequest(formatter, jsonSpec, apiKey);
+        return postOpt;
+
+    }
+
+    private HttpPost createPostRequest(SwaggerHubUrlFormatter formatter, String jsonSpec,
+        String apiKey) {
+        HttpPost post = new HttpPost();
+        post.setURI(formatter.getRequestURL());
+        addHeaders(post, apiKey);
+        addBody(post, jsonSpec);
+        return post;
 
     }
 
@@ -149,11 +122,33 @@ public class SwaggerDriver {
         post.setEntity(stringEntity);
     }
 
-
-    private CloseableHttpClient newRestClient() {
-        return HttpClients.createMinimal();
+    private Map<String, String> setupRequestParametersForUpdate(String version) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(IS_PRIVATE_PARAMETER, "false");
+        parameters.put(FORCE_PARAMETER, "true");
+        parameters.put(VERSION_PARAMETER, version);
+        parameters.put(OAS_VERSION_PARAMETER, "3.0");
+        return parameters;
     }
 
+    public HttpDelete createDeleteApiRequest(String apiKey) throws URISyntaxException {
+        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false,
+            Collections.emptyMap());
+        HttpDelete delete = createDeleteRequest(formatter, apiKey);
+        return delete;
+    }
 
+    private HttpDelete createDeleteRequest(SwaggerHubUrlFormatter formatter, String apiKey) {
+        HttpDelete delete = new HttpDelete(formatter.getRequestURL());
+        addHeaders(delete, apiKey);
+        return delete;
+    }
+
+    public HttpDelete createDeleteVersionRequest(String apiKey) throws URISyntaxException {
+
+        SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, true,
+            Collections.emptyMap());
+        return createDeleteRequest(formatter, apiKey);
+    }
 
 }
