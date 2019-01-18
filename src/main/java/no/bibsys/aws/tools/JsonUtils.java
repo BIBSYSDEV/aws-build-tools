@@ -37,6 +37,16 @@ public final class JsonUtils {
 
     }
 
+
+
+    public static String jsonToYaml(String yaml) throws IOException {
+        ObjectMapper jsonParser = newJsonParser();
+        JsonNode root = jsonParser.readTree(yaml);
+        ObjectMapper yamlParser = newYamlParser();
+        return yamlParser.writeValueAsString(root);
+
+    }
+
     public static String removeComments(String jsonWithComments) throws IOException {
         ObjectMapper mapper = newJsonParser();
         JsonNode jsonNode = mapper.readTree(jsonWithComments);
