@@ -14,46 +14,35 @@ public final class JsonUtils {
         throw new UnsupportedOperationException();
     }
 
-    public static ObjectMapper newJsonParser() {
-        JsonFactory jsonFactory =
-                new JsonFactory().configure(Feature.ALLOW_COMMENTS, true).configure(Feature.ALLOW_YAML_COMMENTS, true);
-        return new ObjectMapper(jsonFactory);
+    public static String yamlToJson(String yaml) throws IOException {
+        ObjectMapper yamlParser = newYamlParser();
+        JsonNode root = yamlParser.readTree(yaml);
+        ObjectMapper jsonParser = newJsonParser();
+        return jsonParser.writeValueAsString(root);
     }
 
-
+    public static ObjectMapper newJsonParser() {
+        JsonFactory jsonFactory = new JsonFactory().configure(Feature.ALLOW_COMMENTS, true)
+            .configure(Feature.ALLOW_YAML_COMMENTS, true);
+        return new ObjectMapper(jsonFactory);
+    }
 
     public static ObjectMapper newYamlParser() {
         YAMLFactory factory = new YAMLFactory();
         return new ObjectMapper(factory);
     }
 
-
-
-    public static String yamlToJson(String yaml) throws IOException {
-        ObjectMapper yamlParser = newYamlParser();
-        JsonNode root = yamlParser.readTree(yaml);
-        ObjectMapper jsonParser = newJsonParser();
-        return jsonParser.writeValueAsString(root);
-
-    }
-
-
-
     public static String jsonToYaml(String yaml) throws IOException {
         ObjectMapper jsonParser = newJsonParser();
         JsonNode root = jsonParser.readTree(yaml);
         ObjectMapper yamlParser = newYamlParser();
         return yamlParser.writeValueAsString(root);
-
     }
 
     public static String removeComments(String jsonWithComments) throws IOException {
         ObjectMapper mapper = newJsonParser();
         JsonNode jsonNode = mapper.readTree(jsonWithComments);
-        String validJson = mapper.writeValueAsString(jsonNode);
-
-        return validJson;
-
+        return mapper.writeValueAsString(jsonNode);
     }
 
 
