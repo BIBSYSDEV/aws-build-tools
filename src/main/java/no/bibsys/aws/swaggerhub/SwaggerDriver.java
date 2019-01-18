@@ -24,13 +24,20 @@ public class SwaggerDriver {
 
     public static final String APPLICATION_JSON_HEADER = "application/json";
     private static final Logger logger = LoggerFactory.getLogger(SwaggerDriver.class);
+    public static final String ACCEPT_HEADER = "accept";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String SWAGGERHUB_RESULT_LOG = "SwaggerHubUpdateResultCode:{}";
+    public static final String IS_PRIVATE_PARAMETER = "isPrivate";
+    public static final String FORCE_PARAMETER = "force";
+    public static final String VERSION_PARAMETER = "version";
+    public static final String OAS_VERSION_PARAMETER = "oasVersion";
     private final transient SwaggerHubInfo swaggerHubInfo;
 
 
     public SwaggerDriver(SwaggerHubInfo swaggerHubInfo) {
         this.swaggerHubInfo = swaggerHubInfo;
     }
-
 
     public String executeGet(HttpGet get) throws IOException {
         CloseableHttpClient client = newRestClient();
@@ -64,9 +71,9 @@ public class SwaggerDriver {
     }
 
     private void addHeaders(HttpUriRequest post, String apiKey) {
-        post.addHeader("accept", APPLICATION_JSON_HEADER);
-        post.addHeader("Content-Type", APPLICATION_JSON_HEADER);
-        post.addHeader("Authorization", apiKey);
+        post.addHeader(ACCEPT_HEADER, APPLICATION_JSON_HEADER);
+        post.addHeader(CONTENT_TYPE, APPLICATION_JSON_HEADER);
+        post.addHeader(AUTHORIZATION, apiKey);
     }
 
     public int executeDelete(HttpDelete delete) throws IOException {
@@ -78,7 +85,7 @@ public class SwaggerDriver {
         CloseableHttpResponse response = client.execute(request);
         int result = response.getStatusLine().getStatusCode();
         if (logger.isInfoEnabled()) {
-            logger.info("SwaggerHubUpdateResultCode:{}", result);
+            logger.info(SWAGGERHUB_RESULT_LOG, result);
         }
 
         return result;
@@ -117,10 +124,10 @@ public class SwaggerDriver {
 
     private Map<String, String> setupRequestParametersForUpdate(String version) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("isPrivate", "false");
-        parameters.put("force", "true");
-        parameters.put("version", version);
-        parameters.put("oasVersion", "3.0");
+        parameters.put(IS_PRIVATE_PARAMETER, "false");
+        parameters.put(FORCE_PARAMETER, "true");
+        parameters.put(VERSION_PARAMETER, version);
+        parameters.put(OAS_VERSION_PARAMETER, "3.0");
         return parameters;
     }
 
@@ -141,9 +148,7 @@ public class SwaggerDriver {
 
         SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, true,
             Collections.emptyMap());
-        HttpDelete delete = createDeleteRequest(formatter, apiKey);
-        return delete;
-
+        return createDeleteRequest(formatter, apiKey);
     }
 
 }
