@@ -23,6 +23,7 @@ public class SwaggerDriver {
 
 
     private static final Logger logger = LoggerFactory.getLogger(SwaggerDriver.class);
+    public static final String APPLICATION_JSON_HEADER = "application/json";
     private final transient SwaggerHubInfo swaggerHubInfo;
 
 
@@ -64,7 +65,8 @@ public class SwaggerDriver {
         return executeUpdate(post);
     }
 
-    public HttpPost createUpdateRequest(String jsonSpec, String apiKey) throws URISyntaxException {
+    public HttpPost createUpdateRequest(String jsonSpec, String apiKey)
+        throws URISyntaxException, IOException {
 
         Map<String, String> parameters = setupRequestParametersForUpdate(swaggerHubInfo.getApiVersion());
         SwaggerHubUrlFormatter formatter = new SwaggerHubUrlFormatter(swaggerHubInfo, false, parameters);
@@ -133,18 +135,19 @@ public class SwaggerDriver {
         parameters.put("isPrivate", "false");
         parameters.put("force", "true");
         parameters.put("version", version);
+        parameters.put("oasVersion","3.0");
         return parameters;
     }
 
 
     private void addHeaders(HttpUriRequest post, String apiKey) {
-        post.addHeader("accept", "application/json");
-        post.addHeader("Content-Type", "application/json");
+        post.addHeader("accept", APPLICATION_JSON_HEADER);
+        post.addHeader("Content-Type", APPLICATION_JSON_HEADER);
         post.addHeader("Authorization", apiKey);
 
     }
 
-    private void addBody(HttpPost post, String jsonSpec) {
+    private void addBody(HttpPost post, String jsonSpec)  {
         StringEntity stringEntity = new StringEntity(jsonSpec, StandardCharsets.UTF_8);
         post.setEntity(stringEntity);
     }
