@@ -1,15 +1,13 @@
 package no.bibsys.aws.lambda.events;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import no.bibsys.aws.lambda.events.CodePipelineEvent;
-import no.bibsys.aws.lambda.events.DeployEventBuilder;
 import no.bibsys.aws.tools.IoUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DeployEventBuilderTest {
 

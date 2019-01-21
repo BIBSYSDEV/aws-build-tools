@@ -5,9 +5,10 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.regex.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StringUtilsTest extends AmazonNamingRestrictions {
 
@@ -41,11 +42,9 @@ public class StringUtilsTest extends AmazonNamingRestrictions {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void randomString_zeroLength_throwsException() {
-        int zeroLength = 0;
-        String randomString1 = stringUtils.randomString(zeroLength);
-        assertThat(false, is(equalTo(true)));
+        assertThrows(IllegalArgumentException.class, () -> stringUtils.randomString(0));
     }
 
 }

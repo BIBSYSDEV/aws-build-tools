@@ -17,8 +17,7 @@ apply plugin: 'pmd'
 apply plugin: 'maven-publish'
 
 
-
-def versionString= "1.0.2"
+def versionString= "1.0.3"
 version="${versionString}"
 
 bintray {
@@ -41,7 +40,6 @@ bintray {
 
         }
         
-        
     }
 }
 
@@ -58,10 +56,6 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-
-
-
-
 publishing {
     publications {
         MyPublication(MavenPublication) {
@@ -76,17 +70,14 @@ publishing {
 }
 
 
-
 repositories {
     mavenCentral()
-
 }
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = "5.1.1"
 }
-
 
 dependencies {
 
@@ -120,9 +111,8 @@ dependencies {
     implementation('io.symphonia:lambda-logging:1.0.3')
 
     //libraries for testing
-    testImplementation group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
-
+    testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
 
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.2')
     testImplementation('org.junit.jupiter:junit-jupiter-params:5.3.2')
@@ -138,14 +128,12 @@ test {
 }
 
 
-
 pmd {
     toolVersion = "6.7.0"
     ruleSetConfig = rootProject.resources.text.fromFile('config/pmd/potential-future-pmd.xml')
     ruleSets = []
     ignoreFailures = false
 }
-
 
 checkstyle {
     configFile = rootProject.resources.text.fromFile('config/checkstyle/google_checks.xml').asFile()
@@ -170,14 +158,12 @@ task fatJar(dependsOn: shadowJar) {}
 
 
 test {
-    useJUnit {
-        excludeCategories 'no.bibsys.aws.tools.IntegrationTest'
-        excludeCategories 'no.bibsys.aws.tools.DoNotRunTest'
+    useJUnitPlatform {
+        excludeTags 'IntegrationTest'
+        includeEngines 'junit-jupiter'
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
     }
 }
 
-task amazonTest(type: Test) {
-    useJUnit {
-        includeCategories 'no.bibsys.utils.IntegrationTest'
-    }
-}
