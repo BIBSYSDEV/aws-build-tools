@@ -122,7 +122,7 @@ dependencies {
     //libraries for testing
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
-    
+
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.2')
     testImplementation('org.junit.jupiter:junit-jupiter-params:5.3.2')
     testImplementation('org.junit.jupiter:junit-jupiter-engine:5.3.2')
@@ -170,10 +170,11 @@ task fatJar(dependsOn: shadowJar) {}
 
 test {
     useJUnitPlatform {
-        includeTags 'fast', 'smoke & feature-a'
-        // excludeTags 'slow', 'ci'
+        excludeTags 'IntegrationTest'
         includeEngines 'junit-jupiter'
-        // excludeEngines 'junit-vintage'
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
     }
 }
 
