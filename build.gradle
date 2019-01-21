@@ -17,8 +17,7 @@ apply plugin: 'pmd'
 apply plugin: 'maven-publish'
 
 
-
-def versionString= "1.0.2"
+def versionString= "1.0.3"
 version="${versionString}"
 
 bintray {
@@ -41,7 +40,6 @@ bintray {
 
         }
         
-        
     }
 }
 
@@ -58,10 +56,6 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-
-
-
-
 publishing {
     publications {
         MyPublication(MavenPublication) {
@@ -76,17 +70,14 @@ publishing {
 }
 
 
-
 repositories {
     mavenCentral()
-
 }
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = "5.1.1"
 }
-
 
 dependencies {
 
@@ -137,14 +128,12 @@ test {
 }
 
 
-
 pmd {
     toolVersion = "6.7.0"
     ruleSetConfig = rootProject.resources.text.fromFile('config/pmd/potential-future-pmd.xml')
     ruleSets = []
     ignoreFailures = false
 }
-
 
 checkstyle {
     configFile = rootProject.resources.text.fromFile('config/checkstyle/google_checks.xml').asFile()
@@ -178,8 +167,3 @@ test {
     }
 }
 
-task amazonTest(type: Test) {
-    useJUnit {
-        includeCategories 'no.bibsys.utils.IntegrationTest'
-    }
-}
