@@ -3,14 +3,15 @@ package no.bibsys.aws.tools;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import no.bibsys.aws.tools.Environment;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EnvironmentTest {
 
@@ -18,10 +19,10 @@ public class EnvironmentTest {
     Environment environment = new Environment();
 
 
-
-    @Test(expected = NullPointerException.class)
+    @Test()
     public void getEnv_nonExistingEnvVariable_throwsException() {
-        environment.readEnv("something_here");
+
+        assertThrows(NullPointerException.class, () -> environment.readEnv("something_here"));
 
     }
 

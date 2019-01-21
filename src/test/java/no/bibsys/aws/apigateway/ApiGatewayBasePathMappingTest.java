@@ -1,11 +1,13 @@
 package no.bibsys.aws.apigateway;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+
 import com.amazonaws.services.apigateway.model.CreateBasePathMappingRequest;
 import no.bibsys.aws.cloudformation.Stage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class ApiGatewayBasePathMappingTest {
 

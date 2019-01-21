@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import java.util.List;
-import no.bibsys.aws.cloudformation.Stage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class StageTest {
 

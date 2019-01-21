@@ -2,15 +2,16 @@ package no.bibsys.aws.swaggerhub;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.junit.MatcherAssert.assertThat;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SwaggerDriverTest {
 

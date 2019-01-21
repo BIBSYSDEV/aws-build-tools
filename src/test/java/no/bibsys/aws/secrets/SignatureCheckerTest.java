@@ -1,13 +1,16 @@
 package no.bibsys.aws.secrets;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import no.bibsys.aws.tools.IoUtils;
 import org.apache.commons.codec.binary.Hex;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class SignatureCheckerTest {
 

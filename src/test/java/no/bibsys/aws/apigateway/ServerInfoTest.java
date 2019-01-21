@@ -4,7 +4,8 @@ package no.bibsys.aws.apigateway;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 public class ServerInfoTest {
 

@@ -1,9 +1,10 @@
 package no.bibsys.aws.apigateway;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
+
 import com.amazonaws.services.apigateway.AmazonApiGateway;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,10 +17,11 @@ import no.bibsys.aws.cloudformation.helpers.StackResources;
 import no.bibsys.aws.tools.Environment;
 import no.bibsys.aws.tools.IntegrationTest;
 import no.bibsys.aws.tools.JsonUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 
 public class ApiGatewayApiInfoTest {
 
@@ -30,8 +32,7 @@ public class ApiGatewayApiInfoTest {
     private AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
 
 
-    @Before
-
+    @BeforeEach
     public void init() throws IOException {
         Environment environment = new Environment();
         String stackName = environment.readEnv("STACK_NAME");
@@ -41,14 +42,14 @@ public class ApiGatewayApiInfoTest {
 
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void generateOpenApiNoExtensions_existingAPIGatewayEndpoint_JsonString() {
         assertThat(apiJson, is(not(equalTo(null))));
         assertThat(apiJson.isEmpty(), is(equalTo(false)));
     }
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void generateOpenApiNoExtensions_existingAPIGatewayEndpoint_OpenAPI3Version() {
 
         Optional<String> openApiVersion = openApiVersion(root);
@@ -59,7 +60,7 @@ public class ApiGatewayApiInfoTest {
 
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void generateOpenApiNoExtensionsexistingAPIGatewayEndpoint_ValidServerUrl() {
         String serverUrl = getServerUrl(root);
         assertThat(serverUrl, is(not(equalTo(null))));
@@ -68,7 +69,7 @@ public class ApiGatewayApiInfoTest {
 
 
     @Test
-    @Category(IntegrationTest.class)
+    @Tag("IntegrationTest")
     public void generateOpenApiNoExtensions_existingAPIGatewayEndpoint_validVBasePath() {
         String basePath = getBasePath(root);
         assertThat(basePath, is(not(equalTo(null))));

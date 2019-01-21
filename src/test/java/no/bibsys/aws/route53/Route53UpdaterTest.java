@@ -1,10 +1,9 @@
 package no.bibsys.aws.route53;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -19,11 +18,9 @@ import com.amazonaws.services.route53.model.ChangeResourceRecordSetsRequest;
 import com.amazonaws.services.route53.model.HostedZone;
 import com.amazonaws.services.route53.model.ListHostedZonesResult;
 import com.amazonaws.services.route53.model.RRType;
-import java.util.Collections;
 import java.util.Optional;
 import no.bibsys.aws.cloudformation.Stage;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class Route53UpdaterTest {
