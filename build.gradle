@@ -122,11 +122,20 @@ dependencies {
     //libraries for testing
     testImplementation group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
 
+
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.2')
+    testImplementation('org.junit.jupiter:junit-jupiter-params:5.3.2')
+    testImplementation('org.junit.jupiter:junit-jupiter-engine:5.3.2')
 
 }
 
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
 
 
 
