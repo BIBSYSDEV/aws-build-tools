@@ -9,7 +9,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class StringUtils {
 
-
     /**
      * Lowercases the input string, replaces underscores with dashes.
      *
@@ -17,16 +16,14 @@ public class StringUtils {
      * @return The normalized String
      */
     public String normalizeString(String input) {
-        String res = input.toLowerCase(Locale.getDefault()).replaceAll("_", "-")
-            .replaceAll("[^-a-z0-9]", "");
+        String res = input.toLowerCase(Locale.getDefault()).replaceAll("_", "-").replaceAll("[^-a-z0-9]", "");
 
         return res;
     }
 
-
     /**
-     * Lowercases the input string, replaces underscores with dashes, and truncates each word
-     * (string between two dashes) to {@code maxWordLength}.
+     * Lowercases the input string, replaces underscores with dashes, and truncates each word (string between two
+     * dashes) to {@code maxWordLength}.
      *
      * @param input The string to be normalized
      * @param maxWorldLength max number of characters between two dashes
@@ -41,12 +38,10 @@ public class StringUtils {
         return String.join("-", wordList);
     }
 
-
     private String shorten(String word, int maxLength) {
         int maxIndex = Math.min(word.length(), maxLength);
         return word.substring(0, maxIndex);
     }
-
 
     public String randomString(int maxLength) {
         if (maxLength <= 0) {
@@ -60,6 +55,4 @@ public class StringUtils {
         int actualLength = Math.min(randomString.length(), maxLength);
         return randomString.substring(0, actualLength);
     }
-
-
 }

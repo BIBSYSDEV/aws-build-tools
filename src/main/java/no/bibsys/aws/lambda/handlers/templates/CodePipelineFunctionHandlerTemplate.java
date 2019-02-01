@@ -19,29 +19,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Lambda handler template for lambda functions invoked during a CodePipeline deploy process.
- * The template includes sending success and failure messages to the pipeline.
+ * Lambda handler template for lambda functions invoked during a CodePipeline deploy process. The template includes
+ * sending success and failure messages to the pipeline.
  *
  * @param <O> The output object of the {@link HandlerTemplate#processInput(Object, String, Context)} method
  */
 
 public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemplate<DeployEvent, O> {
 
-    private final transient AWSCodePipeline pipeline = AWSCodePipelineClientBuilder.defaultClient();
     private static final Logger logger = LoggerFactory.getLogger(CodePipelineFunctionHandlerTemplate.class);
+    private final transient AWSCodePipeline pipeline = AWSCodePipelineClientBuilder.defaultClient();
 
     public CodePipelineFunctionHandlerTemplate() {
         super(DeployEvent.class);
     }
-
-
 
     @Override
     protected final DeployEvent parseInput(String inputString) throws IOException {
 
         return DeployEventBuilder.create(inputString);
     }
-
 
     @Override
     protected void writeOutput(DeployEvent input, O output) throws IOException {
@@ -53,21 +50,14 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
 
         if (isPipelineEvent(input)) {
             sendSuccessToCodePipeline((CodePipelineEvent) input, outputString);
-
         }
-
     }
-
 
     private void writeOutput(String outputString) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             writer.write(outputString);
         }
-
-
     }
-
-
 
     @Override
     protected void writeFailure(DeployEvent input, Throwable error) throws IOException {
@@ -78,34 +68,24 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
         writeOutput(outputString);
     }
 
-
-
-
-
-
     private void sendSuccessToCodePipeline(CodePipelineEvent input, String outputString) {
         logger.info("sending success");
         CodePipelineEvent codePipelineEvent = input;
         PutJobSuccessResultRequest success = new PutJobSuccessResultRequest();
         success.withJobId(codePipelineEvent.getId())
-                .withExecutionDetails(new ExecutionDetails().withSummary(outputString));
+            .withExecutionDetails(new ExecutionDetails().withSummary(outputString));
         pipeline.putJobSuccessResult(success);
         logger.info("sent success");
     }
 
     private void sendFailureToCodePipeline(CodePipelineEvent input, String outputString) {
         FailureDetails failureDetails = new FailureDetails().withMessage(outputString).withType(FailureType.JobFailed);
-        PutJobFailureResultRequest failure =
-                new PutJobFailureResultRequest().withJobId(input.getId()).withFailureDetails(failureDetails);
+        PutJobFailureResultRequest failure = new PutJobFailureResultRequest().withJobId(input.getId())
+            .withFailureDetails(failureDetails);
         pipeline.putJobFailureResult(failure);
     }
 
-
     private boolean isPipelineEvent(DeployEvent buildEvent) {
         return buildEvent instanceof CodePipelineEvent;
-
     }
-
-
-
 }

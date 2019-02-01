@@ -1,15 +1,12 @@
 package no.bibsys.aws.cloudformation;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-
 /**
- * Enumeration of Deployment stages.
- * Deployment stage:
+ * Enumeration of Deployment stages. Deployment stage:
  * <ul>
  * <li>Test: for running tests</li>
  * <li>Final: Production or production-like</li>
@@ -19,16 +16,14 @@ public enum Stage {
 
     TEST, FINAL;
 
-
     public static Stage fromString(String stage) {
         if (stage.equalsIgnoreCase(FINAL.name())) {
             return FINAL;
         } else if (stage.equalsIgnoreCase(TEST.name())) {
             return TEST;
         } else {
-            throw new IllegalArgumentException("Allowed stages:"
-                + String.join(",",
-                listStages().stream().map(st -> st.toString()).collect(Collectors.toList())));
+            throw new IllegalArgumentException("Allowed stages:" + String
+                .join(",", listStages().stream().map(st -> st.toString()).collect(Collectors.toList())));
         }
     }
 
@@ -44,6 +39,5 @@ public enum Stage {
     public String toString() {
         return this.name().toLowerCase(Locale.getDefault());
     }
-
 
 }

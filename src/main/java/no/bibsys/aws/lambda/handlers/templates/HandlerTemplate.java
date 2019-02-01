@@ -11,8 +11,8 @@ import java.net.URISyntaxException;
 import no.bibsys.aws.tools.IoUtils;
 
 /**
- * Template for making it easier to use a POJO Lambda handler.
- * The Amazon template RequestHandler does not behave well with ApiGateway.
+ * Template for making it easier to use a POJO Lambda handler. The Amazon template RequestHandler does not behave well
+ * with ApiGateway.
  *
  * <p>
  * Each class extending the HandlerTemplate should implement the following methods:
@@ -29,24 +29,19 @@ import no.bibsys.aws.tools.IoUtils;
  *
  * </p>
  *
- *
  * @param <I> Input class
  * @param <O> Output class
  */
 public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
 
-
-    private final transient Class<I> iclass;
     protected final transient ObjectMapper objectMapper = new ObjectMapper();
+    private final transient Class<I> iclass;
     protected transient LambdaLogger logger;
     protected transient OutputStream outputStream;
 
-
     public HandlerTemplate(Class<I> iclass) {
         this.iclass = iclass;
-
     }
-
 
     protected void init(OutputStream outputStream, Context context) {
         this.outputStream = outputStream;
@@ -54,17 +49,14 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
         this.logger = context.getLogger();
     }
 
-
     protected abstract I parseInput(String inputString) throws IOException;
 
     protected abstract O processInput(I inputObject, String apiGatewayQuery, Context context)
-            throws IOException, URISyntaxException;
+        throws IOException, URISyntaxException;
 
     protected abstract void writeOutput(I input, O output) throws IOException;
 
-
     protected abstract void writeFailure(I input, Throwable exception) throws IOException;
-
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -77,14 +69,11 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
             writeOutput(inputObject, response);
         } catch (Exception e) {
             logger.log(e.getMessage());
-            e.printStackTrace();
             writeFailure(inputObject, e);
         }
     }
 
-
     protected Class<I> getIClass() {
         return iclass;
     }
-
 }

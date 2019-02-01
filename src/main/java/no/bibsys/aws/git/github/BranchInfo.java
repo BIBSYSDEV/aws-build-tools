@@ -2,12 +2,10 @@ package no.bibsys.aws.git.github;
 
 public class BranchInfo implements GitInfo {
 
+    private transient String repository;
+    private transient String branch;
 
-    private  transient String repository;
-    private  transient String branch;
-
-
-    public BranchInfo(){
+    public BranchInfo() {
         super();
     }
 
@@ -21,20 +19,16 @@ public class BranchInfo implements GitInfo {
         return repository;
     }
 
-
+    public void setRepository(String repository) {
+        this.repository = repository;
+    }
 
     @Override
     public String getBranch() {
         return branch;
     }
 
-    public void setRepository(String repository) {
-        this.repository = repository;
-    }
-
     public void setBranch(String branch) {
         this.branch = branch;
     }
-
-
 }

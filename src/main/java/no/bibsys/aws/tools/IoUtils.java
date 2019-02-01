@@ -12,8 +12,6 @@ import java.util.List;
 
 public final class IoUtils {
 
-
-
     private IoUtils() {
         throw new IllegalStateException("IoUtils should not be initialized");
     }
@@ -22,7 +20,6 @@ public final class IoUtils {
         String pathString = path.toString();
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathString);
     }
-
 
     public static String streamToString(InputStream stream) throws IOException {
         BufferedReader reader = new BufferedReader(newInputStreamReader(stream));
@@ -40,12 +37,10 @@ public final class IoUtils {
         return new InputStreamReader(stream, StandardCharsets.UTF_8);
     }
 
-
     public static String fileAsString(Path path) throws IOException {
         InputStream fileInputStream = Files.newInputStream(path);
         return streamToString(fileInputStream);
     }
-
 
     public static List<String> linesfromResource(Path path) throws IOException {
         BufferedReader reader = new BufferedReader(newInputStreamReader(inputStreamFromResources(path)));
@@ -64,7 +59,6 @@ public final class IoUtils {
         return result;
     }
 
-
     public static String removeMultipleWhiteSpaces(String input) {
         String buffer = input.trim();
         String result = buffer.replaceAll("\\s\\s", " ");
@@ -74,6 +68,4 @@ public final class IoUtils {
         }
         return result;
     }
-
-
 }

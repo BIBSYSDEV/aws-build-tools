@@ -25,7 +25,6 @@ import org.mockito.Mockito;
 
 public class Route53UpdaterTest {
 
-
     private final transient Route53Updater route53Updater;
 
     public Route53UpdaterTest() {
@@ -33,44 +32,35 @@ public class Route53UpdaterTest {
         String zoneName = "ZoneName";
         AmazonRoute53 client = mockRoute53Client(zoneName);
         AmazonApiGateway apiGateway = mockApiGatewayClient();
-        StaticUrlInfo staticUrlINfo = new StaticUrlInfo(zoneName, "some.url.goes.here.",Stage.TEST);
+        StaticUrlInfo staticUrlINfo = new StaticUrlInfo(zoneName, "some.url.goes.here.", Stage.TEST);
 
-        route53Updater = new Route53Updater(staticUrlINfo,  "apiGatewarRestApiId",
-            apiGateway);
+        route53Updater = new Route53Updater(staticUrlINfo, "apiGatewarRestApiId", apiGateway);
         route53Updater.setRoute53Client(client);
-
     }
 
     private AmazonRoute53 mockRoute53Client(String zoneName) {
         AmazonRoute53 client = Mockito.mock(AmazonRoute53.class);
         when(client.listHostedZones()).thenReturn(
-            new ListHostedZonesResult().withHostedZones(new HostedZone().withId("ZoneId").withName(
-                zoneName)));
+            new ListHostedZonesResult().withHostedZones(new HostedZone().withId("ZoneId").withName(zoneName)));
         return client;
     }
 
     private AmazonApiGateway mockApiGatewayClient() {
         AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
-        when(apiGateway.getDomainName(any()))
-            .thenReturn(new GetDomainNameResult().withDomainName("DomainName")
-                .withRegionalDomainName("RegionalDomainName"));
+        when(apiGateway.getDomainName(any())).thenReturn(
+            new GetDomainNameResult().withDomainName("DomainName").withRegionalDomainName("RegionalDomainName"));
         when(apiGateway.getBasePathMappings(any()))
-            .thenReturn(new GetBasePathMappingsResult()
-                .withItems(new BasePathMapping().withBasePath("Basepath")));
+            .thenReturn(new GetBasePathMappingsResult().withItems(new BasePathMapping().withBasePath("Basepath")));
         return apiGateway;
     }
-
 
     @Test
     public void updateRecorsrSetsRequest_changeBatchWithOneChange() {
 
-        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater
-            .createUpdateRequest("certificate");
+        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest("certificate");
         assertTrue(requestOpt.isPresent());
         assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(1)));
-
     }
-
 
     @Test
     public void updateRecorsrSetsRequest_voidf_ChangeWithChangeActionUpsert() {
@@ -87,7 +77,6 @@ public class Route53UpdaterTest {
         assertThat(change.getResourceRecordSet().getTTL(), is(equalTo(300L)));
     }
 
-
     @Test
     public void deleteRecordsSetReqeuset_void_ChangetWithChaggeActionDelete() {
         Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createDeleteRequest();
@@ -101,6 +90,4 @@ public class Route53UpdaterTest {
 
         assertThat(change.getResourceRecordSet().getTTL(), is(equalTo(300L)));
     }
-
-
 }

@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public final class JsonUtils {
 
-
     private JsonUtils() {
         throw new UnsupportedOperationException();
     }
@@ -44,6 +43,4 @@ public final class JsonUtils {
         JsonNode jsonNode = mapper.readTree(jsonWithComments);
         return mapper.writeValueAsString(jsonNode);
     }
-
-
 }

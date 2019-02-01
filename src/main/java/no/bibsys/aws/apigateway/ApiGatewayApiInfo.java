@@ -11,19 +11,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import no.bibsys.aws.cloudformation.Stage;
 import no.bibsys.aws.tools.IoUtils;
 import no.bibsys.aws.tools.JsonUtils;
-
 
 /**
  * Retrieves Information regarding a specific AWS ApiGateway API.
  */
 public class ApiGatewayApiInfo {
-
 
     private final transient Stage stage;
     private final transient AmazonApiGateway client;
@@ -37,7 +35,6 @@ public class ApiGatewayApiInfo {
         this.restApiId = restApiId;
     }
 
-
     public Optional<String> generateOpenApiNoExtensions() throws IOException {
         String openApiTemplate = readOpenApiTemplate();
         Optional<ServerInfo> serverInfo = readServerInfo();
@@ -46,22 +43,16 @@ public class ApiGatewayApiInfo {
             String updatedOpenApiSpecification = injectServerInfo(openApiTemplate, info);
             String openApiJsonSpec = JsonUtils.yamlToJson(updatedOpenApiSpecification);
             return Optional.of(openApiJsonSpec);
-
         }
         return Optional.empty();
-
-
     }
 
     public Optional<ServerInfo> readServerInfo() throws IOException {
-        Map<String, String> requestParameters = new HashMap<>();
+        Map<String, String> requestParameters = new ConcurrentHashMap<>();
         requestParameters.put("accepts", "application/json");
         Optional<JsonNode> amazonApiSpec = readOpenApiSpecFromAmazon(requestParameters);
         return amazonApiSpec.map(apiSpec -> generateServerInfo(apiSpec));
-
-
     }
-
 
     /**
      * We desire a richer OpenApi documentation than the one that Amazon currently provides. So we read the server
@@ -84,50 +75,37 @@ public class ApiGatewayApiInfo {
             server.remove("variables");
             String removedVariables = yamlParser.writeValueAsString(root);
             return removedVariables;
-
-
         }
-
     }
-
 
     public Optional<JsonNode> readOpenApiSpecFromAmazon(Map<String, String> requestParameters) throws IOException {
 
         try {
             GetExportRequest request = new GetExportRequest().withRestApiId(restApiId).withStageName(stage.toString())
-                    .withExportType(ApiGatewayConstants.OPEN_API_3).withParameters(requestParameters);
+                .withExportType(ApiGatewayConstants.OPEN_API_3).withParameters(requestParameters);
             GetExportResult result = client.getExport(request);
             String swaggerFile = new String(result.getBody().array());
             ObjectMapper parser = JsonUtils.newJsonParser();
             return Optional.ofNullable(parser.readTree(swaggerFile));
-
         } catch (NotFoundException e) {
             return Optional.empty();
         }
-
     }
-
 
     private ServerInfo generateServerInfo(JsonNode openApiSpec) {
         JsonNode serversNode = openApiSpec.get("servers").get(0);
         String serverUrl = serversNode.get("url").asText();
         String apiStage = getStageVariable(serversNode).orElse(null);
         return new ServerInfo(serverUrl, apiStage);
-
     }
 
     private Optional<String> getStageVariable(JsonNode serversNode) {
         Optional<String> apiStage = Optional.ofNullable(serversNode.get("variables")).map(var -> var.get("basePath"))
-                .map(basePath -> basePath.get("default")).map(deflt -> deflt.asText());
+            .map(basePath -> basePath.get("default")).map(deflt -> deflt.asText());
         return apiStage;
     }
 
-
     private String readOpenApiTemplate() throws IOException {
         return IoUtils.resourceAsString(Paths.get("openapi", "openapi.yml"));
-
-
     }
-
-
 }
