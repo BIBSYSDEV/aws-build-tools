@@ -18,7 +18,7 @@ public class SwaggerHubInfo {
      *
      * @param apiId The id of the api
      * @param apiVersion The version of the API documentation. Can be {@code null} if the intended action is for the
-     * whole API
+     *      whole API
      * @param swaggerOrganization The SwaggerHub organization or account name
      */
 
