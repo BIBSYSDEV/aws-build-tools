@@ -17,7 +17,7 @@ apply plugin: 'pmd'
 apply plugin: 'maven-publish'
 
 
-def versionString= "1.0.3"
+def versionString= "1.0.4"
 version="${versionString}"
 
 bintray {

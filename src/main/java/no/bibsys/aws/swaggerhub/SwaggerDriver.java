@@ -31,7 +31,7 @@ public class SwaggerDriver {
     public static final String IS_PRIVATE_PARAMETER = "isPrivate";
     public static final String FORCE_PARAMETER = "force";
     public static final String VERSION_PARAMETER = "version";
-    public static final String OAS_VERSION_PARAMETER = "oasVersion";
+    public static final String OAS_VERSION_PARAMETER = "oas";
     private final transient SwaggerHubInfo swaggerHubInfo;
 
 
@@ -127,7 +127,7 @@ public class SwaggerDriver {
         parameters.put(IS_PRIVATE_PARAMETER, "false");
         parameters.put(FORCE_PARAMETER, "true");
         parameters.put(VERSION_PARAMETER, version);
-        parameters.put(OAS_VERSION_PARAMETER, "3.0");
+        parameters.put(OAS_VERSION_PARAMETER, "3.0.1");
         return parameters;
     }
 
