@@ -14,8 +14,7 @@ import no.bibsys.aws.tools.Environment;
  * <li>branch: Branch we are interested in</li>
  * </ul>
  * <p>
- * Example: <br/>
- * https://github.com/BIBSYSDEV/authority-registry-infrastructure/
+ * Example: <br/> https://github.com/BIBSYSDEV/authority-registry-infrastructure/
  * <ul>
  * <li>owner:BIBSYSDEV</li>
  * <li>repository:authority-registry-infrastructure</li>
@@ -36,22 +35,17 @@ public class GithubConf implements GitInfo {
     private final transient String repo;
     private final transient String branch;
 
-
     public GithubConf(Environment environment) {
         this.owner = environment.readEnv(REPO_OWNER);
         this.repo = environment.readEnv(REPOSITORY);
         this.branch = environment.readEnv(BRANCH);
-
     }
-
 
     public GithubConf(String owner, String repo, String branch) {
         this.owner = initOwner(owner);
         this.repo = initRepo(repo);
         this.branch = branch;
-
     }
-
 
     public String getOwner() {
         return owner;
@@ -62,18 +56,15 @@ public class GithubConf implements GitInfo {
         return repo;
     }
 
-
-    public String getOauth() throws IOException {
-        SecretsReader secretsReader = new SecretsReader(AWS_SECRET_NAME, AWS_SECRET_KEY);
-        return secretsReader.readSecret();
-    }
-
-
     @Override
     public String getBranch() {
         return branch;
     }
 
+    public String getOauth() throws IOException {
+        SecretsReader secretsReader = new SecretsReader(AWS_SECRET_NAME, AWS_SECRET_KEY);
+        return secretsReader.readSecret();
+    }
 
     private String initRepo(String repo) {
         return repo;
@@ -82,6 +73,4 @@ public class GithubConf implements GitInfo {
     private String initOwner(String owner) {
         return owner;
     }
-
-
 }

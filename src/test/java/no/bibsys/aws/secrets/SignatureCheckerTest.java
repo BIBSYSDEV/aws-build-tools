@@ -4,17 +4,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import no.bibsys.aws.tools.IoUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.Test;
 
-
 public class SignatureCheckerTest {
-
-
 
     @Test
     public void verifySecurityToken_secretValueAndBody_sha1Signature() throws IOException {
@@ -31,9 +27,5 @@ public class SignatureCheckerTest {
         String actualSignature = Hex.encodeHexString(actualSignatureBytes);
 
         assertThat(actualSignature, is(equalTo(expectedSignature)));
-
-
     }
-
-
 }

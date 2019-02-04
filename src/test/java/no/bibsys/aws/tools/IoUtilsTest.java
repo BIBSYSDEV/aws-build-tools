@@ -15,9 +15,7 @@ import org.junit.jupiter.api.Test;
 
 public class IoUtilsTest {
 
-
     private Path path = Paths.get("github", "pullrequest.json");
-
 
     // IOUtilsShould ...
     @Test
@@ -26,7 +24,6 @@ public class IoUtilsTest {
         InputStream inputSteam = IoUtils.inputStreamFromResources(path);
         int x = inputSteam.read();
         assertThat(x, is(not(equalTo(0))));
-
     }
 
     @Test
@@ -35,14 +32,11 @@ public class IoUtilsTest {
         assertThat(list.size(), is(not(equalTo(0))));
     }
 
-
     @Test
     public void linesfromResource_resourcePath_nonEmptyString() throws IOException {
         String content = IoUtils.resourceAsString(path);
         assertThat(content.length(), is(not(equalTo(0))));
-
     }
-
 
     @Test
     public void linesfromResource_removeMultipleWhiteSpaces_StringwithoutMultipleWhitespaces() throws IOException {
@@ -52,7 +46,4 @@ public class IoUtilsTest {
         assertThat(trimmed.length(), is(not(equalTo(0))));
         assertThat(trimmed, not(matchesPattern("\\s\\s")));
     }
-
-
-
 }

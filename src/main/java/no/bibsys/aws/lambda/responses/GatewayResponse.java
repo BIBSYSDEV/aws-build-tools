@@ -14,8 +14,8 @@ public class GatewayResponse {
     private Map<String, String> headers;
     private int statusCode;
 
-
-    public GatewayResponse() {}
+    public GatewayResponse() {
+    }
 
     public GatewayResponse(final String body, final Map<String, String> headers, final int statusCode) {
         this.statusCode = statusCode;
@@ -35,7 +35,6 @@ public class GatewayResponse {
         map.put("Content-Type", "application/json");
         return map;
     }
-
 
     public String getBody() {
         return body;

@@ -187,31 +187,10 @@
     </module>
     <module name="AbbreviationAsWordInName">
       <property name="ignoreFinal" value="false"/>
-      <property name="allowedAbbreviationLength" value="3"/>
+      <property name="allowedAbbreviationLength" value="2"/>
     </module>
     <module name="OverloadMethodsDeclarationOrder"/>
     <module name="VariableDeclarationUsageDistance"/>
-
-    <!--<module name="CustomImportOrder">-->
-    <!--<property name="sortImportsInGroupAlphabetically" value="true"/>-->
-    <!--<property name="separateLineBetweenGroups" value="true"/>-->
-    <!--<property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>-->
-    <!--</module>-->
-
-    <!--True Google style as described here:https://google.github.io/styleguide/javaguide.html#s3.3-import-statements -->
-    <!--<module name="ImportOrder">-->
-    <!--<property name="option" value="top"/>-->
-    <!--<property name="ordered" value="true"/>-->
-    <!--<property name="sortStaticImportsAlphabetically" value="true"/>-->
-    <!--<property name="separatedStaticGroups" value="true"/>-->
-    <!--</module>-->
-
-<!--     <module name="ImportOrder"> -->
-<!--       <property name="ordered" value="true"/> -->
-<!--       <property name="separated" value="false"/> -->
-<!--       <property name="option" value="top"/> -->
-<!--       <property name="sortStaticImportsAlphabetically" value="true"/> -->
-<!--     </module> -->
 
 
     <module name="MethodParamPad"/>

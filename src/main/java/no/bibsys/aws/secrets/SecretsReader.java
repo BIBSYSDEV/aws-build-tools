@@ -18,7 +18,6 @@ public class SecretsReader {
      * from AWS SSM (System Manager).
      */
 
-
     private final transient AWSSecretsManager client;
     private final transient String secretName;
     private final transient String secretKey;
@@ -29,13 +28,10 @@ public class SecretsReader {
         this.secretName = secretName;
     }
 
-
     public SecretsReader(String secretName, String secretKey) {
         this(AWSSecretsManagerClientBuilder.standard().withRegion(Region.EU_Ireland.toString()).build(), secretName,
-                secretKey);
-
+            secretKey);
     }
-
 
     public String readSecret() throws IOException {
         ObjectMapper mapper = JsonUtils.newJsonParser();
@@ -49,7 +45,6 @@ public class SecretsReader {
         return null;
     }
 
-
     private Optional<GetSecretValueResult> readAuthKey() {
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(secretName);
         Optional<GetSecretValueResult> getSecretValueResult = Optional.empty();
@@ -60,5 +55,4 @@ public class SecretsReader {
         }
         return getSecretValueResult;
     }
-
 }

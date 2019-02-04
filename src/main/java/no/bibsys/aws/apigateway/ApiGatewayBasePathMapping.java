@@ -19,7 +19,6 @@ import no.bibsys.aws.cloudformation.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Class for creating base path mappings for API Gateway Custom Domain Names.
  */
@@ -31,30 +30,24 @@ public class ApiGatewayBasePathMapping {
     private final transient String domainName;
     private final transient Stage stage;
 
-
-    public ApiGatewayBasePathMapping(AmazonApiGateway apiGatewayClient, String domainName,
-        Stage stage) {
+    public ApiGatewayBasePathMapping(AmazonApiGateway apiGatewayClient, String domainName, Stage stage) {
         this.apiGatewayClient = apiGatewayClient;
         this.stage = stage;
         this.domainName = domainName;
-
     }
 
-
     /**
-     *  Creates a BasePath mapping in an existing custom domain. Ensure that a custom domain
-     *  already exists by calling {@link ApiGatewayBasePathMapping:awsCreateCustomDomainName}.
+     * Creates a BasePath mapping in an existing custom domain. Ensure that a custom domain already exists by calling
+     * {@link #awsCreateCustomDomainName}.
      *
      * @param apiGatewayRestApiId The id of the ApiGateway Rest API.
      * @return the result of the query.
      */
     public CreateBasePathMappingResult awsCreateBasePath(String apiGatewayRestApiId) {
-        CreateBasePathMappingRequest createBasePathMappingRequest = newBasePathMappingRequest(
-            apiGatewayRestApiId);
+        CreateBasePathMappingRequest createBasePathMappingRequest = newBasePathMappingRequest(apiGatewayRestApiId);
 
         return apiGatewayClient.createBasePathMapping(createBasePathMappingRequest);
     }
-
 
     public void awsDeleteBasePathMappings() {
         logger.info("Deleting old basepath Mappings");
@@ -64,56 +57,44 @@ public class ApiGatewayBasePathMapping {
                 .map(this::newDeleteBasePathRequest);
             executeDeleteRequests(deleteRequests);
 
-            DeleteDomainNameRequest deleteDomainNameRequest = new DeleteDomainNameRequest()
-                .withDomainName(domainName);
+            DeleteDomainNameRequest deleteDomainNameRequest = new DeleteDomainNameRequest().withDomainName(domainName);
             apiGatewayClient.deleteDomainName(deleteDomainNameRequest);
         } catch (NotFoundException e) {
             logger.warn("Custom domain name not found");
         }
-
     }
 
-
     /**
-     * Checks if there exists a Custom Domain with the {@link ApiGatewayBasePathMapping:domainName}
-     * and if not it creates one.
+     * Checks if there exists a Custom Domain with the {@link #domainName} and if not it creates one.
      *
      * @return The target name of the Custom Domain Name
-     * @throws NotFoundException
      */
     public Optional<String> awsGetTargetDomainName() throws NotFoundException {
         try {
-            String targetname = apiGatewayClient
-                .getDomainName(new GetDomainNameRequest().withDomainName(domainName))
+            String targetname = apiGatewayClient.getDomainName(new GetDomainNameRequest().withDomainName(domainName))
                 .getRegionalDomainName();
             return Optional.ofNullable(targetname);
         } catch (NotFoundException e) {
             logger.warn("No Custom Domain Name found for the name {}", domainName);
             return Optional.empty();
         }
-
-
     }
 
-
-    public  void awsCreateCustomDomainName(String certifcateArn) {
+    public void awsCreateCustomDomainName(String certifcateArn) {
         if (!awsDomainExists()) {
             awsCreateDomainName(certifcateArn);
         }
     }
 
     @VisibleForTesting
-    public  CreateBasePathMappingRequest newBasePathMappingRequest(String restApiId) {
-        return new CreateBasePathMappingRequest().withRestApiId(restApiId)
-            .withDomainName(domainName)
+    public CreateBasePathMappingRequest newBasePathMappingRequest(String restApiId) {
+        return new CreateBasePathMappingRequest().withRestApiId(restApiId).withDomainName(domainName)
             .withStage(stage.toString());
     }
 
     private void executeDeleteRequests(Stream<DeleteBasePathMappingRequest> deleteRequests) {
         deleteRequests.forEach(apiGatewayClient::deleteBasePathMapping);
     }
-
-
 
     private Stream<BasePathMapping> awsGetBasePathMappings() {
         try {
@@ -126,18 +107,14 @@ public class ApiGatewayBasePathMapping {
     }
 
     private DeleteBasePathMappingRequest newDeleteBasePathRequest(BasePathMapping item) {
-        return new DeleteBasePathMappingRequest().withBasePath(item.getBasePath())
-            .withDomainName(domainName);
+        return new DeleteBasePathMappingRequest().withBasePath(item.getBasePath()).withDomainName(domainName);
     }
-
 
     private void awsCreateDomainName(String certificateArn) {
 
-        CreateDomainNameRequest createDomainNameRequest =
-            new CreateDomainNameRequest().withRegionalCertificateArn(certificateArn)
-                .withDomainName(domainName)
-                .withEndpointConfiguration(
-                    new EndpointConfiguration().withTypes(EndpointType.REGIONAL));
+        CreateDomainNameRequest createDomainNameRequest = new CreateDomainNameRequest()
+            .withRegionalCertificateArn(certificateArn).withDomainName(domainName)
+            .withEndpointConfiguration(new EndpointConfiguration().withTypes(EndpointType.REGIONAL));
 
         this.apiGatewayClient.createDomainName(createDomainNameRequest);
     }
@@ -151,6 +128,4 @@ public class ApiGatewayBasePathMapping {
 
         return true;
     }
-
-
 }

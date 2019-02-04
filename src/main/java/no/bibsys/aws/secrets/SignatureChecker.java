@@ -48,17 +48,14 @@ public class SignatureChecker {
 
     private transient SecretsReader secretsReader;
 
-
     public SignatureChecker(String secretName, String secretKey) {
         secretsReader = new SecretsReader(secretName, secretKey);
     }
-
 
     public boolean verifySecurityToken(String token, String requestBody) throws IOException {
         String privateKey = readSecretsKey();
         return validateSignature(token, requestBody, privateKey);
     }
-
 
     private boolean validateSignature(String signatureHeader, String body, String webhookSecret) {
 
@@ -95,7 +92,6 @@ public class SignatureChecker {
         return calculateExpectedSignature(payload, webhookSecret);
     }
 
-
     private byte[] calculateExpectedSignature(byte[] payload, String webhookSecret) {
         SecretKeySpec key = new SecretKeySpec(webhookSecret.getBytes(), HMAC_SHA1_ALGORITHM);
         Mac hmac;
@@ -110,16 +106,12 @@ public class SignatureChecker {
         return hmac.doFinal(payload);
     }
 
-
     private String readSecretsKey() throws IOException {
         String secretValue = secretsReader.readSecret();
         return secretValue;
-
     }
 
     public void setSecretsReader(SecretsReader secretsReader) {
         this.secretsReader = secretsReader;
     }
-
-
 }

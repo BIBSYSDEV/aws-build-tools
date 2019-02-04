@@ -10,8 +10,7 @@ package no.bibsys.aws.git.github;
  * <li>branch: Branch we are interested in</li>
  * </ul>
  * <p>
- * Example: <br/>
- * https://github.com/BIBSYSDEV/authority-registry-infrastructure/
+ * Example: <br/> https://github.com/BIBSYSDEV/authority-registry-infrastructure/
  * <ul>
  * <li>owner:BIBSYSDEV</li>
  * <li>repository:authority-registry-infrastructure</li>
@@ -20,13 +19,9 @@ package no.bibsys.aws.git.github;
  * </p>
  **/
 
-
 public interface GitInfo {
-
 
     String getRepository();
 
     String getBranch();
-
-
 }

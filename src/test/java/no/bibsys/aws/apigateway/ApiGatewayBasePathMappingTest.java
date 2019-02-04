@@ -8,7 +8,6 @@ import com.amazonaws.services.apigateway.model.CreateBasePathMappingRequest;
 import no.bibsys.aws.cloudformation.Stage;
 import org.junit.jupiter.api.Test;
 
-
 public class ApiGatewayBasePathMappingTest {
 
     private final String domainName = "domain.name.";
@@ -16,8 +15,8 @@ public class ApiGatewayBasePathMappingTest {
     @Test
     public void newBasePathMappingRequest_restApiIdTestStage_CreateBasePathMappingRequestWithRestApi() {
 
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
-                new ApiGatewayBasePathMapping(null, domainName, Stage.TEST);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(null, domainName,
+            Stage.TEST);
 
         CreateBasePathMappingRequest request = apiGatewayBasePathMapping.newBasePathMappingRequest("restApi");
 
@@ -26,12 +25,11 @@ public class ApiGatewayBasePathMappingTest {
         assertThat(request.getStage(), is(equalTo(Stage.TEST.toString())));
     }
 
-
     @Test
     public void newBasePathMappingRequest_restApiIdFinalStage_CreateBasePathMappingRequestWithRestApi() {
         String domainName = "domain.name.";
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
-                new ApiGatewayBasePathMapping(null, domainName, Stage.FINAL);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(null, domainName,
+            Stage.FINAL);
 
         CreateBasePathMappingRequest request = apiGatewayBasePathMapping.newBasePathMappingRequest("restApi");
 
@@ -39,5 +37,4 @@ public class ApiGatewayBasePathMappingTest {
         assertThat(request.getDomainName(), is(equalTo(domainName)));
         assertThat(request.getStage(), is(equalTo(Stage.FINAL.toString())));
     }
-
 }

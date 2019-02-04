@@ -11,12 +11,10 @@ import org.junit.jupiter.api.Test;
 
 public class DeployEventBuilderTest {
 
-
     @Test
     public void create_CodePipelineEvent_CodePipelineEvent() throws IOException {
         String input = IoUtils.resourceAsString(Paths.get("events", "mock_codePipeline_event.json"));
         CodePipelineEvent event = (CodePipelineEvent) DeployEventBuilder.create(input);
         assertThat(event.getId(), is(equalTo("a0a4b321-beb6-4da6")));
     }
-
 }

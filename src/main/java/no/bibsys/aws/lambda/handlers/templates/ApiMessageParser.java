@@ -1,6 +1,5 @@
 package no.bibsys.aws.lambda.handlers.templates;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
@@ -11,8 +10,8 @@ import java.util.Optional;
 import no.bibsys.aws.tools.JsonUtils;
 
 /**
- *  Not intended for use ouside the {@link ApiGatewayHandlerTemplate}.
- *  Class for parsing a message from ApiGateway.
+ * Not intended for use ouside the {@link ApiGatewayHandlerTemplate}. Class for parsing a message from ApiGateway.
+ *
  * @param <T> Class of the object we want to extract from the API message
  */
 public class ApiMessageParser<T> {
@@ -24,9 +23,7 @@ public class ApiMessageParser<T> {
         JsonNode headers = root.get("headers");
         Map<String, String> headersMap = (Map<String, String>) mapper.convertValue(headers, Map.class);
         return headersMap;
-
     }
-
 
     public T getBodyElementFromJson(String inputString, Class<T> tclass) throws IOException {
 
@@ -48,20 +45,15 @@ public class ApiMessageParser<T> {
 
             return request;
         }
-
-
     }
-
 
     private T parseBody(ObjectMapper mapper, JsonNode node, Class<T> tclass) throws IOException {
         return mapper.readValue(new TreeTraversingParser(node), tclass);
     }
 
-
     private T parseBody(ObjectMapper mapper, String json, Class<T> tclass) throws IOException {
 
         T object = mapper.readValue(json, tclass);
         return object;
-
     }
 }

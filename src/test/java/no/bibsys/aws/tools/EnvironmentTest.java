@@ -15,24 +15,19 @@ import org.junit.jupiter.api.Test;
 
 public class EnvironmentTest {
 
-
     Environment environment = new Environment();
-
 
     @Test()
     public void getEnv_nonExistingEnvVariable_throwsException() {
 
         assertThrows(NullPointerException.class, () -> environment.readEnv("something_here"));
-
     }
-
 
     @Test
     public void getEnvOpt_nonExistingEnvVariable_emptyOptional() {
         Optional<String> value = environment.readEnvOpt("something_here");
         assertThat(value, is(equalTo(Optional.empty())));
     }
-
 
     @Test
     public void getEnvOpt_existingVariable_envVariableValue() {
@@ -61,6 +56,4 @@ public class EnvironmentTest {
         Map<String, String> envVariable = Collections.singletonMap(key, value);
         return envVariable;
     }
-
-
 }
