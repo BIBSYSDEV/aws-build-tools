@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class Route53Updater {
 
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
-    private final transient StaticUrlInfo staticUrlINfo;
+    private final transient StaticUrlInfo staticUrlInfo;
 
     private final transient String apiGatewayRestApiId;
     private final transient AmazonApiGateway apiGatewayClient;
@@ -36,7 +36,7 @@ public class Route53Updater {
 
     public Route53Updater(StaticUrlInfo staticUrlInfo, String apiGatewayRestApiId, AmazonApiGateway apiGatewayClient) {
 
-        this.staticUrlINfo = staticUrlInfo;
+        this.staticUrlInfo = staticUrlInfo;
 
         this.apiGatewayClient = apiGatewayClient;
 
@@ -48,7 +48,7 @@ public class Route53Updater {
     }
 
     public Route53Updater copy(Stage stage) {
-        StaticUrlInfo info = this.staticUrlINfo.copy(stage);
+        StaticUrlInfo info = this.staticUrlInfo.copy(stage);
         return new Route53Updater(info, apiGatewayRestApiId, apiGatewayClient);
     }
 
@@ -91,9 +91,9 @@ public class Route53Updater {
 
     private HostedZone getHostedZone() {
         List<HostedZone> hostedZones = route53Client.listHostedZones().getHostedZones().stream()
-            .filter(zone -> zone.getName().equals(staticUrlINfo.getZoneName())).collect(Collectors.toList());
+            .filter(zone -> zone.getName().equals(staticUrlInfo.getZoneName())).collect(Collectors.toList());
         Preconditions.checkArgument(hostedZones.size() == 1,
-            "There should exist exactly one hosted zone with the name " + staticUrlINfo.getZoneName());
+            "There should exist exactly one hosted zone with the name " + staticUrlInfo.getZoneName());
         return hostedZones.get(0);
     }
 
@@ -124,7 +124,7 @@ public class Route53Updater {
     }
 
     private ResourceRecordSet createRecordSet(String serverUrl) {
-        ResourceRecordSet recordSet = new ResourceRecordSet().withName(staticUrlINfo.getRecordSetName())
+        ResourceRecordSet recordSet = new ResourceRecordSet().withName(staticUrlInfo.getRecordSetName())
             .withType(RRType.CNAME).withTTL(300L).withResourceRecords(new ResourceRecord().withValue(serverUrl));
         return recordSet;
     }
