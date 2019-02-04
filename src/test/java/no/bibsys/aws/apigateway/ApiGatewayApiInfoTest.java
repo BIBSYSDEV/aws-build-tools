@@ -45,7 +45,7 @@ public class ApiGatewayApiInfoTest {
 
     @Test
     @Tag("IntegrationTest")
-    public void generateOpenApiNoExtensions_existingApiGatewayEndpoint_OpenAPI3Version() {
+    public void generateOpenApiNoExtensions_existingApiGatewayEndpoint_OpenApi3Version() {
 
         Optional<String> openApiVersion = openApiVersion(root);
         assertThat(openApiVersion.isPresent(), is(equalTo(true)));
