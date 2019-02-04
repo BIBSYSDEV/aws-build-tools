@@ -23,6 +23,16 @@ import no.bibsys.aws.tools.JsonUtils;
  */
 public class ApiGatewayApiInfo {
 
+    private static final String SERVERS_FIELD = "servers";
+    private static final String URL_FIELD = "url";
+    private static final String VARIABLES_FIELD = "variables";
+    private static final String BASE_PATH_FIELD = "basePath";
+    private static final String DEFAULT_FIELD = "default";
+    private static final String OPENAPI_RESOURCE_FOLDER = "openapi";
+    private static final String OPENAPI_YML = "openapi.yml";
+    private static final String OPENAPI_TEMPLATE = OPENAPI_YML;
+    private static final String SERVER_URL_PLACEHOLDER = "<SERVER_PLACEHOLDER>";
+    private static final String STAGE_PLACEHOLDER = "<STAGE_PLACEHOLDER>";
     private final transient Stage stage;
     private final transient AmazonApiGateway client;
     private final transient String restApiId;
@@ -64,15 +74,15 @@ public class ApiGatewayApiInfo {
      */
     private String injectServerInfo(String openApiTemplate, ServerInfo serverInfo) throws IOException {
 
-        String replacedSever = openApiTemplate.replace("<SERVER_PLACEHOLDER>", serverInfo.getServerUrl());
+        String replacedSever = openApiTemplate.replace(SERVER_URL_PLACEHOLDER, serverInfo.getServerUrl());
         if (serverInfo.getStage() != null) {
-            return replacedSever.replace("<STAGE_PLACEHOLDER>", serverInfo.getStage());
+            return replacedSever.replace(STAGE_PLACEHOLDER, serverInfo.getStage());
         } else {
             ObjectMapper yamlParser = JsonUtils.newYamlParser();
             ObjectNode root = (ObjectNode) yamlParser.readTree(replacedSever);
-            ArrayNode servers = (ArrayNode) root.get("servers");
+            ArrayNode servers = (ArrayNode) root.get(SERVERS_FIELD);
             ObjectNode server = (ObjectNode) servers.get(0);
-            server.remove("variables");
+            server.remove(VARIABLES_FIELD);
             String removedVariables = yamlParser.writeValueAsString(root);
             return removedVariables;
         }
@@ -93,19 +103,19 @@ public class ApiGatewayApiInfo {
     }
 
     private ServerInfo generateServerInfo(JsonNode openApiSpec) {
-        JsonNode serversNode = openApiSpec.get("servers").get(0);
-        String serverUrl = serversNode.get("url").asText();
+        JsonNode serversNode = openApiSpec.get(SERVERS_FIELD).get(0);
+        String serverUrl = serversNode.get(URL_FIELD).asText();
         String apiStage = getStageVariable(serversNode).orElse(null);
         return new ServerInfo(serverUrl, apiStage);
     }
 
     private Optional<String> getStageVariable(JsonNode serversNode) {
-        Optional<String> apiStage = Optional.ofNullable(serversNode.get("variables")).map(var -> var.get("basePath"))
-            .map(basePath -> basePath.get("default")).map(deflt -> deflt.asText());
+        Optional<String> apiStage = Optional.ofNullable(serversNode.get(VARIABLES_FIELD))
+            .map(var -> var.get(BASE_PATH_FIELD)).map(basePath -> basePath.get(DEFAULT_FIELD)).map(JsonNode::asText);
         return apiStage;
     }
 
     private String readOpenApiTemplate() throws IOException {
-        return IoUtils.resourceAsString(Paths.get("openapi", "openapi.yml"));
+        return IoUtils.resourceAsString(Paths.get(OPENAPI_RESOURCE_FOLDER, OPENAPI_TEMPLATE));
     }
 }
