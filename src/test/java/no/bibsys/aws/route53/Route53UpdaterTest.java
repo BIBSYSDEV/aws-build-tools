@@ -41,8 +41,8 @@ public class Route53UpdaterTest {
         AmazonRoute53 client = mockRoute53Client(ZONE_NAME);
         AmazonApiGateway apiGateway = mockApiGatewayClient();
         StaticUrlInfo staticUrlInfo = new StaticUrlInfo(ZONE_NAME, SAMPLE_RECORD_SET_NAME, Stage.TEST);
-
-        route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, apiGateway);
+        AmazonRoute53 route53Client = Mockito.mock(AmazonRoute53.class);
+        route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, apiGateway, route53Client);
         route53Updater.setRoute53Client(client);
     }
 

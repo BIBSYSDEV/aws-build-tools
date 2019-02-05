@@ -3,7 +3,6 @@ package no.bibsys.aws.route53;
 import com.amazonaws.services.apigateway.AmazonApiGateway;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.amazonaws.services.route53.AmazonRoute53;
-import com.amazonaws.services.route53.AmazonRoute53ClientBuilder;
 import com.amazonaws.services.route53.model.Change;
 import com.amazonaws.services.route53.model.ChangeAction;
 import com.amazonaws.services.route53.model.ChangeBatch;
@@ -31,25 +30,22 @@ public class Route53Updater {
     private final transient AmazonApiGateway apiGatewayClient;
 
     private final transient ApiGatewayBasePathMapping apiGatewayBasePathMapping;
-
     private transient AmazonRoute53 route53Client;
 
-    public Route53Updater(StaticUrlInfo staticUrlInfo, String apiGatewayRestApiId, AmazonApiGateway apiGatewayClient) {
+    public Route53Updater(StaticUrlInfo staticUrlInfo, String apiGatewayRestApiId, AmazonApiGateway apiGatewayClient,
+        AmazonRoute53 route53Client) {
 
         this.staticUrlInfo = staticUrlInfo;
-
         this.apiGatewayClient = apiGatewayClient;
-
-        this.route53Client = AmazonRoute53ClientBuilder.defaultClient();
         this.apiGatewayRestApiId = apiGatewayRestApiId;
-
+        this.route53Client = route53Client;
         this.apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGatewayClient, staticUrlInfo.getDomainName(),
             staticUrlInfo.getStage());
     }
 
     public Route53Updater copy(Stage stage) {
         StaticUrlInfo info = this.staticUrlInfo.copy(stage);
-        return new Route53Updater(info, apiGatewayRestApiId, apiGatewayClient);
+        return new Route53Updater(info, apiGatewayRestApiId, apiGatewayClient, route53Client);
     }
 
     public Optional<ChangeResourceRecordSetsRequest> createUpdateRequest(String certificateArn) {
