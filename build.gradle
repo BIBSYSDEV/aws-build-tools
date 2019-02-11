@@ -5,7 +5,8 @@ plugins {
     id 'checkstyle'
     id 'pmd'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.8.4"
+    id 'com.jfrog.bintray' version "1.8.4"
+    id 'jacoco'
 }
 
 apply plugin: 'com.jfrog.bintray'
@@ -14,6 +15,7 @@ apply plugin: 'base'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
 
 
 def versionString = "1.1.0"
@@ -119,12 +121,21 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'IntegrationTest'
+        includeEngines 'junit-jupiter'
+    }
     testLogging {
         events "passed", "skipped", "failed"
     }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
     failFast = true
 }
+
+
 
 
 checkstyle {
@@ -149,6 +160,42 @@ pmd {
     ignoreFailures = false
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/reports/jacoco")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.3"
+}
+
+
+check.dependsOn jacocoTestCoverageVerification
+jacocoTestCoverageVerification.dependsOn(jacocoTestReport)
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.9
+            }
+        }
+
+        rule {
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.9
+            }
+        }
+
+    }
+}
+
 
 shadowJar {
     archiveName = "${baseName}-fat.jar"
@@ -157,13 +204,5 @@ shadowJar {
 task fatJar(dependsOn: shadowJar) {}
 
 
-test {
-    useJUnitPlatform {
-        excludeTags 'IntegrationTest'
-        includeEngines 'junit-jupiter'
-    }
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
-}
+
 
