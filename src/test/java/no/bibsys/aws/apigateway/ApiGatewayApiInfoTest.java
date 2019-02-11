@@ -1,16 +1,9 @@
 package no.bibsys.aws.apigateway;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
-
 import com.amazonaws.services.apigateway.AmazonApiGateway;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Optional;
 import no.bibsys.aws.cloudformation.Stage;
 import no.bibsys.aws.cloudformation.helpers.ResourceType;
 import no.bibsys.aws.cloudformation.helpers.StackResources;
@@ -20,6 +13,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 
 public class ApiGatewayApiInfoTest {
 
@@ -46,7 +47,6 @@ public class ApiGatewayApiInfoTest {
     @Test
     @Tag("IntegrationTest")
     public void generateOpenApiNoExtensions_existingApiGatewayEndpoint_OpenApi3Version() {
-
         Optional<String> openApiVersion = openApiVersion(root);
         assertThat(openApiVersion.isPresent(), is(equalTo(true)));
         assertThat(openApiVersion.get(), is(equalTo("3.0.1")));

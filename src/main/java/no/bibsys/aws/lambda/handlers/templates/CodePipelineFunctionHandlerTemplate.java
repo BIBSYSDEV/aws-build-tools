@@ -8,15 +8,16 @@ import com.amazonaws.services.codepipeline.model.FailureType;
 import com.amazonaws.services.codepipeline.model.PutJobFailureResultRequest;
 import com.amazonaws.services.codepipeline.model.PutJobSuccessResultRequest;
 import com.amazonaws.services.lambda.runtime.Context;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Optional;
 import no.bibsys.aws.lambda.events.CodePipelineEvent;
 import no.bibsys.aws.lambda.events.DeployEvent;
 import no.bibsys.aws.lambda.events.DeployEventBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Optional;
 
 /**
  * Lambda handler template for lambda functions invoked during a CodePipeline deploy process. The template includes
@@ -36,7 +37,6 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
 
     @Override
     protected final DeployEvent parseInput(String inputString) throws IOException {
-
         return DeployEventBuilder.create(inputString);
     }
 
