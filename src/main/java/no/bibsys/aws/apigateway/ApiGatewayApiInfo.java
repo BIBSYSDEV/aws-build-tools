@@ -9,14 +9,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
+import no.bibsys.aws.cloudformation.Stage;
+import no.bibsys.aws.tools.IoUtils;
+import no.bibsys.aws.tools.JsonUtils;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import no.bibsys.aws.cloudformation.Stage;
-import no.bibsys.aws.tools.IoUtils;
-import no.bibsys.aws.tools.JsonUtils;
 
 /**
  * Retrieves Information regarding a specific AWS ApiGateway API.
@@ -61,7 +62,7 @@ public class ApiGatewayApiInfo {
         Map<String, String> requestParameters = new ConcurrentHashMap<>();
         requestParameters.put("accepts", "application/json");
         Optional<JsonNode> amazonApiSpec = readOpenApiSpecFromAmazon(requestParameters);
-        return amazonApiSpec.map(apiSpec -> generateServerInfo(apiSpec));
+        return amazonApiSpec.map(this::generateServerInfo);
     }
 
     /**
@@ -83,13 +84,11 @@ public class ApiGatewayApiInfo {
             ArrayNode servers = (ArrayNode) root.get(SERVERS_FIELD);
             ObjectNode server = (ObjectNode) servers.get(0);
             server.remove(VARIABLES_FIELD);
-            String removedVariables = yamlParser.writeValueAsString(root);
-            return removedVariables;
+            return yamlParser.writeValueAsString(root);
         }
     }
 
     public Optional<JsonNode> readOpenApiSpecFromAmazon(Map<String, String> requestParameters) throws IOException {
-
         try {
             GetExportRequest request = new GetExportRequest().withRestApiId(restApiId).withStageName(stage.toString())
                 .withExportType(ApiGatewayConstants.OPEN_API_3).withParameters(requestParameters);
