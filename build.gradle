@@ -110,6 +110,8 @@ dependencies {
 
     implementation('io.symphonia:lambda-logging:1.0.3')
 
+    compile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+
     //libraries for testing
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
@@ -132,7 +134,13 @@ test {
         events "passed", "skipped", "failed"
     }
 
+    jacoco{
+        excludes ['*']
+
+    }
+
     failFast = true
+
 }
 
 
@@ -161,6 +169,7 @@ pmd {
 }
 
 jacocoTestReport {
+
     reports {
         xml.enabled false
         csv.enabled false
@@ -170,6 +179,8 @@ jacocoTestReport {
 
 jacoco {
     toolVersion = "0.8.3"
+
+
 }
 
 
@@ -182,6 +193,7 @@ jacocoTestCoverageVerification {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
                 minimum = 0.9
+                excludes ['*CodePipelineCommunicator*']
             }
         }
 
@@ -190,11 +202,14 @@ jacocoTestCoverageVerification {
                 counter = 'CLASS'
                 value = 'COVEREDRATIO'
                 minimum = 0.9
+                excludes ['*CodePipelineCommunicator*']
             }
         }
 
     }
 }
+
+
 
 
 shadowJar {

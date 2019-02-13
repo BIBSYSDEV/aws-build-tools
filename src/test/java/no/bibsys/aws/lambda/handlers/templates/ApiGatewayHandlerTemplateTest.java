@@ -6,8 +6,8 @@ import com.amazonaws.util.StringInputStream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.bibsys.aws.lambda.handlers.InputClass;
 import no.bibsys.aws.lambda.handlers.LocalTest;
+import no.bibsys.aws.lambda.handlers.SampleClass;
 import no.bibsys.aws.tools.JsonUtils;
 import no.bibsys.aws.tools.MockContext;
 import org.apache.http.HttpStatus;
@@ -29,41 +29,41 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
     private static final String STATUS_CODE = "statusCode";
     private final String apiGatewayMessage;
     private ObjectMapper parser = JsonUtils.newJsonParser();
-
-    private ApiGatewayHandlerTemplate<InputClass, InputClass> template =
-            new ApiGatewayHandlerTemplate<InputClass, InputClass>(InputClass.class) {
+    
+    private ApiGatewayHandlerTemplate<SampleClass, SampleClass> template =
+            new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
                 @Override
-                protected InputClass processInput(InputClass input, Map<String, String> headers, Context context) {
+                protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
                     return input;
 
                 }
             };
-
-    private ApiGatewayHandlerTemplate<InputClass, InputClass> unauthorizedTemplate =
-            new ApiGatewayHandlerTemplate<InputClass, InputClass>(InputClass.class) {
+    
+    private ApiGatewayHandlerTemplate<SampleClass, SampleClass> unauthorizedTemplate =
+            new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
                 @Override
-                protected InputClass processInput(InputClass input, Map<String, String> headers, Context context) {
+                protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
                     throw new UnauthorizedException("Unauthorized");
                 }
             };
-
-    private ApiGatewayHandlerTemplate<InputClass, InputClass> unknownErrorTemplate =
-            new ApiGatewayHandlerTemplate<InputClass, InputClass>(InputClass.class) {
+    
+    private ApiGatewayHandlerTemplate<SampleClass, SampleClass> unknownErrorTemplate =
+            new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
                 @Override
-                protected InputClass processInput(InputClass input, Map<String, String> headers, Context context)
+                protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context)
                         throws IOException {
                     throw new IOException("IOException");
                 }
             };
 
     public ApiGatewayHandlerTemplateTest() throws JsonProcessingException {
-        apiGatewayMessage = apiGatewayMessageWithObjectAsBody(InputClass.create());
+        apiGatewayMessage = apiGatewayMessageWithObjectAsBody(SampleClass.create());
     }
 
     @Test
     public void parseInput_inputString_inputObject() throws IOException {
-        InputClass actual = (InputClass) template.parseInput(apiGatewayMessage);
-        InputClass expected = InputClass.create();
+        SampleClass actual = (SampleClass) template.parseInput(apiGatewayMessage);
+        SampleClass expected = SampleClass.create();
         assertThat(actual, is(equalTo(expected)));
 
     }
@@ -78,8 +78,8 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
 
         ObjectNode responseNode = (ObjectNode) parser.readTree(output);
         String bodyString = responseNode.get("body").textValue();
-        InputClass actual = parser.readValue(bodyString, InputClass.class);
-        assertThat(actual, is(equalTo(InputClass.create())));
+        SampleClass actual = parser.readValue(bodyString, SampleClass.class);
+        assertThat(actual, is(equalTo(SampleClass.create())));
     }
 
     @Test

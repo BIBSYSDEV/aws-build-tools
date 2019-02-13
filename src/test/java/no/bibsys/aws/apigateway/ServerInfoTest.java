@@ -1,10 +1,11 @@
 package no.bibsys.aws.apigateway;
 
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-
-import org.junit.jupiter.api.Test;
+import static org.hamcrest.core.IsNot.not;
 
 public class ServerInfoTest {
 
@@ -20,10 +21,24 @@ public class ServerInfoTest {
         ServerInfo serverInfo = new ServerInfo(HTTPS_PREFIX + SAMPLE_API_GATEWAY_URL + BASE_PATH, FINAL_STAGE);
         assertThat(serverInfo.serverAddress(), is(equalTo(SAMPLE_API_GATEWAY_URL)));
     }
+    
+    @Test
+    public void completeServerUrl_HttpsServerUrlAndStageWithSlash_workingServerUrl() {
+        ServerInfo serverInfo = new ServerInfo(HTTPS_PREFIX + SAMPLE_API_GATEWAY_URL + BASE_PATH,
+                                               ServerInfo.PATH_SEPARATOR + FINAL_STAGE);
+        assertThat(serverInfo.serverAddress(), is(equalTo(SAMPLE_API_GATEWAY_URL)));
+    }
+    
 
     @Test
     public void completeServerUrl_HttpServerUrlAndStage_workingServerUrl() {
         ServerInfo serverInfo = new ServerInfo(HTTP_PREFIX + SAMPLE_API_GATEWAY_URL + BASE_PATH, FINAL_STAGE);
         assertThat(serverInfo.serverAddress(), is(equalTo(SAMPLE_API_GATEWAY_URL)));
+    }
+    
+    @Test
+    public void getStage_ServerInfoObject_notNull() {
+        ServerInfo serverInfo = new ServerInfo(HTTP_PREFIX + SAMPLE_API_GATEWAY_URL + BASE_PATH, FINAL_STAGE);
+        assertThat(serverInfo.getStage(), is(not(equalTo(null))));
     }
 }

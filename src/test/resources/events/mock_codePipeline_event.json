@@ -1,6 +1,8 @@
 {
   "CodePipeline.job": {
-    "id": "a0a4b321-beb6-4da6", "accountId": "ACCOUNTID", "data": {
+    "id": "aaaaaaaa-aaaa-aaaa-12341-123456789012",
+    "accountId": "ACCOUNTID",
+    "data": {
       "actionConfiguration": {
         "configuration": {"FunctionName": "aut-reg-inf-autreg-58-openapi-lambdab-init-function"}
       }, "inputArtifacts"  : [], "outputArtifacts": [], "artifactCredentials": {

@@ -1,12 +1,5 @@
 package no.bibsys.aws.lambda.handlers.templates;
 
-import com.amazonaws.services.codepipeline.AWSCodePipeline;
-import com.amazonaws.services.codepipeline.AWSCodePipelineClientBuilder;
-import com.amazonaws.services.codepipeline.model.ExecutionDetails;
-import com.amazonaws.services.codepipeline.model.FailureDetails;
-import com.amazonaws.services.codepipeline.model.FailureType;
-import com.amazonaws.services.codepipeline.model.PutJobFailureResultRequest;
-import com.amazonaws.services.codepipeline.model.PutJobSuccessResultRequest;
 import com.amazonaws.services.lambda.runtime.Context;
 import no.bibsys.aws.lambda.events.CodePipelineEvent;
 import no.bibsys.aws.lambda.events.DeployEvent;
@@ -29,10 +22,11 @@ import java.util.Optional;
 public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemplate<DeployEvent, O> {
 
     private static final Logger logger = LoggerFactory.getLogger(CodePipelineFunctionHandlerTemplate.class);
-    private final transient AWSCodePipeline pipeline = AWSCodePipelineClientBuilder.defaultClient();
-
-    public CodePipelineFunctionHandlerTemplate() {
+    private final CodePipelineCommunicator codePipelineCommunicator;
+    
+    public CodePipelineFunctionHandlerTemplate(CodePipelineCommunicator codePipelineCommunicator) {
         super(DeployEvent.class);
+        this.codePipelineCommunicator = codePipelineCommunicator;
     }
 
     @Override
@@ -43,7 +37,6 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
     @Override
     protected void writeOutput(DeployEvent input, O output) throws IOException {
         String outputString = objectMapper.writeValueAsString(output);
-
         writeOutput(outputString);
         logger.info(input.getClass().getName());
         logger.info(String.valueOf(input instanceof CodePipelineEvent));
@@ -67,24 +60,15 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
         }
         writeOutput(outputString);
     }
-
-    private void sendSuccessToCodePipeline(CodePipelineEvent input, String outputString) {
-        logger.info("sending success");
-        CodePipelineEvent codePipelineEvent = input;
-        PutJobSuccessResultRequest success = new PutJobSuccessResultRequest();
-        success.withJobId(codePipelineEvent.getId())
-            .withExecutionDetails(new ExecutionDetails().withSummary(outputString));
-        pipeline.putJobSuccessResult(success);
-        logger.info("sent success");
+    
+    private void sendFailureToCodePipeline(CodePipelineEvent event, String outputString) {
+        codePipelineCommunicator.sendFailureToCodePipeline(event, outputString);
     }
-
-    private void sendFailureToCodePipeline(CodePipelineEvent input, String outputString) {
-        FailureDetails failureDetails = new FailureDetails().withMessage(outputString).withType(FailureType.JobFailed);
-        PutJobFailureResultRequest failure = new PutJobFailureResultRequest().withJobId(input.getId())
-            .withFailureDetails(failureDetails);
-        pipeline.putJobFailureResult(failure);
+    
+    private void sendSuccessToCodePipeline(CodePipelineEvent event, String outputString) {
+        codePipelineCommunicator.sendSuccessToCodePipeline(event, outputString);
     }
-
+    
     private boolean isPipelineEvent(DeployEvent buildEvent) {
         return buildEvent instanceof CodePipelineEvent;
     }

@@ -22,10 +22,10 @@ public class ApiMessageParserTest extends LocalTest {
 
     @Test
     public void getHeadersFromJson_headersFieldObject_headersMap() throws IOException {
-
-        ApiMessageParser<InputClass> apiMessageParser = new ApiMessageParser<>();
-        Map<String, String> headers =
-                apiMessageParser.getHeadersFromJson(apiGatewayMessageWithObjectAsBody(InputClass.create()));
+    
+        ApiMessageParser<SampleClass> apiMessageParser = new ApiMessageParser<>();
+        Map<String, String> headers = apiMessageParser.getHeadersFromJson(
+                apiGatewayMessageWithObjectAsBody(SampleClass.create()));
         assertThat(headers.size(), is(equalTo(NUMBER_OF_HEADERS)));
         assertThat(headers.get(HEADER), is(equalTo(HEADER_VALUE)));
         assertThat(headers.get(ANOTHER_HEADER), is(equalTo(ANOTHER_HEADER_VALUE)));
@@ -40,20 +40,20 @@ public class ApiMessageParserTest extends LocalTest {
 
     @Test
     public void getBodyElementFromJson_Objectbody_object() throws IOException {
-        ApiMessageParser<InputClass> apiMessageParser = new ApiMessageParser<>();
-        InputClass body = apiMessageParser
-                .getBodyElementFromJson(apiGatewayMessageWithObjectAsBody(InputClass.create()), InputClass.class);
-        InputClass expected = InputClass.create();
+        ApiMessageParser<SampleClass> apiMessageParser = new ApiMessageParser<>();
+        SampleClass body = apiMessageParser.getBodyElementFromJson(
+                apiGatewayMessageWithObjectAsBody(SampleClass.create()), SampleClass.class);
+        SampleClass expected = SampleClass.create();
         assertThat(body.getId(), is(equalTo(expected.getId())));
         assertThat(body.getRandomField(), is(equalTo(expected.getRandomField())));
     }
 
     @Test
     public void getBodyElemtFromJson_StringRepresenationOfObject_object() throws IOException {
-        ApiMessageParser<InputClass> apiMessageParser = new ApiMessageParser<>();
-        InputClass body =
-                apiMessageParser.getBodyElementFromJson(apiGatewayMessageWithSerializedJsonBody(), InputClass.class);
-        InputClass expected = InputClass.create();
+        ApiMessageParser<SampleClass> apiMessageParser = new ApiMessageParser<>();
+        SampleClass body = apiMessageParser.getBodyElementFromJson(apiGatewayMessageWithSerializedJsonBody(),
+                                                                   SampleClass.class);
+        SampleClass expected = SampleClass.create();
         assertThat(body.getId(), is(equalTo(expected.getId())));
         assertThat(body.getRandomField(), is(equalTo(expected.getRandomField())));
 
@@ -61,8 +61,8 @@ public class ApiMessageParserTest extends LocalTest {
 
     @Test
     public void getBodyElemtFromJson_nullObject_null() throws IOException {
-        ApiMessageParser<InputClass> apiMessageParser = new ApiMessageParser<>();
-        InputClass body = apiMessageParser.getBodyElementFromJson(apiGatewayMessageWitNullBody(), InputClass.class);
+        ApiMessageParser<SampleClass> apiMessageParser = new ApiMessageParser<>();
+        SampleClass body = apiMessageParser.getBodyElementFromJson(apiGatewayMessageWitNullBody(), SampleClass.class);
 
         assertThat(body, is(equalTo(null)));
 
