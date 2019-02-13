@@ -25,7 +25,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 
 public class ApiGatewayHandlerTemplateTest extends LocalTest {
-
+    
     private static final String STATUS_CODE = "statusCode";
     private final String apiGatewayMessage;
     private ObjectMapper parser = JsonUtils.newJsonParser();
@@ -35,7 +35,6 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
                 @Override
                 protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
                     return input;
-
                 }
             };
     
@@ -55,53 +54,53 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
                     throw new IOException("IOException");
                 }
             };
-
+    
     public ApiGatewayHandlerTemplateTest() throws JsonProcessingException {
         apiGatewayMessage = apiGatewayMessageWithObjectAsBody(SampleClass.create());
     }
-
+    
     @Test
     public void parseInput_inputString_inputObject() throws IOException {
         SampleClass actual = (SampleClass) template.parseInput(apiGatewayMessage);
         SampleClass expected = SampleClass.create();
         assertThat(actual, is(equalTo(expected)));
-
+        
     }
-
+    
     @Test
     public void processInput_input_intactInput() throws IOException {
         InputStream in = new StringInputStream(apiGatewayMessage);
-
+        
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         template.handleRequest(in, outputStream, new MockContext());
         String output = outputStream.toString(StandardCharsets.UTF_8.name());
-
+        
         ObjectNode responseNode = (ObjectNode) parser.readTree(output);
         String bodyString = responseNode.get("body").textValue();
         SampleClass actual = parser.readValue(bodyString, SampleClass.class);
         assertThat(actual, is(equalTo(SampleClass.create())));
     }
-
+    
     @Test
     public void parseInput_inputStringUnauthorized_inputObject() throws IOException {
         InputStream in = new StringInputStream(apiGatewayMessage);
-
+        
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         unauthorizedTemplate.handleRequest(in, outputStream, new MockContext());
         String output = outputStream.toString(StandardCharsets.UTF_8.name());
         ObjectNode response = parser.readValue(output, ObjectNode.class);
         assertThat(response.get(STATUS_CODE), is(not(equalTo(HttpStatus.SC_UNAUTHORIZED))));
     }
-
+    
     @Test
     public void parseInput_inputStringUnknownError_inputObject() throws IOException {
         InputStream in = new StringInputStream(apiGatewayMessage);
-
+        
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         unknownErrorTemplate.handleRequest(in, outputStream, new MockContext());
         String output = outputStream.toString(StandardCharsets.UTF_8.name());
         ObjectNode response = parser.readValue(output, ObjectNode.class);
         assertThat(response.get(STATUS_CODE), is(not(equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR))));
     }
-
+    
 }

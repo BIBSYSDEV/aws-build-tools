@@ -14,23 +14,54 @@ import static org.mockito.Mockito.when;
 
 public class GithubSignatureCheckerTest {
     
-    private final SecretsReader secretsReader;
     private final static String secretKey = "SECRETKEY";
+    private final SecretsReader secretsReaderWithCorrectKey;
+    private final SecretsReader secretsReaderWithAnotherKey;
+    private final SecretsReader secretsReaderWithNullKey;
     
     public GithubSignatureCheckerTest() throws IOException {
-        secretsReader = Mockito.mock(SecretsReader.class);
-        
-        when(secretsReader.readSecret()).thenReturn(secretKey);
+        secretsReaderWithCorrectKey = Mockito.mock(SecretsReader.class);
+        when(secretsReaderWithCorrectKey.readSecret()).thenReturn(secretKey);
+    
+        secretsReaderWithAnotherKey = Mockito.mock(SecretsReader.class);
+        when(secretsReaderWithAnotherKey.readSecret()).thenReturn(secretKey.toLowerCase());
+    
+        secretsReaderWithNullKey = Mockito.mock(SecretsReader.class);
+        when(secretsReaderWithNullKey.readSecret()).thenReturn(null);
+    
     }
     
     @Test
-    public void verifySecurityToken_secretValueAndBody_sha1Signature() throws IOException {
+    public void verifySecurityToken_correctSecretValueAndBody_validResult() throws IOException {
         String requestBody = IoUtils.resourceAsString(Paths.get("github", "sha_test_githubEvent.json"));
         String header = IoUtils.resourceAsString(Paths.get("github", "sha_test_github_header.txt"));
         
-        GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReader);
+        GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReaderWithCorrectKey);
+        boolean verificationResult = signatureChecker.verifySecurityToken(header, requestBody);
+        
+        assertThat(verificationResult, is(equalTo(true)));
+    }
+    
+    @Test
+    public void verifySecurityToken_wrongSecretValueAndBody_invalidResult() throws IOException {
+        String requestBody = IoUtils.resourceAsString(Paths.get("github", "sha_test_githubEvent.json"));
+        String header = IoUtils.resourceAsString(Paths.get("github", "sha_test_github_header.txt"));
+    
+        GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReaderWithAnotherKey);
+        boolean verificationResult = signatureChecker.verifySecurityToken(header, requestBody);
+    
+        assertThat(verificationResult, is(equalTo(false)));
+    }
+    
+    @Test
+    public void verifySecurityToken_NullValueAndBody_validResult() throws IOException {
+        String requestBody = IoUtils.resourceAsString(Paths.get("github", "sha_test_githubEvent.json"));
+        String header = IoUtils.resourceAsString(Paths.get("github", "sha_test_github_header.txt"));
+        
+        GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReaderWithNullKey);
         boolean verificationResult = signatureChecker.verifySecurityToken(header, requestBody);
         
         assertThat(verificationResult, is(equalTo(true)));
     }
 }
+

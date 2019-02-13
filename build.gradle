@@ -134,16 +134,15 @@ test {
         events "passed", "skipped", "failed"
     }
 
-    jacoco{
-        excludes ['*']
+    jacoco {
+
+        excludes['*SecretsReader*']
 
     }
 
     failFast = true
 
 }
-
-
 
 
 checkstyle {
@@ -193,7 +192,7 @@ jacocoTestCoverageVerification {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
                 minimum = 0.9
-                excludes ['*CodePipelineCommunicator*']
+                excludes['*CodePipelineCommunicator*']
             }
         }
 
@@ -202,14 +201,12 @@ jacocoTestCoverageVerification {
                 counter = 'CLASS'
                 value = 'COVEREDRATIO'
                 minimum = 0.9
-                excludes ['*CodePipelineCommunicator*']
+                excludes['*CodePipelineCommunicator*']
             }
         }
 
     }
 }
-
-
 
 
 shadowJar {

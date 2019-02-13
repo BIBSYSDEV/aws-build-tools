@@ -55,8 +55,8 @@ public class ApiGatewayInfo {
     }
     
     private GetExportRequest createApiExportRequest(Map<String, String> requestParameters) {
-        return new GetExportRequest().withRestApiId(restApiId).withStageName(stage.toString()).withExportType(
-                ApiGatewayConstants.OPEN_API_3).withParameters(requestParameters);
+        return new GetExportRequest().withRestApiId(restApiId).withStageName(stage.toString())
+                                     .withExportType(ApiGatewayConstants.OPEN_API_3).withParameters(requestParameters);
     }
     
     private ServerInfo generateServerInfo(JsonNode openApiSpec) {
@@ -67,8 +67,8 @@ public class ApiGatewayInfo {
     }
     
     private Optional<String> getStageVariable(JsonNode serversNode) {
-        return Optional.ofNullable(serversNode.get(VARIABLES_FIELD)).map(var -> var.get(BASE_PATH_FIELD)).map(
-                basePath -> basePath.get(DEFAULT_FIELD)).map(JsonNode::asText);
+        return Optional.ofNullable(serversNode.get(VARIABLES_FIELD)).map(var -> var.get(BASE_PATH_FIELD))
+                       .map(basePath -> basePath.get(DEFAULT_FIELD)).map(JsonNode::asText);
     }
     
 }
