@@ -78,6 +78,11 @@ public class LocalTest {
     
     
     public static class MockCodePipelineCommunicator extends CodePipelineCommunicator {
+    
+        public MockCodePipelineCommunicator() {
+            super(null);
+        }
+        
         @Override
         public void sendSuccessToCodePipeline(CodePipelineEvent input, String outputString) {
         }

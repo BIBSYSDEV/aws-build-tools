@@ -14,7 +14,15 @@ import org.slf4j.LoggerFactory;
 public class CodePipelineCommunicator {
     
     private static final Logger logger = LoggerFactory.getLogger(CodePipelineCommunicator.class);
-    private final transient AWSCodePipeline pipeline = AWSCodePipelineClientBuilder.defaultClient();
+    private final transient AWSCodePipeline pipeline;
+    
+    public CodePipelineCommunicator(AWSCodePipeline pipelineClient) {
+        this.pipeline = pipelineClient;
+    }
+    
+    public CodePipelineCommunicator() {
+        this(AWSCodePipelineClientBuilder.defaultClient());
+    }
     
     public void sendSuccessToCodePipeline(CodePipelineEvent input, String outputString) {
         logger.info("sending success");
