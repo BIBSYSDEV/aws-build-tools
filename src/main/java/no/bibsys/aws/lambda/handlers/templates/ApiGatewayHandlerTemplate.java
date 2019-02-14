@@ -18,7 +18,7 @@ import java.util.Optional;
  *
  * @param <I> Class of the object in the body field of the ApiGateway message.
  * @param <O> Class of the response object.
- * @see <a href="https://github.com/awslabs/aws-serverless-java-container">The aws-serverless-container</a> for
+ * @see <a href="https://github.com/awslabs/aws-serverless-java-container">The aws-serverless-container /> for
  *         alternative solutions.
  */
 public abstract class ApiGatewayHandlerTemplate<I, O> extends HandlerTemplate<I, O> {

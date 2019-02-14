@@ -3,7 +3,6 @@ package no.bibsys.aws.lambda.handlers.templates;
 import com.amazonaws.services.apigateway.model.UnauthorizedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.util.StringInputStream;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.bibsys.aws.lambda.handlers.LocalTest;
@@ -55,13 +54,14 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
                 }
             };
     
-    public ApiGatewayHandlerTemplateTest() throws JsonProcessingException {
+    public ApiGatewayHandlerTemplateTest() throws IOException {
+        super();
         apiGatewayMessage = apiGatewayMessageWithObjectAsBody(SampleClass.create());
     }
     
     @Test
     public void parseInput_inputString_inputObject() throws IOException {
-        SampleClass actual = (SampleClass) template.parseInput(apiGatewayMessage);
+        SampleClass actual = template.parseInput(apiGatewayMessage);
         SampleClass expected = SampleClass.create();
         assertThat(actual, is(equalTo(expected)));
         

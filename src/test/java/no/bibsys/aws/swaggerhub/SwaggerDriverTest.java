@@ -1,7 +1,6 @@
 package no.bibsys.aws.swaggerhub;
 
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import no.bibsys.aws.lambda.handlers.LocalTest;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -22,9 +21,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-
-
-public class SwaggerDriverTest {
+public class SwaggerDriverTest extends LocalTest {
     
     private static final String JSON_SPEC = "{\"key\":\"value\"}";
     private static final String API_KEY = "apiKey";
@@ -35,12 +32,11 @@ public class SwaggerDriverTest {
     private final transient SwaggerDriver driver;
     
     public SwaggerDriverTest() throws IOException {
-        
+        super();
         CloseableHttpClient httpClient = Mockito.mock(CloseableHttpClient.class);
         when(httpClient.execute(any())).thenReturn(new CustomReponse());
-        
-        this.driver = new SwaggerDriver(
-                new SwaggerHubInfo(apiId, apiVersion, organization, Region.getRegion(Regions.EU_WEST_1)), httpClient);
+    
+        this.driver = new SwaggerDriver(new SwaggerHubInfo(apiId, apiVersion, organization, secretsReader), httpClient);
     }
     
     @Test

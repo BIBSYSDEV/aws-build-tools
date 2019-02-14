@@ -18,7 +18,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 
 
-def versionString = "1.1.0"
+def versionString = "1.2.0b"
 version = "${versionString}"
 
 bintray {

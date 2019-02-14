@@ -66,7 +66,6 @@ public class GithubConf implements GitInfo {
     }
 
     public String getOauth() throws IOException {
-    
         return secretsReader.readSecret();
     }
 

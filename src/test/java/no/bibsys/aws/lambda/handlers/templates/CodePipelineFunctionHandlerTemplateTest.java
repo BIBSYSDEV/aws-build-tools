@@ -27,24 +27,25 @@ public class CodePipelineFunctionHandlerTemplateTest extends LocalTest {
     private static final String EXCEPTION_MESSAGE = "A test exception";
     private static final String NO_PIPELINE_EVENT = "{\"hello\":\"world\"}";
     
-    private final CodePipelineFunctionHandlerTemplate<String> successTemplate =
-            new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
-                @Override
-                protected String processInput(DeployEvent inputObject, String apiGatewayQuery, Context context) {
-                    return ((CodePipelineEvent) inputObject).getId();
-                    
-                }
-            };
+    private final CodePipelineFunctionHandlerTemplate<String> successTemplate;
+    private final CodePipelineFunctionHandlerTemplate<String> failureTemplate;
     
-    private final CodePipelineFunctionHandlerTemplate<String> failureTemplate =
-            new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
-                @Override
-                protected String processInput(DeployEvent inputObject, String apiGatewayQuery, Context context)
-                        throws IOException {
-                    throw new IOException(EXCEPTION_MESSAGE);
-                    
-                }
-            };
+    public CodePipelineFunctionHandlerTemplateTest() throws IOException {
+        successTemplate = new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
+            @Override
+            protected String processInput(DeployEvent inputObject, String apiGatewayQuery, Context context) {
+                return ((CodePipelineEvent) inputObject).getId();
+            }
+        };
+        
+        failureTemplate = new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
+            @Override
+            protected String processInput(DeployEvent inputObject, String apiGatewayQuery, Context context)
+                    throws IOException {
+                throw new IOException(EXCEPTION_MESSAGE);
+            }
+        };
+    }
     
     @Test
     public void handler_jsonCodePipelineEvent_readEventIdInsideTheFunction() throws IOException {
@@ -74,5 +75,4 @@ public class CodePipelineFunctionHandlerTemplateTest extends LocalTest {
         String output = outputStream.toString(StandardCharsets.UTF_8.toString());
         assertThat(output, is(equalTo(DeployEventBuilder.UNSUPPORTED_EVENT_MESSAGE)));
     }
-    
 }

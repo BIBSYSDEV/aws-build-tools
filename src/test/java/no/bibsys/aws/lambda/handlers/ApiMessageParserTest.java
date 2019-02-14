@@ -18,8 +18,11 @@ public class ApiMessageParserTest extends LocalTest {
     private static final String ANOTHER_HEADER_VALUE = "Header2Value";
     private static final int NUMBER_OF_HEADERS = 2;
     private static final String BODY_STRING = "Some body data goes here";
-
-
+    
+    public ApiMessageParserTest() throws IOException {
+        super();
+    }
+    
     @Test
     public void getHeadersFromJson_headersFieldObject_headersMap() throws IOException {
     
