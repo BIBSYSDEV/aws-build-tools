@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import no.bibsys.aws.lambda.events.CodePipelineEvent;
 import no.bibsys.aws.lambda.events.DeployEvent;
 import no.bibsys.aws.lambda.events.DeployEventBuilder;
+import no.bibsys.aws.lambda.events.exceptions.UnsupportedEventException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ import java.util.Optional;
 public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemplate<DeployEvent, O> {
 
     private static final Logger logger = LoggerFactory.getLogger(CodePipelineFunctionHandlerTemplate.class);
-    private final CodePipelineCommunicator codePipelineCommunicator;
+    private final transient CodePipelineCommunicator codePipelineCommunicator;
     
     public CodePipelineFunctionHandlerTemplate(CodePipelineCommunicator codePipelineCommunicator) {
         super(DeployEvent.class);
@@ -30,7 +31,7 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
     }
 
     @Override
-    protected final DeployEvent parseInput(String inputString) throws IOException {
+    protected final DeployEvent parseInput(String inputString) throws IOException, UnsupportedEventException {
         return DeployEventBuilder.create(inputString);
     }
 

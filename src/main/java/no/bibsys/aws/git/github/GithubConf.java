@@ -1,7 +1,5 @@
 package no.bibsys.aws.git.github;
 
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import no.bibsys.aws.secrets.SecretsReader;
 import no.bibsys.aws.tools.Environment;
 
@@ -37,22 +35,19 @@ public class GithubConf implements GitInfo {
     private final transient String owner;
     private final transient String repo;
     private final transient String branch;
-    private final transient Region region;
     private final transient SecretsReader secretsReader;
     
     public GithubConf(Environment environment, SecretsReader secretsReader) {
         this.owner = environment.readEnv(REPO_OWNER);
         this.repo = environment.readEnv(REPOSITORY);
         this.branch = environment.readEnv(BRANCH);
-        this.region = Region.getRegion(Regions.fromName(environment.readEnv(AWS_REGION)));
         this.secretsReader = secretsReader;
     }
     
-    public GithubConf(String owner, String repo, String branch, Region region, SecretsReader secretsReader) {
+    public GithubConf(String owner, String repo, String branch, SecretsReader secretsReader) {
         this.owner = initOwner(owner);
         this.repo = initRepo(repo);
         this.branch = branch;
-        this.region = region;
         this.secretsReader = secretsReader;
     }
 

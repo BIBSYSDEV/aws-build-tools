@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.util.StringInputStream;
 import no.bibsys.aws.lambda.events.CodePipelineEvent;
 import no.bibsys.aws.lambda.events.DeployEvent;
+import no.bibsys.aws.lambda.events.DeployEventBuilder;
 import no.bibsys.aws.lambda.handlers.LocalTest;
 import no.bibsys.aws.tools.IoUtils;
 import no.bibsys.aws.tools.MockContext;
@@ -24,6 +25,7 @@ public class CodePipelineFunctionHandlerTemplateTest extends LocalTest {
     private static final String RESOURCE_FOLDER = "events";
     private static final String ID_VALUE_IN_TEST_FILE = "\"aaaaaaaa-aaaa-aaaa-12341-123456789012\"";
     private static final String EXCEPTION_MESSAGE = "A test exception";
+    private static final String NO_PIPELINE_EVENT = "{\"hello\":\"world\"}";
     
     private final CodePipelineFunctionHandlerTemplate<String> successTemplate =
             new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
@@ -62,6 +64,15 @@ public class CodePipelineFunctionHandlerTemplateTest extends LocalTest {
         failureTemplate.handleRequest(inputStream, outputStream, new MockContext());
         String output = outputStream.toString(StandardCharsets.UTF_8.toString());
         assertThat(output, is(equalTo(EXCEPTION_MESSAGE)));
+    }
+    
+    @Test
+    public void handler_notCodePipelineEventFailureTemplate_reportFailure() throws IOException {
+        StringInputStream inputStream = new StringInputStream(NO_PIPELINE_EVENT);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        failureTemplate.handleRequest(inputStream, outputStream, new MockContext());
+        String output = outputStream.toString(StandardCharsets.UTF_8.toString());
+        assertThat(output, is(equalTo(DeployEventBuilder.UNSUPPORTED_EVENT_MESSAGE)));
     }
     
 }

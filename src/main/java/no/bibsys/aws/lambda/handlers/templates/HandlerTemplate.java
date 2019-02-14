@@ -4,11 +4,13 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.bibsys.aws.lambda.events.exceptions.UnsupportedEventException;
+import no.bibsys.aws.tools.IoUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import no.bibsys.aws.tools.IoUtils;
 
 /**
  * Template for making it easier to use a POJO Lambda handler. The Amazon template RequestHandler does not behave well
@@ -33,38 +35,39 @@ import no.bibsys.aws.tools.IoUtils;
  * @param <O> Output class
  */
 public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
-
+    
     protected final transient ObjectMapper objectMapper = new ObjectMapper();
     private final transient Class<I> iclass;
     protected transient LambdaLogger logger;
     protected transient OutputStream outputStream;
-
+    
     public HandlerTemplate(Class<I> iclass) {
         this.iclass = iclass;
     }
-
+    
     protected void init(OutputStream outputStream, Context context) {
         this.outputStream = outputStream;
-
+        
         this.logger = context.getLogger();
     }
-
-    protected abstract I parseInput(String inputString) throws IOException;
-
+    
+    protected abstract I parseInput(String inputString) throws IOException, UnsupportedEventException;
+    
     protected abstract O processInput(I inputObject, String apiGatewayQuery, Context context)
-        throws IOException, URISyntaxException;
-
+            throws IOException, URISyntaxException;
+    
     protected abstract void writeOutput(I input, O output) throws IOException;
-
+    
     protected abstract void writeFailure(I input, Throwable exception) throws IOException;
-
+    
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         init(output, context);
+        I inputObject = null;
         String inputString = IoUtils.streamToString(input);
-        I inputObject = parseInput(inputString);
-        O response = null;
         try {
+            inputObject = parseInput(inputString);
+            O response = null;
             response = processInput(inputObject, inputString, context);
             writeOutput(inputObject, response);
         } catch (Exception e) {
@@ -72,7 +75,7 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
             writeFailure(inputObject, e);
         }
     }
-
+    
     protected Class<I> getIClass() {
         return iclass;
     }

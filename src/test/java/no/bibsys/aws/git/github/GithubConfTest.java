@@ -22,18 +22,17 @@ class GithubConfTest {
     private static final String REPOSITORY = "repository";
     private static final String BRANCH = "branch";
     private static final String SECRET_VALUE = "secretValue";
-    private static final String ENV_VALUE = "envValue";
     private static final Region REGION = Region.getRegion(Regions.EU_WEST_1);
     
     private final transient GithubConf githhubconfWithEnv;
     private transient GithubConf githubConf;
-    private Environment environment = Mockito.mock(Environment.class);
     
     public GithubConfTest() throws IOException {
         SecretsReader secretsReader = Mockito.mock(SecretsReader.class);
         when(secretsReader.readSecret()).thenReturn(SECRET_VALUE);
-        githubConf = new GithubConf(REPO_OWNER, REPOSITORY, BRANCH, REGION, secretsReader);
-        
+        githubConf = new GithubConf(REPO_OWNER, REPOSITORY, BRANCH, secretsReader);
+    
+        Environment environment = Mockito.mock(Environment.class);
         when(environment.readEnv(anyString())).thenAnswer(invocation -> {
             String envVariable = invocation.getArgument(0);
             if (GithubConf.AWS_REGION.equals(envVariable)) {

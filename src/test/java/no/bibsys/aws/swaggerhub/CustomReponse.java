@@ -1,5 +1,6 @@
 package no.bibsys.aws.swaggerhub;
 
+import com.amazonaws.util.StringInputStream;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -7,13 +8,18 @@ import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 public class CustomReponse implements CloseableHttpResponse {
+    
+    public static final String MESSAGE = "message";
+    
     @Override
     public void close() throws IOException {
     
@@ -51,7 +57,14 @@ public class CustomReponse implements CloseableHttpResponse {
     
     @Override
     public HttpEntity getEntity() {
-        return null;
+        BasicHttpEntity entity = new BasicHttpEntity();
+        try {
+            entity.setContent(new StringInputStream(MESSAGE));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        
+        }
+        return entity;
     }
     
     @Override
