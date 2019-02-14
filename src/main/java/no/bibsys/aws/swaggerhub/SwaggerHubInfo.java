@@ -1,8 +1,10 @@
 package no.bibsys.aws.swaggerhub;
 
-import java.io.IOException;
+import com.amazonaws.regions.Region;
 import no.bibsys.aws.secrets.SecretsReader;
 import no.bibsys.aws.tools.Environment;
+
+import java.io.IOException;
 
 public class SwaggerHubInfo {
 
@@ -12,7 +14,8 @@ public class SwaggerHubInfo {
     private final transient String apiId;
     private final transient String apiVersion;
     private final transient String swaggerOrganization;
-
+    private final transient Region region;
+    
     /**
      * SwaggerHub constructor without the use of {@link Environment}.
      *
@@ -22,10 +25,11 @@ public class SwaggerHubInfo {
      * @param swaggerOrganization The SwaggerHub organization or account name
      */
 
-    public SwaggerHubInfo(String apiId, String apiVersion, String swaggerOrganization) {
+    public SwaggerHubInfo(String apiId, String apiVersion, String swaggerOrganization, Region region) {
         this.apiId = apiId;
         this.apiVersion = apiVersion;
         this.swaggerOrganization = swaggerOrganization;
+        this.region = region;
     }
 
     public String getApiId() {
@@ -41,8 +45,8 @@ public class SwaggerHubInfo {
     }
 
     public String getSwaggerAuth() throws IOException {
-
-        SecretsReader secretsReader = new SecretsReader(AWS_SECRET_NAME, AWS_SECRET_KEY);
+    
+        SecretsReader secretsReader = new SecretsReader(AWS_SECRET_NAME, AWS_SECRET_KEY, region);
         return secretsReader.readSecret();
     }
 }
