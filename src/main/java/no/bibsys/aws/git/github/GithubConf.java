@@ -1,8 +1,11 @@
 package no.bibsys.aws.git.github;
 
-import java.io.IOException;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import no.bibsys.aws.secrets.SecretsReader;
 import no.bibsys.aws.tools.Environment;
+
+import java.io.IOException;
 
 /**
  * Helper class for containing the necessary details for retrieving information from a Github repository.
@@ -28,23 +31,29 @@ public class GithubConf implements GitInfo {
     public static final String REPO_OWNER = "OWNER";
     public static final String REPOSITORY = "REPOSITORY";
     public static final String BRANCH = "BRANCH";
+    public static final String AWS_REGION = "AWS_REGION";
 
-    public static String AWS_SECRET_NAME = "github";
-    public static String AWS_SECRET_KEY = "read_from_github";
+   
     private final transient String owner;
     private final transient String repo;
     private final transient String branch;
-
-    public GithubConf(Environment environment) {
+    private final transient Region region;
+    private final transient SecretsReader secretsReader;
+    
+    public GithubConf(Environment environment, SecretsReader secretsReader) {
         this.owner = environment.readEnv(REPO_OWNER);
         this.repo = environment.readEnv(REPOSITORY);
         this.branch = environment.readEnv(BRANCH);
+        this.region = Region.getRegion(Regions.fromName(environment.readEnv(AWS_REGION)));
+        this.secretsReader = secretsReader;
     }
-
-    public GithubConf(String owner, String repo, String branch) {
+    
+    public GithubConf(String owner, String repo, String branch, Region region, SecretsReader secretsReader) {
         this.owner = initOwner(owner);
         this.repo = initRepo(repo);
         this.branch = branch;
+        this.region = region;
+        this.secretsReader = secretsReader;
     }
 
     public String getOwner() {
@@ -62,7 +71,7 @@ public class GithubConf implements GitInfo {
     }
 
     public String getOauth() throws IOException {
-        SecretsReader secretsReader = new SecretsReader(AWS_SECRET_NAME, AWS_SECRET_KEY);
+    
         return secretsReader.readSecret();
     }
 
