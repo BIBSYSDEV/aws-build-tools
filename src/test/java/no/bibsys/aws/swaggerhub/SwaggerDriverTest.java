@@ -1,17 +1,20 @@
 package no.bibsys.aws.swaggerhub;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.junit.jupiter.api.Test;
 
 public class SwaggerDriverTest {
 
@@ -23,7 +26,8 @@ public class SwaggerDriverTest {
     private final transient SwaggerDriver driver;
 
     public SwaggerDriverTest() throws IOException {
-        this.driver = new SwaggerDriver(new SwaggerHubInfo(apiId, apiVersion, organization));
+        this.driver = new SwaggerDriver(
+                new SwaggerHubInfo(apiId, apiVersion, organization, Region.getRegion(Regions.EU_WEST_1)));
     }
 
     @Test
