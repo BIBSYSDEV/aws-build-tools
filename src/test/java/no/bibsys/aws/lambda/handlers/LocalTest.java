@@ -7,13 +7,10 @@ import no.bibsys.aws.lambda.events.CodePipelineEvent;
 import no.bibsys.aws.lambda.handlers.templates.CodePipelineCommunicator;
 import no.bibsys.aws.secrets.SecretsReader;
 import no.bibsys.aws.tools.JsonUtils;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static org.mockito.Mockito.when;
 
 public class LocalTest {
     private static final String HEADER = "header1";
@@ -64,9 +61,7 @@ public class LocalTest {
     }
     
     private SecretsReader initializeMockSecretsReader() throws IOException {
-        SecretsReader secretsReader = Mockito.mock(SecretsReader.class);
-        when(secretsReader.readSecret()).thenReturn("secretValue");
-        return secretsReader;
+        return () -> "secretValue";
     }
     
     public static class MockCodePipelineCommunicator extends CodePipelineCommunicator {

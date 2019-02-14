@@ -15,18 +15,18 @@ import static org.mockito.Mockito.when;
 public class GithubSignatureCheckerTest {
     
     private final static String secretKey = "SECRETKEY";
-    private final SecretsReader secretsReaderWithCorrectKey;
-    private final SecretsReader secretsReaderWithAnotherKey;
-    private final SecretsReader secretsReaderWithNullKey;
+    private final AWSSecretsReader secretsReaderWithCorrectKey;
+    private final AWSSecretsReader secretsReaderWithAnotherKey;
+    private final AWSSecretsReader secretsReaderWithNullKey;
     
     public GithubSignatureCheckerTest() throws IOException {
-        secretsReaderWithCorrectKey = Mockito.mock(SecretsReader.class);
+        secretsReaderWithCorrectKey = Mockito.mock(AWSSecretsReader.class);
         when(secretsReaderWithCorrectKey.readSecret()).thenReturn(secretKey);
     
-        secretsReaderWithAnotherKey = Mockito.mock(SecretsReader.class);
+        secretsReaderWithAnotherKey = Mockito.mock(AWSSecretsReader.class);
         when(secretsReaderWithAnotherKey.readSecret()).thenReturn(secretKey.toLowerCase());
     
-        secretsReaderWithNullKey = Mockito.mock(SecretsReader.class);
+        secretsReaderWithNullKey = Mockito.mock(AWSSecretsReader.class);
         when(secretsReaderWithNullKey.readSecret()).thenReturn(null);
     
     }

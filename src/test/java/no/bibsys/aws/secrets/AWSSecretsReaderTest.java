@@ -17,14 +17,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class SecretsReaderTest {
+public class AWSSecretsReaderTest {
     
     private static final String SECRET_KEY = "github";
     private static final String SECRET_NAME = "github";
     private static final String SECRET_VALUE = "secretValue";
     private final SecretsReader secretsReaderFindsValue;
     
-    public SecretsReaderTest() throws JsonProcessingException {
+    public AWSSecretsReaderTest() throws JsonProcessingException {
         ObjectMapper jsonParser = JsonUtils.newJsonParser();
         ObjectNode root = jsonParser.createObjectNode();
         root.put(SECRET_KEY, SECRET_VALUE);
@@ -34,7 +34,7 @@ public class SecretsReaderTest {
         when(secretsManagerWithValue.getSecretValue(any()))
                 .thenReturn(new GetSecretValueResult().withSecretString(keyJson));
         
-        this.secretsReaderFindsValue = new SecretsReader(secretsManagerWithValue, SECRET_NAME, SECRET_KEY);
+        this.secretsReaderFindsValue = new AWSSecretsReader(secretsManagerWithValue, SECRET_NAME, SECRET_KEY);
     }
     
     @Test
