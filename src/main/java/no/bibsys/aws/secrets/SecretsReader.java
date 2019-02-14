@@ -1,15 +1,16 @@
 package no.bibsys.aws.secrets;
 
-import com.amazonaws.services.s3.model.Region;
+import com.amazonaws.regions.Region;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.bibsys.aws.tools.JsonUtils;
+
 import java.io.IOException;
 import java.util.Optional;
-import no.bibsys.aws.tools.JsonUtils;
 
 public class SecretsReader {
 
@@ -22,30 +23,32 @@ public class SecretsReader {
     private final transient String secretName;
     private final transient String secretKey;
 
+
     public SecretsReader(AWSSecretsManager client, String secretName, String secretKey) {
         this.client = client;
         this.secretKey = secretKey;
         this.secretName = secretName;
     }
-
-    public SecretsReader(String secretName, String secretKey) {
-        this(AWSSecretsManagerClientBuilder.standard().withRegion(Region.EU_Ireland.toString()).build(), secretName,
+    
+    public SecretsReader(String secretName, String secretKey, Region region) {
+        this(AWSSecretsManagerClientBuilder.standard().withRegion(region.toString()).build(), secretName,
             secretKey);
     }
 
     public String readSecret() throws IOException {
         ObjectMapper mapper = JsonUtils.newJsonParser();
-        Optional<GetSecretValueResult> getSecretValueResult = readAuthKey();
+        Optional<GetSecretValueResult> getSecretValueResult = readSecretsForName();
 
         if (getSecretValueResult.map(result -> result.getSecretString()).isPresent()) {
             String secret = getSecretValueResult.get().getSecretString();
             String value = mapper.readTree(secret).findValuesAsText(secretKey).stream().findFirst().orElse(null);
             return value;
+    
         }
         return null;
     }
-
-    private Optional<GetSecretValueResult> readAuthKey() {
+    
+    private Optional<GetSecretValueResult> readSecretsForName() {
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(secretName);
         Optional<GetSecretValueResult> getSecretValueResult = Optional.empty();
         try {
