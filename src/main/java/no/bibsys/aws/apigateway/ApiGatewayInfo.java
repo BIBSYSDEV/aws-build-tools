@@ -24,6 +24,7 @@ public class ApiGatewayInfo {
     private static final String VARIABLES_FIELD = "variables";
     private static final String BASE_PATH_FIELD = "basePath";
     private static final String DEFAULT_FIELD = "default";
+    private static final int FIRST_ARRAY_ELEMENT = 0;
     
     private final transient Stage stage;
     private final transient AmazonApiGateway client;
@@ -60,7 +61,7 @@ public class ApiGatewayInfo {
     }
     
     private ServerInfo generateServerInfo(JsonNode openApiSpec) {
-        JsonNode serversNode = openApiSpec.get(SERVERS_FIELD).get(0);
+        JsonNode serversNode = openApiSpec.get(SERVERS_FIELD).get(FIRST_ARRAY_ELEMENT);
         String serverUrl = serversNode.get(URL_FIELD).asText();
         String apiStage = getStageVariable(serversNode).orElse(null);
         return new ServerInfo(serverUrl, apiStage);
