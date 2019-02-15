@@ -1,17 +1,20 @@
 package no.bibsys.aws.tools;
 
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 public class IoUtilsTest {
 
@@ -45,5 +48,14 @@ public class IoUtilsTest {
 
         assertThat(trimmed.length(), is(not(equalTo(0))));
         assertThat(trimmed, not(matchesPattern("\\s\\s")));
+    }
+    
+    @Test
+    public void stringFromFile_file_string() throws URISyntaxException, IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(path.toString());
+        Path path = Paths.get(resource.toURI());
+        String result = IoUtils.fileAsString(path);
+        assertThat(result, is(not(equalTo(null))));
+        
     }
 }

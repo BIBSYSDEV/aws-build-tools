@@ -13,7 +13,6 @@ import java.util.List;
 public final class IoUtils {
 
     private IoUtils() {
-        throw new IllegalStateException("IoUtils should not be initialized");
     }
 
     public static InputStream inputStreamFromResources(Path path) {

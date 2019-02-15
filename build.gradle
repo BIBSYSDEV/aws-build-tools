@@ -5,7 +5,8 @@ plugins {
     id 'checkstyle'
     id 'pmd'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.8.4"
+    id 'com.jfrog.bintray' version "1.8.4"
+    id 'jacoco'
 }
 
 apply plugin: 'com.jfrog.bintray'
@@ -14,9 +15,10 @@ apply plugin: 'base'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
 
 
-def versionString = "1.1.0"
+def versionString = "1.2.0d"
 version = "${versionString}"
 
 bintray {
@@ -108,6 +110,8 @@ dependencies {
 
     implementation('io.symphonia:lambda-logging:1.0.3')
 
+    compile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+
     //libraries for testing
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
     testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
@@ -119,11 +123,25 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'IntegrationTest'
+        includeEngines 'junit-jupiter'
+    }
     testLogging {
         events "passed", "skipped", "failed"
     }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+    jacoco {
+
+        excludes['*SecretsReader*']
+
+    }
+
     failFast = true
+
 }
 
 
@@ -149,6 +167,47 @@ pmd {
     ignoreFailures = false
 }
 
+jacocoTestReport {
+
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/reports/jacoco")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.3"
+
+
+}
+
+
+check.dependsOn jacocoTestCoverageVerification
+jacocoTestCoverageVerification.dependsOn(jacocoTestReport)
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.9
+                excludes['*CodePipelineCommunicator*']
+            }
+        }
+
+        rule {
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.9
+                excludes['*CodePipelineCommunicator*']
+            }
+        }
+
+    }
+}
+
 
 shadowJar {
     archiveName = "${baseName}-fat.jar"
@@ -157,13 +216,5 @@ shadowJar {
 task fatJar(dependsOn: shadowJar) {}
 
 
-test {
-    useJUnitPlatform {
-        excludeTags 'IntegrationTest'
-        includeEngines 'junit-jupiter'
-    }
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
-}
+
 

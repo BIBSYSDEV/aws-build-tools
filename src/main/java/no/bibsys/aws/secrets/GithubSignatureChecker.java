@@ -1,20 +1,21 @@
 package no.bibsys.aws.secrets;
 
-import com.google.common.annotations.VisibleForTesting;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
- * SignatureChecker uses a secret key and the body of the request to generate a validation signature. It expects the
+ * GithubSignatureChecker uses a secret key and the body of the request to generate a validation signature. It
+ * expects the
  * client not to send the api-key, but to send a sha1 hash value of the concatenation of the secret value and the
  * request body. In short it works as follows:
  * <p>
@@ -28,8 +29,8 @@ import org.slf4j.LoggerFactory;
  * <br/>
  * <b>Output:</b>
  * <ul>
- * <li>true if the client's signature matches the signature calculated by {@link SignatureChecker}</li>
- * <li>false if the client's signature does not matche the signature calculated by {@link SignatureChecker}</li>
+ * <li>true if the client's signature matches the signature calculated by {@link GithubSignatureChecker}</li>
+ * <li>false if the client's signature does not matche the signature calculated by {@link GithubSignatureChecker}</li>
  * </ul>
  *
  *
@@ -37,19 +38,17 @@ import org.slf4j.LoggerFactory;
  *
  * </p>
  */
-public class SignatureChecker {
+public class GithubSignatureChecker {
 
     private static final String SIGNATURE_PREFIX = "sha1=";
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
-    private static final Logger logger = LoggerFactory.getLogger(SignatureChecker.class);
+    private static final Logger logger = LoggerFactory.getLogger(GithubSignatureChecker.class);
 
-    public static String AWS_SECRET_NAME = "SECRET_NAME";
-    public static String AWS_SECRET_KEY = "SECRET_KEY";
 
     private transient SecretsReader secretsReader;
-
-    public SignatureChecker(String secretName, String secretKey) {
-        secretsReader = new SecretsReader(secretName, secretKey);
+    
+    public GithubSignatureChecker(SecretsReader secretsReader) {
+        this.secretsReader = secretsReader;
     }
 
     public boolean verifySecurityToken(String token, String requestBody) throws IOException {
@@ -85,9 +84,8 @@ public class SignatureChecker {
         signature = Hex.decodeHex(signatureHeader.substring(SIGNATURE_PREFIX.length()).toCharArray());
         return signature;
     }
-
-    @VisibleForTesting
-    public byte[] calculateExpectedSignature(String body, String webhookSecret) {
+    
+    private byte[] calculateExpectedSignature(String body, String webhookSecret) {
         byte[] payload = body.getBytes(StandardCharsets.UTF_8);
         return calculateExpectedSignature(payload, webhookSecret);
     }
@@ -107,8 +105,7 @@ public class SignatureChecker {
     }
 
     private String readSecretsKey() throws IOException {
-        String secretValue = secretsReader.readSecret();
-        return secretValue;
+        return secretsReader.readSecret();
     }
 
     public void setSecretsReader(SecretsReader secretsReader) {

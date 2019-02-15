@@ -1,107 +1,65 @@
 package no.bibsys.aws.apigateway;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
-
 import com.amazonaws.services.apigateway.AmazonApiGateway;
-import com.amazonaws.services.kms.model.NotFoundException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Optional;
+import com.amazonaws.services.apigateway.model.NotFoundException;
 import no.bibsys.aws.cloudformation.Stage;
-import no.bibsys.aws.cloudformation.helpers.ResourceType;
-import no.bibsys.aws.cloudformation.helpers.StackResources;
+import no.bibsys.aws.mocks.MockGetExportResult;
 import no.bibsys.aws.tools.Environment;
+import no.bibsys.aws.tools.IoUtils;
 import no.bibsys.aws.tools.JsonUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 public class ApiGatewayApiInfoTest {
-
-    private transient String apiJson;
-    private transient JsonNode root;
-
-    private AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
-
-    @BeforeEach
-    public void init() throws IOException {
-        Environment environment = new Environment();
-        String stackName = environment.readEnv("STACK_NAME");
-        apiJson = generateOpenApiSpec(stackName).orElse(null);
-        root = parseOpenApiSpec(apiJson);
+    
+    private static final String MOCK_API_ID = "RestApiId";
+    private static final String SERVER_URL = "<SERVER_PLACEHOLDER>";
+    private static final String SAMPLE_OPENAPI_YML = "openapi.yml";
+    private static final String RESOURCES = "openapi";
+    
+    private AmazonApiGateway apiGateway;
+    private AmazonApiGateway apiGatewayApiNotFound;
+    private Environment environment;
+    
+    public ApiGatewayApiInfoTest() throws IOException {
+        environment = Mockito.mock(Environment.class);
+        when(environment.readEnv(anyString())).thenReturn(Stage.TEST.toString());
+        
+        String openApiJson = readOpenApiInfoFromResources();
+        apiGateway = Mockito.mock(AmazonApiGateway.class);
+        when(apiGateway.getExport(any())).thenReturn(new MockGetExportResult(openApiJson));
+        
+        apiGatewayApiNotFound = Mockito.mock(AmazonApiGateway.class);
+        when(apiGatewayApiNotFound.getExport(any())).thenThrow(new NotFoundException(("Not found")));
     }
-
+    
+    private String readOpenApiInfoFromResources() throws IOException {
+        String openApiYaml = IoUtils.resourceAsString(Paths.get(RESOURCES, SAMPLE_OPENAPI_YML));
+        return JsonUtils.yamlToJson(openApiYaml);
+    }
+    
     @Test
-    @Tag("IntegrationTest")
-    public void generateOpenApiNoExtensions_existingApiGatewayEndpoint_JsonString() {
-        assertThat(apiJson, is(not(equalTo(null))));
-        assertThat(apiJson.isEmpty(), is(equalTo(false)));
+    public void readServerInfo_existingApiGatewayEndpoint_serverUrl() throws IOException {
+        ApiGatewayInfo apiGatewayInfo = new ApiGatewayInfo(Stage.TEST, apiGateway, MOCK_API_ID);
+        ServerInfo serverInfo = apiGatewayInfo.readServerInfo();
+        assertThat(serverInfo.getServerUrl(), is(equalTo(SERVER_URL)));
     }
-
+    
     @Test
-    @Tag("IntegrationTest")
-    public void generateOpenApiNoExtensions_existingApiGatewayEndpoint_OpenApi3Version() {
-
-        Optional<String> openApiVersion = openApiVersion(root);
-        assertThat(openApiVersion.isPresent(), is(equalTo(true)));
-        assertThat(openApiVersion.get(), is(equalTo("3.0.1")));
+    public void readServerInfo_nonExistingApiGatewayEndpoin_NotFoundException() throws IOException {
+        ApiGatewayInfo apiGatewayInfo = new ApiGatewayInfo(Stage.TEST, apiGatewayApiNotFound, MOCK_API_ID);
+        assertThrows(NotFoundException.class, apiGatewayInfo::readServerInfo);
     }
-
-    @Test
-    @Tag("IntegrationTest")
-    public void generateOpenApiNoExtensionsexistingApiGatewayEndpoint_ValidServerUrl() {
-        String serverUrl = getServerUrl(root);
-        assertThat(serverUrl, is(not(equalTo(null))));
-        assertThat(serverUrl.isEmpty(), is(equalTo(false)));
-    }
-
-    @Test
-    @Tag("IntegrationTest")
-    public void generateOpenApiNoExtensions_existingApiGatewayEndpoint_validVBasePath() {
-        String basePath = getBasePath(root);
-        assertThat(basePath, is(not(equalTo(null))));
-        assertThat(basePath.isEmpty(), is(equalTo(false)));
-        assertThat(basePath, is(equalTo("test")));
-    }
-
-    private Optional<String> generateOpenApiSpec(String stackName) throws IOException {
-
-        String restApiId = restApiId(stackName);
-        ApiGatewayApiInfo apiGatewayApiInfo = new ApiGatewayApiInfo(Stage.TEST, apiGateway, restApiId);
-        return apiGatewayApiInfo.generateOpenApiNoExtensions();
-    }
-
-    private String restApiId(String stackName) {
-
-        StackResources stackResources = new StackResources(stackName);
-
-        String result = stackResources.getResourceIds(ResourceType.REST_API).stream().findAny()
-            .orElseThrow(() -> new NotFoundException("RestApi not Found for stack:" + stackName));
-        return result;
-    }
-
-    private Optional<String> openApiVersion(JsonNode root) {
-        String openApi = root.get("openapi").asText();
-        return Optional.ofNullable(openApi);
-    }
-
-    private JsonNode parseOpenApiSpec(String json) throws IOException {
-        ObjectMapper mapper = JsonUtils.newJsonParser();
-        return mapper.readTree(json);
-    }
-
-    private String getServerUrl(JsonNode root) {
-        JsonNode serversNode = root.get("servers").get(0);
-        return serversNode.get("url").asText();
-    }
-
-    private String getBasePath(JsonNode root) {
-        JsonNode serversNode = root.get("servers").get(0);
-        return serversNode.get("variables").get("basePath").get("default").asText();
-    }
+    
 }
