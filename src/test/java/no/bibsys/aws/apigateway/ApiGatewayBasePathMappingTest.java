@@ -36,6 +36,7 @@ public class ApiGatewayBasePathMappingTest {
     private static final String CERTIFICATE_STRING = "certificateARN";
     private static final String CERTIFCATE_ARN = CERTIFICATE_STRING;
     private static final String ERROR_MESSAGE = "Domain not found";
+    private static final int FIRST_ARRAY_ELEMENT = 0;
     private final transient Stage stage = Stage.TEST;
     private AmazonApiGateway apiGateway;
     
@@ -43,7 +44,7 @@ public class ApiGatewayBasePathMappingTest {
         apiGateway = Mockito.mock(AmazonApiGateway.class);
         
         when(apiGateway.createBasePathMapping(any())).thenAnswer((Answer<CreateBasePathMappingResult>) invocation -> {
-            CreateBasePathMappingRequest request = invocation.getArgument(0);
+            CreateBasePathMappingRequest request = invocation.getArgument(FIRST_ARRAY_ELEMENT);
             CreateBasePathMappingResult result = new CreateBasePathMappingResult();
             result.setRestApiId(request.getRestApiId());
             result.setBasePath(request.getDomainName());
@@ -51,7 +52,7 @@ public class ApiGatewayBasePathMappingTest {
             return result;
         });
         when(apiGateway.deleteDomainName(any())).thenAnswer((Answer<DeleteDomainNameResult>) invocation -> {
-            DeleteDomainNameRequest request = invocation.getArgument(0);
+            DeleteDomainNameRequest request = invocation.getArgument(FIRST_ARRAY_ELEMENT);
             String requestDomainName = request.getDomainName();
             if (DOMAIN_NAME.equals(requestDomainName)) {
                 return new DeleteDomainNameResult();
@@ -61,7 +62,7 @@ public class ApiGatewayBasePathMappingTest {
         });
         
         when(apiGateway.getBasePathMappings(any())).thenAnswer(invocation -> {
-            GetBasePathMappingsRequest request = invocation.getArgument(0);
+            GetBasePathMappingsRequest request = invocation.getArgument(FIRST_ARRAY_ELEMENT);
             if (DOMAIN_NAME.equals(request.getDomainName())) {
                 return new GetBasePathMappingsResult().withItems(Collections.emptyList());
             } else {
@@ -139,29 +140,4 @@ public class ApiGatewayBasePathMappingTest {
         assertThat(result.isPresent(), is(equalTo(false)));
     }
     
-    //    @Test
-    //    public void newBasePathMappingRequest_restApiIdTestStage_CreateBasePathMappingRequestWithRestApi() {
-    //
-    //        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(null, DOMAIN_NAME,
-    //            Stage.TEST);
-    //
-    //        CreateBasePathMappingRequest request = apiGatewayBasePathMapping.newBasePathMappingRequest("restApi");
-    //
-    //        assertThat(request.getRestApiId(), is(equalTo("restApi")));
-    //        assertThat(request.getDomainName(), is(equalTo(DOMAIN_NAME)));
-    //        assertThat(request.getStage(), is(equalTo(Stage.TEST.toString())));
-    //    }
-    //
-    //    @Test
-    //    public void newBasePathMappingRequest_restApiIdFinalStage_CreateBasePathMappingRequestWithRestApi() {
-    //        String DOMAIN_NAME = "domain.name.";
-    //        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(null, DOMAIN_NAME,
-    //            Stage.FINAL);
-    //
-    //        CreateBasePathMappingRequest request = apiGatewayBasePathMapping.newBasePathMappingRequest("restApi");
-    //
-    //        assertThat(request.getRestApiId(), is(equalTo("restApi")));
-    //        assertThat(request.getDomainName(), is(equalTo(DOMAIN_NAME)));
-    //        assertThat(request.getStage(), is(equalTo(Stage.FINAL.toString())));
-    //    }
 }
