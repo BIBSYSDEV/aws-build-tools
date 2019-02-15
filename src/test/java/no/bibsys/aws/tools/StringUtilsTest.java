@@ -16,10 +16,12 @@ public class StringUtilsTest extends AmazonNamingRestrictions {
     private static final int SMALL_LENGTH = 2;
     private static final int BIG_LENGTH = 10;
     private static final StringUtils stringUtils = new StringUtils();
+    private static final String BRANCH_GIVING_INVALID_STACK_IN_AWS = "AUTREG-131_ensure_javascript_linting_is_in_place";
+    private static final String RANDOM_STRING_OF_MEDIUM_LENGHT = "ABDCEFG";
     
     @Test
     public void normalizedStringsShoudComplyWithAmazonConstraints() {
-        String branchName = "AUTREG-131_ensure_javascript_linting_is_in_place";
+        String branchName = BRANCH_GIVING_INVALID_STACK_IN_AWS;
         String normalized = stringUtils.normalizeString(branchName);
         Matcher matcher = amazonPattern.matcher(normalized);
         assertThat(matcher.matches(), is(equalTo(true)));
@@ -52,7 +54,7 @@ public class StringUtilsTest extends AmazonNamingRestrictions {
     
     @Test
     public void shortString_stringNonZeroLength_stringWithGivenLength() {
-        String test = "ABDCEFG";
+        String test = RANDOM_STRING_OF_MEDIUM_LENGHT;
         String short1 = stringUtils.shortNormalizedString(test, SMALL_LENGTH);
         assertThat(short1.length(), is(equalTo(2)));
         

@@ -12,11 +12,14 @@ import static org.hamcrest.core.IsNot.not;
 
 class SwaggerHubInfoTest extends LocalTest {
     
+    private static final String RANDOM_API_ID = "apiId";
+    private static final String RANDOM_API_VERSION = "apiVersion";
+    private static final String RANDOM_SWAGGERHUB_USER = "swaggerhubUser";
     private final SwaggerHubInfo swaggerHubInfo;
     
     public SwaggerHubInfoTest() throws IOException {
-        
-        swaggerHubInfo = new SwaggerHubInfo("apiId", "apiVersion", "swaggerhubUser", secretsReader);
+    
+        swaggerHubInfo = new SwaggerHubInfo(RANDOM_API_ID, RANDOM_API_VERSION, RANDOM_SWAGGERHUB_USER, secretsReader);
     }
     
     @Test

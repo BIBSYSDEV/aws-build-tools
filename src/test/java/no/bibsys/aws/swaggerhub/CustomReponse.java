@@ -23,6 +23,7 @@ public class CustomReponse implements CloseableHttpResponse {
     private static final int RANDOM_MAJOR_VERSION = 1;
     private static final int RANDOM_MINOR_VERSION = 1;
     private static final String RANDOM_REASON_PHRASE = "OK";
+    private static final int FIRST_ARRAY_ELEMENT = 0;
     
     @Override
     public void close() {
@@ -112,7 +113,7 @@ public class CustomReponse implements CloseableHttpResponse {
     
     @Override
     public Header[] getAllHeaders() {
-        return new Header[0];
+        return new Header[FIRST_ARRAY_ELEMENT];
     }
     
     @Override

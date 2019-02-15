@@ -1,6 +1,10 @@
 package no.bibsys.aws.swaggerhub;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.bibsys.aws.lambda.handlers.LocalTest;
+import no.bibsys.aws.tools.JsonUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -23,13 +27,15 @@ import static org.mockito.Mockito.when;
 
 public class SwaggerDriverTest extends LocalTest {
     
-    private static final String JSON_SPEC = "{\"key\":\"value\"}";
     private static final String API_KEY = "apiKey";
+    private static final String RANDOM_FIELD = "key";
+    private static final String RANDOM_VALUE = "value";
     private final transient String organization = "unit";
     private final transient String apiId = "api-id";
     private final transient String apiKey = "ApIKeY";
     private final transient String apiVersion = "2.1";
     private final transient SwaggerDriver driver;
+    private final String minimalValidJsonDoc;
     
     public SwaggerDriverTest() throws IOException {
         super();
@@ -37,11 +43,19 @@ public class SwaggerDriverTest extends LocalTest {
         when(httpClient.execute(any())).thenReturn(new CustomReponse());
     
         this.driver = new SwaggerDriver(new SwaggerHubInfo(apiId, apiVersion, organization, secretsReader), httpClient);
+        this.minimalValidJsonDoc = randomSwaggerHubSpecificationInJsonFormat();
+    }
+    
+    private String randomSwaggerHubSpecificationInJsonFormat() throws JsonProcessingException {
+        ObjectMapper mapper = JsonUtils.newJsonParser();
+        ObjectNode root = mapper.createObjectNode();
+        root.put(RANDOM_FIELD, RANDOM_VALUE);
+        return mapper.writeValueAsString(root);
     }
     
     @Test
     public void executePost_updateRequest_updateResult() throws IOException, URISyntaxException {
-        HttpPost postRequest = driver.createUpdateRequest(JSON_SPEC, API_KEY);
+        HttpPost postRequest = driver.createUpdateRequest(minimalValidJsonDoc, API_KEY);
         int result = driver.executePost(postRequest);
         assertThat(result, is(equalTo(HttpStatus.SC_OK)));
     }
@@ -51,7 +65,6 @@ public class SwaggerDriverTest extends LocalTest {
         HttpDelete deleteRequest = driver.createDeleteApiRequest(API_KEY);
         int result = driver.executeDelete(deleteRequest);
         assertThat(result, is(equalTo(HttpStatus.SC_OK)));
-        
     }
     
     @Test
@@ -135,6 +148,6 @@ public class SwaggerDriverTest extends LocalTest {
     }
     
     private HttpPost postRequest() throws URISyntaxException {
-        return driver.createUpdateRequest(JSON_SPEC, apiKey);
+        return driver.createUpdateRequest(minimalValidJsonDoc, apiKey);
     }
 }
