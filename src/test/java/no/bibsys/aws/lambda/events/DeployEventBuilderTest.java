@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DeployEventBuilderTest {
     
     private static final String ID_IN_RESOURCE_FILE = "aaaaaaaa-aaaa-aaaa-12341-123456789012";
+    private static final String RANDOM_FIELD = "some";
+    private static final String RANDOM_VALUE = "field";
     
     @Test
     public void create_CodePipelineEvent_CodePipelineEvent() throws IOException, UnsupportedEventException {
@@ -30,7 +32,7 @@ public class DeployEventBuilderTest {
     public void create_anotherEvent_CodePipelineEvent() throws IOException {
         ObjectMapper parser = JsonUtils.newJsonParser();
         ObjectNode rootNode = parser.createObjectNode();
-        rootNode.put("some", "field");
+        rootNode.put(RANDOM_FIELD, RANDOM_VALUE);
         String json = parser.writeValueAsString(rootNode);
         assertThrows(UnsupportedEventException.class, () -> DeployEventBuilder.create(json));
     }

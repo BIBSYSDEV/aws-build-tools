@@ -19,15 +19,19 @@ import java.util.Locale;
 public class CustomReponse implements CloseableHttpResponse {
     
     public static final String MESSAGE = "message";
+    private static final String RANDOM_PROTOCOL = "HTTP";
+    private static final int RANDOM_MAJOR_VERSION = 1;
+    private static final int RANDOM_MINOR_VERSION = 1;
+    private static final String RANDOM_REASON_PHRASE = "OK";
     
     @Override
-    public void close() throws IOException {
-    
+    public void close() {
     }
     
     @Override
     public StatusLine getStatusLine() {
-        return new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), HttpStatus.SC_OK, "OK");
+        return new BasicStatusLine(new ProtocolVersion(RANDOM_PROTOCOL, RANDOM_MAJOR_VERSION, RANDOM_MINOR_VERSION),
+                                   HttpStatus.SC_OK, RANDOM_REASON_PHRASE);
     }
     
     @Override
@@ -62,7 +66,6 @@ public class CustomReponse implements CloseableHttpResponse {
             entity.setContent(new StringInputStream(MESSAGE));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        
         }
         return entity;
     }

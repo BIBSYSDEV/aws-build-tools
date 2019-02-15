@@ -19,6 +19,7 @@ public class LocalTest {
     private static final String ANOTHER_HEADER_VALUE = "Header2Value";
     private static final String BODY_STRING = "Some body data goes here";
     private static final String BODY_FIELD = "body";
+    private static final String RANDOM_SECRET_VALUE = "secretValue";
     
     protected final SecretsReader secretsReader;
     
@@ -61,7 +62,7 @@ public class LocalTest {
     }
     
     private SecretsReader initializeMockSecretsReader() throws IOException {
-        return () -> "secretValue";
+        return () -> RANDOM_SECRET_VALUE;
     }
     
     public static class MockCodePipelineCommunicator extends CodePipelineCommunicator {

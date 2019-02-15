@@ -26,6 +26,9 @@ import static org.hamcrest.core.IsNot.not;
 public class ApiGatewayHandlerTemplateTest extends LocalTest {
     
     private static final String STATUS_CODE = "statusCode";
+    private static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "Unauthorized";
+    private static final String IO_EXCEPTION_EXCEPTION_MESSAGE = "IOException";
+    private static final String BODY_FIELD = "body";
     private final String apiGatewayMessage;
     private ObjectMapper parser = JsonUtils.newJsonParser();
     
@@ -41,7 +44,7 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
             new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
                 @Override
                 protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
-                    throw new UnauthorizedException("Unauthorized");
+                    throw new UnauthorizedException(UNAUTHORIZED_EXCEPTION_MESSAGE);
                 }
             };
     
@@ -50,7 +53,7 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
                 @Override
                 protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context)
                         throws IOException {
-                    throw new IOException("IOException");
+                    throw new IOException(IO_EXCEPTION_EXCEPTION_MESSAGE);
                 }
             };
     
@@ -76,7 +79,7 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
         String output = outputStream.toString(StandardCharsets.UTF_8.name());
         
         ObjectNode responseNode = (ObjectNode) parser.readTree(output);
-        String bodyString = responseNode.get("body").textValue();
+        String bodyString = responseNode.get(BODY_FIELD).textValue();
         SampleClass actual = parser.readValue(bodyString, SampleClass.class);
         assertThat(actual, is(equalTo(SampleClass.create())));
     }

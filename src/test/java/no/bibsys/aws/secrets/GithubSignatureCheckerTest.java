@@ -15,6 +15,9 @@ import static org.mockito.Mockito.when;
 public class GithubSignatureCheckerTest {
     
     private final static String secretKey = "SECRETKEY";
+    private static final String GITHUB_TEST_RESOURCES = "github";
+    private static final String SAMPLE_GITHUB_EVENT = "sha_test_githubEvent.json";
+    private static final String SAMPLE_GITHUB_HEADER = "sha_test_github_header.txt";
     private final AWSSecretsReader secretsReaderWithCorrectKey;
     private final AWSSecretsReader secretsReaderWithAnotherKey;
     private final AWSSecretsReader secretsReaderWithNullKey;
@@ -33,8 +36,8 @@ public class GithubSignatureCheckerTest {
     
     @Test
     public void verifySecurityToken_correctSecretValueAndBody_validResult() throws IOException {
-        String requestBody = IoUtils.resourceAsString(Paths.get("github", "sha_test_githubEvent.json"));
-        String header = IoUtils.resourceAsString(Paths.get("github", "sha_test_github_header.txt"));
+        String requestBody = IoUtils.resourceAsString(Paths.get(GITHUB_TEST_RESOURCES, SAMPLE_GITHUB_EVENT));
+        String header = IoUtils.resourceAsString(Paths.get(GITHUB_TEST_RESOURCES, SAMPLE_GITHUB_HEADER));
         
         GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReaderWithCorrectKey);
         boolean verificationResult = signatureChecker.verifySecurityToken(header, requestBody);
@@ -44,8 +47,8 @@ public class GithubSignatureCheckerTest {
     
     @Test
     public void verifySecurityToken_wrongSecretValueAndBody_invalidResult() throws IOException {
-        String requestBody = IoUtils.resourceAsString(Paths.get("github", "sha_test_githubEvent.json"));
-        String header = IoUtils.resourceAsString(Paths.get("github", "sha_test_github_header.txt"));
+        String requestBody = IoUtils.resourceAsString(Paths.get(GITHUB_TEST_RESOURCES, SAMPLE_GITHUB_EVENT));
+        String header = IoUtils.resourceAsString(Paths.get(GITHUB_TEST_RESOURCES, SAMPLE_GITHUB_HEADER));
     
         GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReaderWithAnotherKey);
         boolean verificationResult = signatureChecker.verifySecurityToken(header, requestBody);
@@ -55,8 +58,8 @@ public class GithubSignatureCheckerTest {
     
     @Test
     public void verifySecurityToken_NullValueAndBody_validResult() throws IOException {
-        String requestBody = IoUtils.resourceAsString(Paths.get("github", "sha_test_githubEvent.json"));
-        String header = IoUtils.resourceAsString(Paths.get("github", "sha_test_github_header.txt"));
+        String requestBody = IoUtils.resourceAsString(Paths.get(GITHUB_TEST_RESOURCES, SAMPLE_GITHUB_EVENT));
+        String header = IoUtils.resourceAsString(Paths.get(GITHUB_TEST_RESOURCES, SAMPLE_GITHUB_HEADER));
         
         GithubSignatureChecker signatureChecker = new GithubSignatureChecker(secretsReaderWithNullKey);
         boolean verificationResult = signatureChecker.verifySecurityToken(header, requestBody);

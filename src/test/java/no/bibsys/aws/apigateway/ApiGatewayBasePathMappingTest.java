@@ -80,13 +80,12 @@ public class ApiGatewayBasePathMappingTest {
         });
         
         when(apiGateway.createDomainName(any())).thenReturn(new CreateDomainNameResult());
-        
     }
     
     @Test
     public void createBasePathMapping_restApiIdDomainStage_newBasePathMappingWith() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME,
-                                                                                            stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME, stage);
         CreateBasePathMappingResult result = apiGatewayBasePathMapping.awsCreateBasePath(SAMPLE_REST_API_ID);
         assertThat(result.getBasePath(), containsString(DOMAIN_NAME));
         assertThat(result.getRestApiId(), is(SAMPLE_REST_API_ID));
@@ -95,22 +94,22 @@ public class ApiGatewayBasePathMappingTest {
     
     @Test
     public void deleteBasePathMappings_restApiDomainStage_deleteCorrectBasepathMappings() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME,
-                                                                                            stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME, stage);
         apiGatewayBasePathMapping.awsDeleteBasePathMappings();
     }
     
     @Test
     public void deleteBasePathMappings_notExistingDomainStage_throwException() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway,
-                                                                                            NOT_EXISTING_DOMAIN, stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, NOT_EXISTING_DOMAIN, stage);
         assertThrows(NotFoundException.class, apiGatewayBasePathMapping::awsDeleteBasePathMappings);
     }
     
     @Test
     public void getTargetDomain_existingDomainName_targetDomain() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME,
-                                                                                            stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME, stage);
         Optional<String> targetDomain = apiGatewayBasePathMapping.awsGetTargetDomainName();
         assertThat(targetDomain.isPresent(), is(true));
         assertThat(targetDomain.get(), is(equalTo(DOMAIN_NAME)));
@@ -118,26 +117,25 @@ public class ApiGatewayBasePathMappingTest {
     
     @Test
     public void getTargetDomain_notExistingDomainName_emptyOptional() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway,
-                                                                                            NOT_EXISTING_DOMAIN, stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, NOT_EXISTING_DOMAIN, stage);
         Optional<String> targetDomain = apiGatewayBasePathMapping.awsGetTargetDomainName();
         assertThat(targetDomain.isPresent(), is(false));
     }
     
     @Test
     public void awsCreateCustomDomainName_notExistingDomainName_newDomainName() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway,
-                                                                                            NOT_EXISTING_DOMAIN, stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, NOT_EXISTING_DOMAIN, stage);
         Optional<CreateDomainNameResult> result = apiGatewayBasePathMapping.awsCreateCustomDomainName(CERTIFCATE_ARN);
         assertThat(result.isPresent(), is(equalTo(true)));
     }
     
     @Test
     public void awsCreateCustomDomainName_existingDomainName_newDomainName() {
-        ApiGatewayBasePathMapping apiGatewayBasePathMapping = new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME,
-                                                                                            stage);
+        ApiGatewayBasePathMapping apiGatewayBasePathMapping =
+                new ApiGatewayBasePathMapping(apiGateway, DOMAIN_NAME, stage);
         Optional<CreateDomainNameResult> result = apiGatewayBasePathMapping.awsCreateCustomDomainName(CERTIFCATE_ARN);
         assertThat(result.isPresent(), is(equalTo(false)));
     }
-    
 }

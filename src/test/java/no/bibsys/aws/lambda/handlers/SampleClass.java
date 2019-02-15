@@ -6,6 +6,8 @@ import no.bibsys.aws.tools.JsonUtils;
 import java.util.Objects;
 
 public class SampleClass {
+    private static final String RANDOM_ID = "id";
+    private static final String RANDOM_VALUE = "randomField";
     private String id;
     private String randomField;
     
@@ -18,7 +20,7 @@ public class SampleClass {
     }
     
     public static SampleClass create() {
-        return new SampleClass("id", "randomField");
+        return new SampleClass(RANDOM_ID, RANDOM_VALUE);
     }
     
     public String getId() {

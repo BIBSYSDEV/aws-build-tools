@@ -38,6 +38,7 @@ public class Route53UpdaterTest {
     private static final String REGIONAL_DOMAIN_NAME = "RegionalDomainName";
     private static final String BASEPATH = "Basepath";
     private static final String CERTIFICATE_ARN = "certificate";
+    private static final String NOT_FOUND_EXCEPTION_MESSAGE = "Not Found";
     
     private final transient AmazonRoute53 route53Client;
     private final transient AmazonApiGateway apiGateway;
@@ -149,7 +150,7 @@ public class Route53UpdaterTest {
     
     private AmazonApiGateway mockApiGatewayClientThrowingNotFoundException() {
         AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
-        when(apiGateway.getDomainName(any())).thenThrow(new NotFoundException("Not Found"));
+        when(apiGateway.getDomainName(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
         
         return apiGateway;
     }

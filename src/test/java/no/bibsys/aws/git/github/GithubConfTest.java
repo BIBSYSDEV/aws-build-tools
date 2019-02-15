@@ -23,6 +23,7 @@ class GithubConfTest {
     private static final String BRANCH = "branch";
     private static final String SECRET_VALUE = "secretValue";
     private static final Region REGION = Region.getRegion(Regions.EU_WEST_1);
+    private static final int FIRST_ELEMENT = 0;
     
     private final transient GithubConf githhubconfWithEnv;
     private transient GithubConf githubConf;
@@ -34,7 +35,7 @@ class GithubConfTest {
     
         Environment environment = Mockito.mock(Environment.class);
         when(environment.readEnv(anyString())).thenAnswer(invocation -> {
-            String envVariable = invocation.getArgument(0);
+            String envVariable = invocation.getArgument(FIRST_ELEMENT);
             if (GithubConf.AWS_REGION.equals(envVariable)) {
                 return REGION.toString();
             } else {

@@ -19,31 +19,36 @@ import static org.mockito.Mockito.when;
 class StackResourcesTest {
     
     private static final String LOGICAL_ID = "logicalId";
+    private static final String RANDOM_CHAR = "a";
+    private static final String ANOTHER_LOGICAL_ID = LOGICAL_ID + RANDOM_CHAR;
     private static final String PHYSICAL_ID = "physicalId";
+    private static final String ANOTHER_PHYSICAL_ID = PHYSICAL_ID + RANDOM_CHAR;
     private static final ResourceType RESOURCE_TYPE = ResourceType.REST_API;
     private static final ResourceType UNWANTED_RESOURCE = ResourceType.S3_BUCKET;
     private static final int EXPECTED_NUMBER_OF_RESOURCES = 1;
+    private static final int FIRST_ARRAY_ELEMENT = 0;
+    private static final String RANDOM_STACK_NAME = "STACK_NAME";
     private final transient StackResources stackResources;
     
     public StackResourcesTest() {
         AmazonCloudFormation client = Mockito.mock(AmazonCloudFormation.class);
         
         when(client.describeStackResources(any())).then((Answer<DescribeStackResourcesResult>) invocation -> {
-            DescribeStackResourcesRequest request = invocation.getArgument(0);
+            DescribeStackResourcesRequest request = invocation.getArgument(FIRST_ARRAY_ELEMENT);
             String stackName = request.getStackName();
             
             StackResource stackResource = new StackResource().withStackName(stackName).withLogicalResourceId(LOGICAL_ID)
                                                              .withPhysicalResourceId(PHYSICAL_ID)
                                                              .withResourceType(RESOURCE_TYPE.toString());
             StackResource annotherResource =
-                    new StackResource().withStackName(stackName).withLogicalResourceId(LOGICAL_ID + "a")
-                                       .withPhysicalResourceId(PHYSICAL_ID + "a")
+                    new StackResource().withStackName(stackName).withLogicalResourceId(ANOTHER_LOGICAL_ID)
+                                       .withPhysicalResourceId(ANOTHER_PHYSICAL_ID)
                                        .withResourceType(UNWANTED_RESOURCE.toString());
             
             return new DescribeStackResourcesResult().withStackResources(stackResource, annotherResource);
         });
-        
-        this.stackResources = new StackResources("STACK_NAME", client);
+    
+        this.stackResources = new StackResources(RANDOM_STACK_NAME, client);
     }
     
     @Test
