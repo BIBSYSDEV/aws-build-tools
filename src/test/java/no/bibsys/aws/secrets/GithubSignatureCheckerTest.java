@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 public class GithubSignatureCheckerTest {
     
-    private final static String secretKey = "SECRETKEY";
+    private static final String secretKey = "SECRETKEY";
     private static final String GITHUB_TEST_RESOURCES = "github";
     private static final String SAMPLE_GITHUB_EVENT = "sha_test_githubEvent.json";
     private static final String SAMPLE_GITHUB_HEADER = "sha_test_github_header.txt";
@@ -31,7 +31,6 @@ public class GithubSignatureCheckerTest {
     
         secretsReaderWithNullKey = Mockito.mock(AwsSecretsReader.class);
         when(secretsReaderWithNullKey.readSecret()).thenReturn(null);
-    
     }
     
     @Test

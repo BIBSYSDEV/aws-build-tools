@@ -24,39 +24,39 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 
 public class ApiGatewayHandlerTemplateTest extends LocalTest {
-    
+
     private static final String STATUS_CODE = "statusCode";
     private static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "Unauthorized";
     private static final String IO_EXCEPTION_EXCEPTION_MESSAGE = "IOException";
     private static final String BODY_FIELD = "body";
     private final String apiGatewayMessage;
     private ObjectMapper parser = JsonUtils.newJsonParser();
-    
+
     private ApiGatewayHandlerTemplate<SampleClass, SampleClass> template =
-            new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
-                @Override
-                protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
-                    return input;
-                }
-            };
-    
+        new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
+            @Override
+            protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
+                return input;
+            }
+        };
+
     private ApiGatewayHandlerTemplate<SampleClass, SampleClass> unauthorizedTemplate =
-            new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
-                @Override
-                protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
-                    throw new UnauthorizedException(UNAUTHORIZED_EXCEPTION_MESSAGE);
-                }
-            };
-    
+        new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
+            @Override
+            protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context) {
+                throw new UnauthorizedException(UNAUTHORIZED_EXCEPTION_MESSAGE);
+            }
+        };
+
     private ApiGatewayHandlerTemplate<SampleClass, SampleClass> unknownErrorTemplate =
-            new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
-                @Override
-                protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context)
-                        throws IOException {
-                    throw new IOException(IO_EXCEPTION_EXCEPTION_MESSAGE);
-                }
-            };
-    
+        new ApiGatewayHandlerTemplate<SampleClass, SampleClass>(SampleClass.class) {
+            @Override
+            protected SampleClass processInput(SampleClass input, Map<String, String> headers, Context context)
+                throws IOException {
+                throw new IOException(IO_EXCEPTION_EXCEPTION_MESSAGE);
+            }
+        };
+
     public ApiGatewayHandlerTemplateTest() throws IOException {
         super();
         apiGatewayMessage = apiGatewayMessageWithObjectAsBody(SampleClass.create());

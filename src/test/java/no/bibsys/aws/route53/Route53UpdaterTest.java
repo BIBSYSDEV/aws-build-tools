@@ -44,7 +44,7 @@ public class Route53UpdaterTest {
     private final transient AmazonApiGateway apiGateway;
     private final transient AmazonApiGateway apiGatewayThrowsNotFoundException;
     private final transient StaticUrlInfo staticUrlInfo =
-            new StaticUrlInfo(ZONE_NAME, SAMPLE_RECORD_SET_NAME, Stage.TEST);
+        new StaticUrlInfo(ZONE_NAME, SAMPLE_RECORD_SET_NAME, Stage.TEST);
     
     private final transient Route53Updater route53Updater;
     
@@ -101,8 +101,8 @@ public class Route53UpdaterTest {
     @Test
     public void deleteRecordsSetRequest_nonExistingDomain_emptyOptional() {
         Route53Updater route53Updater =
-                new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, apiGatewayThrowsNotFoundException,
-                                   route53Client);
+            new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, apiGatewayThrowsNotFoundException,
+                route53Client);
         
         Optional<ChangeResourceRecordSetsRequest> result = route53Updater.createDeleteRequest();
         assertThat(result, is(equalTo(Optional.empty())));
@@ -111,7 +111,7 @@ public class Route53UpdaterTest {
     @Test
     public void executeDeleteRequest_request_result() {
         Optional<ChangeResourceRecordSetsResult> result =
-                route53Updater.createDeleteRequest().map(route53Updater::executeDeleteRequest);
+            route53Updater.createDeleteRequest().map(route53Updater::executeDeleteRequest);
         
         assertTrue(result.isPresent());
     }
@@ -119,7 +119,7 @@ public class Route53UpdaterTest {
     @Test
     public void executUpdateRequest_request_result() {
         Optional<ChangeResourceRecordSetsResult> result =
-                route53Updater.createUpdateRequest(CERTIFICATE_ARN).map(route53Updater::executeUpdateRequest);
+            route53Updater.createUpdateRequest(CERTIFICATE_ARN).map(route53Updater::executeUpdateRequest);
         
         assertTrue(result.isPresent());
     }
@@ -128,13 +128,13 @@ public class Route53UpdaterTest {
     public void setRoute53Client_route53Client_newRoute53Client() {
         route53Updater.setRoute53Client(null);
         assertThrows(NullPointerException.class,
-                     () -> route53Updater.createDeleteRequest().ifPresent(route53Updater::executeDeleteRequest));
+            () -> route53Updater.createDeleteRequest().ifPresent(route53Updater::executeDeleteRequest));
     }
     
     private AmazonRoute53 mockRoute53Client(String zoneName) {
         AmazonRoute53 client = Mockito.mock(AmazonRoute53.class);
         when(client.listHostedZones()).thenReturn(
-                new ListHostedZonesResult().withHostedZones(new HostedZone().withId(ZONE_ID).withName(zoneName)));
+            new ListHostedZonesResult().withHostedZones(new HostedZone().withId(ZONE_ID).withName(zoneName)));
         when(client.changeResourceRecordSets(any())).thenReturn(new ChangeResourceRecordSetsResult());
         return client;
     }
@@ -142,9 +142,9 @@ public class Route53UpdaterTest {
     private AmazonApiGateway mockApiGatewayClient() {
         AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
         when(apiGateway.getDomainName(any())).thenReturn(
-                new GetDomainNameResult().withDomainName(DOMAIN_NAME).withRegionalDomainName(REGIONAL_DOMAIN_NAME));
+            new GetDomainNameResult().withDomainName(DOMAIN_NAME).withRegionalDomainName(REGIONAL_DOMAIN_NAME));
         when(apiGateway.getBasePathMappings(any()))
-                .thenReturn(new GetBasePathMappingsResult().withItems(new BasePathMapping().withBasePath(BASEPATH)));
+            .thenReturn(new GetBasePathMappingsResult().withItems(new BasePathMapping().withBasePath(BASEPATH)));
         return apiGateway;
     }
     
