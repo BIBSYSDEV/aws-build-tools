@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.bibsys.aws.tools.JsonUtils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public class AWSSecretsReader implements SecretsReader {
@@ -35,15 +36,19 @@ public class AWSSecretsReader implements SecretsReader {
     
     @Override
     public String readSecret() throws IOException {
-        ObjectMapper mapper = JsonUtils.newJsonParser();
+    
         Optional<GetSecretValueResult> getSecretValueResult = readSecretsForName();
-        
-        if (getSecretValueResult.map(result -> result.getSecretString()).isPresent()) {
+    
+        if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
             String secret = getSecretValueResult.get().getSecretString();
-            String value = mapper.readTree(secret).findValuesAsText(secretKey).stream().findFirst().orElse(null);
-            return value;
+            return readValuesForKeyFromJson(secret).stream().findFirst().orElse(null);
         }
         return null;
+    }
+    
+    private List<String> readValuesForKeyFromJson(String secret) throws IOException {
+        ObjectMapper mapper = JsonUtils.newJsonParser();
+        return mapper.readTree(secret).findValuesAsText(secretKey);
     }
     
     private Optional<GetSecretValueResult> readSecretsForName() {
