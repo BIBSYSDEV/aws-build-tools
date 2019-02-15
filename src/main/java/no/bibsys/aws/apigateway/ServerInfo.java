@@ -7,7 +7,7 @@ public class ServerInfo {
     
     protected static final char PATH_SEPARATOR = '/';
     private static final String basePathString = PATH_SEPARATOR + "{basePath}";
-    private static final String basePathStringRegex = PATH_SEPARATOR + "\\{basePath}";
+    private static final String removeBasePathFromApiGatewayUrlRegex = PATH_SEPARATOR + "\\{basePath}";
     private final String serverUrl;
     private final String stage;
 
@@ -46,6 +46,7 @@ public class ServerInfo {
      * @return The Server URL where {@code {basepath}} and "http(s)://" has been removed.
      */
     public String serverAddress() {
-        return serverUrl.replaceAll("(http(s?)):" + PATH_SEPARATOR + "/", "").replaceAll(basePathStringRegex, "");
+        return serverUrl.replaceAll("(http(s?)):" + PATH_SEPARATOR + PATH_SEPARATOR, "")
+                        .replaceAll(removeBasePathFromApiGatewayUrlRegex, "");
     }
 }
