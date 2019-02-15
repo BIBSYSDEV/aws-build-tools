@@ -6,6 +6,7 @@ import no.bibsys.aws.lambda.events.exceptions.UnsupportedEventException;
 import no.bibsys.aws.tools.JsonUtils;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public final class DeployEventBuilder {
     
@@ -19,7 +20,7 @@ public final class DeployEventBuilder {
     }
     
     public static DeployEvent create(String eventJsonString) throws IOException, UnsupportedEventException {
-        if (eventJsonString != null && !eventJsonString.isEmpty()) {
+        if (Objects.nonNull(eventJsonString) && !eventJsonString.isEmpty()) {
             return readEventFromString(eventJsonString);
         } else {
             throw new UnsupportedEventException(EMPTY_EVENT_STRING);
