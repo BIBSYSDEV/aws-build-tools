@@ -26,6 +26,8 @@ public class Route53Updater {
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
     private static final String EXACTLY_ONE_ZONE_MESSAGE = "There should exist exactly one hosted zone with the name ";
     private static final int _EXACTLY_ONE_ZONE = 1;
+    private static final int FIRST_ARRAY_ELLEMENT = 0;
+    private static final long STANDARD_TTL = 300L;
     private final transient StaticUrlInfo staticUrlInfo;
     
     private final transient String apiGatewayRestApiId;
@@ -68,7 +70,6 @@ public class Route53Updater {
         
         Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
         return targetDomainName.map(this::deleteRecordSetsRequest);
-        
     }
     
     public ChangeResourceRecordSetsResult executeUpdateRequest(ChangeResourceRecordSetsRequest request) {
@@ -86,7 +87,7 @@ public class Route53Updater {
         List<HostedZone> hostedZones = zonesMatchingStaticUrlInfoZoneName();
         Preconditions.checkArgument(hostedZones.size() == _EXACTLY_ONE_ZONE,
                                     EXACTLY_ONE_ZONE_MESSAGE + staticUrlInfo.getZoneName());
-        return hostedZones.get(0);
+        return hostedZones.get(FIRST_ARRAY_ELLEMENT);
     }
     
     private List<HostedZone> zonesMatchingStaticUrlInfoZoneName() {
@@ -127,7 +128,8 @@ public class Route53Updater {
     
     private ResourceRecordSet createRecordSet(String serverUrl) {
         ResourceRecordSet recordSet =
-                new ResourceRecordSet().withName(staticUrlInfo.getRecordSetName()).withType(RRType.CNAME).withTTL(300L)
+                new ResourceRecordSet().withName(staticUrlInfo.getRecordSetName()).withType(RRType.CNAME)
+                                       .withTTL(STANDARD_TTL)
                                        .withResourceRecords(new ResourceRecord().withValue(serverUrl));
         return recordSet;
     }
