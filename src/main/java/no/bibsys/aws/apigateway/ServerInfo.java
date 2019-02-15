@@ -6,6 +6,7 @@ package no.bibsys.aws.apigateway;
 public class ServerInfo {
     
     protected static final char PATH_SEPARATOR = '/';
+    private static final String HTTP_PROTOCOL_MATCH = "(http(s?))://";
     private static final String basePathString = PATH_SEPARATOR + "{basePath}";
     private static final String removeBasePathFromApiGatewayUrlRegex = PATH_SEPARATOR + "\\{basePath}";
     private final String serverUrl;
@@ -46,7 +47,7 @@ public class ServerInfo {
      * @return The Server URL where {@code {basepath}} and "http(s)://" has been removed.
      */
     public String serverAddress() {
-        return serverUrl.replaceAll("(http(s?)):" + PATH_SEPARATOR + PATH_SEPARATOR, "")
+        return serverUrl.replaceAll(HTTP_PROTOCOL_MATCH, "")
                         .replaceAll(removeBasePathFromApiGatewayUrlRegex, "");
     }
 }

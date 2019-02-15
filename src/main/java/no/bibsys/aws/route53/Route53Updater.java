@@ -25,9 +25,9 @@ public class Route53Updater {
     
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
     private static final String EXACTLY_ONE_ZONE_MESSAGE = "There should exist exactly one hosted zone with the name ";
-    private static final int _EXACTLY_ONE_ZONE = 1;
-    private static final int FIRST_ARRAY_ELLEMENT = 0;
+    private static final int EXACTLY_ONE_ZONE = 1;
     private static final long STANDARD_TTL = 300L;
+    private static final int SINGLE_ZONE_IN_ZONE_LIST = 0;
     private final transient StaticUrlInfo staticUrlInfo;
     
     private final transient String apiGatewayRestApiId;
@@ -57,7 +57,7 @@ public class Route53Updater {
         prepareCustomDomainName(certificateArn);
         
         Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
-        return targetDomainName.map(domainName -> updateRecordSetsRequest(domainName));
+        return targetDomainName.map(this::updateRecordSetsRequest);
     }
     
     private void prepareCustomDomainName(String certificateArn) {
@@ -85,9 +85,9 @@ public class Route53Updater {
     
     private HostedZone getHostedZone() {
         List<HostedZone> hostedZones = zonesMatchingStaticUrlInfoZoneName();
-        Preconditions.checkArgument(hostedZones.size() == _EXACTLY_ONE_ZONE,
+        Preconditions.checkArgument(hostedZones.size() == EXACTLY_ONE_ZONE,
                                     EXACTLY_ONE_ZONE_MESSAGE + staticUrlInfo.getZoneName());
-        return hostedZones.get(FIRST_ARRAY_ELLEMENT);
+        return hostedZones.get(SINGLE_ZONE_IN_ZONE_LIST);
     }
     
     private List<HostedZone> zonesMatchingStaticUrlInfoZoneName() {

@@ -18,7 +18,7 @@ import java.util.Locale;
 public class CustomReponse implements CloseableHttpResponse {
     
     public static final String MESSAGE = "message";
-    private static final String RANDOM_PROTOCOL = "HTTP";
+    private static final String ARBITRARY_PROTOCOL = "HTTP";
     private static final int RANDOM_MAJOR_VERSION = 1;
     private static final int RANDOM_MINOR_VERSION = 1;
     private static final String RANDOM_REASON_PHRASE = "OK";
@@ -30,7 +30,7 @@ public class CustomReponse implements CloseableHttpResponse {
     
     @Override
     public StatusLine getStatusLine() {
-        return new BasicStatusLine(new ProtocolVersion(RANDOM_PROTOCOL, RANDOM_MAJOR_VERSION, RANDOM_MINOR_VERSION),
+        return new BasicStatusLine(new ProtocolVersion(ARBITRARY_PROTOCOL, RANDOM_MAJOR_VERSION, RANDOM_MINOR_VERSION),
                                    HttpStatus.SC_OK, RANDOM_REASON_PHRASE);
     }
     

@@ -19,10 +19,10 @@ import static org.mockito.Mockito.when;
 class StackResourcesTest {
     
     private static final String LOGICAL_ID = "logicalId";
-    private static final String RANDOM_CHAR = "a";
-    private static final String ANOTHER_LOGICAL_ID = LOGICAL_ID + RANDOM_CHAR;
+    private static final String ARBITRARY_CHAR = "a";
+    private static final String ANOTHER_LOGICAL_ID = LOGICAL_ID + ARBITRARY_CHAR;
     private static final String PHYSICAL_ID = "physicalId";
-    private static final String ANOTHER_PHYSICAL_ID = PHYSICAL_ID + RANDOM_CHAR;
+    private static final String ANOTHER_PHYSICAL_ID = PHYSICAL_ID + ARBITRARY_CHAR;
     private static final ResourceType RESOURCE_TYPE = ResourceType.REST_API;
     private static final ResourceType UNWANTED_RESOURCE = ResourceType.S3_BUCKET;
     private static final int EXPECTED_NUMBER_OF_RESOURCES = 1;
