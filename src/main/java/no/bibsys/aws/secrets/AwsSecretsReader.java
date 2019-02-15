@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class AWSSecretsReader implements SecretsReader {
+public class AwsSecretsReader implements SecretsReader {
     
     /**
      * Class for reading secrets from Amazon. It reads secrets from the AWS Secrets Manager and not encrypted parameters
@@ -24,13 +24,13 @@ public class AWSSecretsReader implements SecretsReader {
     private final transient String secretName;
     private final transient String secretKey;
     
-    public AWSSecretsReader(AWSSecretsManager client, String secretName, String secretKey) {
+    public AwsSecretsReader(AWSSecretsManager client, String secretName, String secretKey) {
         this.client = client;
         this.secretKey = secretKey;
         this.secretName = secretName;
     }
     
-    public AWSSecretsReader(String secretName, String secretKey, Region region) {
+    public AwsSecretsReader(String secretName, String secretKey, Region region) {
         this(AWSSecretsManagerClientBuilder.standard().withRegion(region.toString()).build(), secretName, secretKey);
     }
     

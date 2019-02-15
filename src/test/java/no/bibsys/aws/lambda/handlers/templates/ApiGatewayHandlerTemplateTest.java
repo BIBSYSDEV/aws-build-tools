@@ -67,7 +67,6 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
         SampleClass actual = template.parseInput(apiGatewayMessage);
         SampleClass expected = SampleClass.create();
         assertThat(actual, is(equalTo(expected)));
-        
     }
     
     @Test
@@ -105,5 +104,4 @@ public class ApiGatewayHandlerTemplateTest extends LocalTest {
         ObjectNode response = parser.readValue(output, ObjectNode.class);
         assertThat(response.get(STATUS_CODE), is(not(equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR))));
     }
-    
 }

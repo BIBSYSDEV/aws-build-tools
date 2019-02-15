@@ -77,6 +77,7 @@ public class ApiGatewayBasePathMapping {
     }
     
     /**
+     * Creates a Custom Domain in AWS Api Gateway.
      * @param certifcateArn Certificate ARN. Certificate is stored in Certificate Manager
      * @return an {@link Optional} of a  CreateDomainNameResult if the does not exist already or
      * {@code Optional.empty} if the domain pre-exists

@@ -18,18 +18,18 @@ public class GithubSignatureCheckerTest {
     private static final String GITHUB_TEST_RESOURCES = "github";
     private static final String SAMPLE_GITHUB_EVENT = "sha_test_githubEvent.json";
     private static final String SAMPLE_GITHUB_HEADER = "sha_test_github_header.txt";
-    private final AWSSecretsReader secretsReaderWithCorrectKey;
-    private final AWSSecretsReader secretsReaderWithAnotherKey;
-    private final AWSSecretsReader secretsReaderWithNullKey;
+    private final AwsSecretsReader secretsReaderWithCorrectKey;
+    private final AwsSecretsReader secretsReaderWithAnotherKey;
+    private final AwsSecretsReader secretsReaderWithNullKey;
     
     public GithubSignatureCheckerTest() throws IOException {
-        secretsReaderWithCorrectKey = Mockito.mock(AWSSecretsReader.class);
+        secretsReaderWithCorrectKey = Mockito.mock(AwsSecretsReader.class);
         when(secretsReaderWithCorrectKey.readSecret()).thenReturn(secretKey);
     
-        secretsReaderWithAnotherKey = Mockito.mock(AWSSecretsReader.class);
+        secretsReaderWithAnotherKey = Mockito.mock(AwsSecretsReader.class);
         when(secretsReaderWithAnotherKey.readSecret()).thenReturn(secretKey.toLowerCase());
     
-        secretsReaderWithNullKey = Mockito.mock(AWSSecretsReader.class);
+        secretsReaderWithNullKey = Mockito.mock(AwsSecretsReader.class);
         when(secretsReaderWithNullKey.readSecret()).thenReturn(null);
     
     }
