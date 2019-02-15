@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 public class Route53Updater {
     
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
+    private static final String EXACTLY_ONE_ZONE_MESSAGE = "There should exist exactly one hosted zone with the name ";
+    private static final int _EXACTLY_ONE_ZONE = 1;
     private final transient StaticUrlInfo staticUrlInfo;
     
     private final transient String apiGatewayRestApiId;
@@ -65,7 +67,7 @@ public class Route53Updater {
     public Optional<ChangeResourceRecordSetsRequest> createDeleteRequest() {
         
         Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
-        return targetDomainName.map(domainName -> deleteRecordSetsRequest(domainName));
+        return targetDomainName.map(this::deleteRecordSetsRequest);
         
     }
     
@@ -81,13 +83,19 @@ public class Route53Updater {
     }
     
     private HostedZone getHostedZone() {
-        List<HostedZone> hostedZones = route53Client.listHostedZones().getHostedZones().stream()
-                                                    .filter(zone -> zone.getName().equals(staticUrlInfo.getZoneName()))
-                                                    .collect(Collectors.toList());
-        Preconditions.checkArgument(hostedZones.size() == 1,
-                                    "There should exist exactly one hosted zone with the name " + staticUrlInfo
-                                            .getZoneName());
+        List<HostedZone> hostedZones = zonesMatchingStaticUrlInfoZoneName();
+        Preconditions.checkArgument(hostedZones.size() == _EXACTLY_ONE_ZONE,
+                                    EXACTLY_ONE_ZONE_MESSAGE + staticUrlInfo.getZoneName());
         return hostedZones.get(0);
+    }
+    
+    private List<HostedZone> zonesMatchingStaticUrlInfoZoneName() {
+        return route53Client.listHostedZones().getHostedZones().stream().filter(this::zoneMatchesStaticUrlInfoZoneName)
+                            .collect(Collectors.toList());
+    }
+    
+    private boolean zoneMatchesStaticUrlInfoZoneName(HostedZone zone) {
+        return zone.getName().equals(staticUrlInfo.getZoneName());
     }
     
     private ChangeResourceRecordSetsRequest deleteRecordSetsRequest(String serverUrl) {
