@@ -12,7 +12,6 @@ import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
@@ -23,7 +22,7 @@ public class CustomReponse implements CloseableHttpResponse {
     private static final int RANDOM_MAJOR_VERSION = 1;
     private static final int RANDOM_MINOR_VERSION = 1;
     private static final String RANDOM_REASON_PHRASE = "OK";
-    private static final int FIRST_ARRAY_ELEMENT = 0;
+    private static final int NO_HEADERS = 0;
     
     @Override
     public void close() {
@@ -98,7 +97,7 @@ public class CustomReponse implements CloseableHttpResponse {
     
     @Override
     public Header[] getHeaders(String name) {
-        return new Header[0];
+        return new Header[NO_HEADERS];
     }
     
     @Override
@@ -113,7 +112,7 @@ public class CustomReponse implements CloseableHttpResponse {
     
     @Override
     public Header[] getAllHeaders() {
-        return new Header[FIRST_ARRAY_ELEMENT];
+        return new Header[NO_HEADERS];
     }
     
     @Override

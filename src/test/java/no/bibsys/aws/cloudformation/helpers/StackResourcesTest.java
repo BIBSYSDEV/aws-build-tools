@@ -26,7 +26,7 @@ class StackResourcesTest {
     private static final ResourceType RESOURCE_TYPE = ResourceType.REST_API;
     private static final ResourceType UNWANTED_RESOURCE = ResourceType.S3_BUCKET;
     private static final int EXPECTED_NUMBER_OF_RESOURCES = 1;
-    private static final int FIRST_ARRAY_ELEMENT = 0;
+    private static final int REQUEST = 0;
     private static final String RANDOM_STACK_NAME = "STACK_NAME";
     private final transient StackResources stackResources;
     
@@ -34,7 +34,7 @@ class StackResourcesTest {
         AmazonCloudFormation client = Mockito.mock(AmazonCloudFormation.class);
         
         when(client.describeStackResources(any())).then((Answer<DescribeStackResourcesResult>) invocation -> {
-            DescribeStackResourcesRequest request = invocation.getArgument(FIRST_ARRAY_ELEMENT);
+            DescribeStackResourcesRequest request = invocation.getArgument(REQUEST);
             String stackName = request.getStackName();
             
             StackResource stackResource = new StackResource().withStackName(stackName).withLogicalResourceId(LOGICAL_ID)
