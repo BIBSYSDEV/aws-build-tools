@@ -1,10 +1,12 @@
 package no.bibsys.aws.swaggerhub;
 
 import no.bibsys.aws.secrets.SecretsReader;
-import no.bibsys.aws.tools.Environment;
 
 import java.io.IOException;
 
+/**
+ * SwaggerHubInfo contains information about updating the SwaggerDocumentation for an API.
+ */
 public class SwaggerHubInfo {
     
     private final transient String apiId;
@@ -14,14 +16,14 @@ public class SwaggerHubInfo {
     private final transient SecretsReader secretsReader;
     
     /**
-     * SwaggerHub constructor without the use of {@link Environment}.
      *
-     * @param apiId The id of the api
-     * @param apiVersion The version of the API documentation. Can be {@code null} if the intended action is for
-     *         the whole API
-     * @param swaggerOrganization The SwaggerHub organization or account name
+     * SwaggerHub constructor.
+     * @param apiId The id of the API in the SwaggerHub account
+     * @param apiVersion The version of the API
+     * @param swaggerOrganization The username of the account or the organization
+     * @param secretsReader SecretsReader that provides the Rest-API key for updating the SwaggerHub account
      */
-
+    
     public SwaggerHubInfo(String apiId, String apiVersion, String swaggerOrganization, SecretsReader secretsReader) {
         this.apiId = apiId;
         this.apiVersion = apiVersion;
