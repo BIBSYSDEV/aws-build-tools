@@ -2,6 +2,7 @@ package no.bibsys.aws.route53;
 
 import com.amazonaws.services.apigateway.AmazonApiGateway;
 import com.amazonaws.services.apigateway.model.BasePathMapping;
+import com.amazonaws.services.apigateway.model.CreateDomainNameResult;
 import com.amazonaws.services.apigateway.model.GetBasePathMappingsResult;
 import com.amazonaws.services.apigateway.model.GetDomainNameResult;
 import com.amazonaws.services.apigateway.model.NotFoundException;
@@ -39,10 +40,12 @@ public class Route53UpdaterTest {
     private static final String BASEPATH = "Basepath";
     private static final String CERTIFICATE_ARN = "certificate";
     private static final String NOT_FOUND_EXCEPTION_MESSAGE = "Not Found";
+    private static final int FAILURE = 1;
+    private static final String PRIVATE_METHOD = "deletePossiblyExistingMappings";
+    private static final int EXACTLY_ONE_RECORDSET = 1;
     
     private final transient AmazonRoute53 route53Client;
     private final transient AmazonApiGateway apiGateway;
-    private final transient AmazonApiGateway apiGatewayThrowsNotFoundException;
     private final transient StaticUrlInfo staticUrlInfo =
         new StaticUrlInfo(ZONE_NAME, SAMPLE_RECORD_SET_NAME, Stage.TEST);
     
@@ -51,7 +54,7 @@ public class Route53UpdaterTest {
     public Route53UpdaterTest() {
         route53Client = mockRoute53Client(ZONE_NAME);
         apiGateway = mockApiGatewayClient();
-        apiGatewayThrowsNotFoundException = mockApiGatewayClientThrowingNotFoundException();
+    
         route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, apiGateway, route53Client);
     }
     
@@ -62,15 +65,25 @@ public class Route53UpdaterTest {
     }
     
     @Test
-    public void updateRecorsrSetsRequest_changeBatchWithOneChange() {
+    public void updateRecordsSetsRequest_changeBatchWithOneChange() {
         
         Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest(CERTIFICATE_ARN);
         assertTrue(requestOpt.isPresent());
-        assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(1)));
+        assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(EXACTLY_ONE_RECORDSET)));
     }
     
     @Test
-    public void updateRecorsrSetsRequest_voidf_ChangeWithChangeActionUpsert() {
+    public void createUpdateRequest_existingDomain_noException() {
+        Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
+            mockApiGatewayClientThrowingNotFoundExceptionForDeleteDomainName(), route53Client);
+        
+        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest(CERTIFICATE_ARN);
+        assertTrue(requestOpt.isPresent());
+        assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(EXACTLY_ONE_RECORDSET)));
+    }
+    
+    @Test
+    public void updateRecordsSetsRequest_void_ChangeWithChangeActionUpsert() {
         
         Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest(CERTIFICATE_ARN);
         
@@ -100,8 +113,8 @@ public class Route53UpdaterTest {
     
     @Test
     public void deleteRecordsSetRequest_nonExistingDomain_emptyOptional() {
-        Route53Updater route53Updater =
-            new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, apiGatewayThrowsNotFoundException,
+        Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
+            mockApiGatewayClientThrowingNotFoundExceptionForGetDomainName(),
                 route53Client);
         
         Optional<ChangeResourceRecordSetsRequest> result = route53Updater.createDeleteRequest();
@@ -148,10 +161,22 @@ public class Route53UpdaterTest {
         return apiGateway;
     }
     
-    private AmazonApiGateway mockApiGatewayClientThrowingNotFoundException() {
+    private AmazonApiGateway mockApiGatewayClientThrowingNotFoundExceptionForGetDomainName() {
         AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
         when(apiGateway.getDomainName(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
-        
+        when(apiGateway.getBasePathMappings(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
+        when(apiGateway.deleteDomainName(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
+        when(apiGateway.createDomainName(any())).thenReturn(new CreateDomainNameResult());
+        return apiGateway;
+    }
+    
+    private AmazonApiGateway mockApiGatewayClientThrowingNotFoundExceptionForDeleteDomainName() {
+        AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
+        when(apiGateway.deleteDomainName(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
+        when(apiGateway.getBasePathMappings(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
+        when(apiGateway.createDomainName(any())).thenReturn(new CreateDomainNameResult());
+        when(apiGateway.getDomainName(any())).thenReturn(
+            new GetDomainNameResult().withDomainName(DOMAIN_NAME).withRegionalDomainName(REGIONAL_DOMAIN_NAME));
         return apiGateway;
     }
 }
