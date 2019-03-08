@@ -28,7 +28,6 @@ public class CodePipelineFunctionHandlerTemplateTest extends LocalTest {
     private static final String NO_PIPELINE_EVENT = "{\"hello\":\"world\"}";
     private static final String CUSTOM_TRIGGERED_PIPELINE_EVENT_SUCCESS = "CustomTriggeredPipelineEvent success";
     
-    
     private final CodePipelineFunctionHandlerTemplate<String> successTemplate;
     private final CodePipelineFunctionHandlerTemplate<String> failureTemplate;
     
@@ -36,17 +35,18 @@ public class CodePipelineFunctionHandlerTemplateTest extends LocalTest {
         successTemplate = new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
             @Override
             protected String processInput(DeployEvent inputObject, String apiGatewayQuery, Context context) {
-                if (inputObject instanceof CodePipelineEvent)
+                if (inputObject instanceof CodePipelineEvent) {
                     return ((CodePipelineEvent) inputObject).getId();
-                else
+                } else {
                     return CUSTOM_TRIGGERED_PIPELINE_EVENT_SUCCESS;
+                }
             }
         };
         
         failureTemplate = new CodePipelineFunctionHandlerTemplate<String>(new MockCodePipelineCommunicator()) {
             @Override
             protected String processInput(DeployEvent inputObject, String apiGatewayQuery, Context context)
-                    throws IOException {
+                throws IOException {
                 throw new IOException(EXCEPTION_MESSAGE);
             }
         };
