@@ -98,7 +98,7 @@ dependencies {
     implementation group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '+'
 
     //this should be the same version as the one used by amazon
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.6.0'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.8'
 
     // useful java libraries
     implementation group: 'com.google.guava', name: 'guava', version: '27.0-jre'
