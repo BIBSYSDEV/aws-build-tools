@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeployEventBuilderTest {
     
@@ -29,17 +28,19 @@ public class DeployEventBuilderTest {
     }
     
     @Test
-    public void create_anotherEvent_CodePipelineEvent() throws IOException {
+    public void create_anotherEvent_CustomTriggeredDeployEvent() throws IOException, UnsupportedEventException {
         ObjectMapper parser = JsonUtils.newJsonParser();
         ObjectNode rootNode = parser.createObjectNode();
         rootNode.put(RANDOM_FIELD, RANDOM_VALUE);
         String json = parser.writeValueAsString(rootNode);
-        assertThrows(UnsupportedEventException.class, () -> DeployEventBuilder.create(json));
+        DeployEvent event = DeployEventBuilder.create(json);
+        assertThat(event instanceof CustomTriggeredDeployEvent, is(equalTo(true)));
     }
     
     @Test
-    public void create_emptyEventString_throwsException() {
-        assertThrows(UnsupportedEventException.class, () -> DeployEventBuilder.create(null));
+    public void create_emptyEventString_CustomTriggeredDeployEvent() throws IOException, UnsupportedEventException {
+        DeployEvent event = DeployEventBuilder.create(null);
+        assertThat(event instanceof CustomTriggeredDeployEvent, is(equalTo(true)));
     }
     
 }
