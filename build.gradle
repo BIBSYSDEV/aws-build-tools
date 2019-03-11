@@ -101,7 +101,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.8'
 
     // useful java libraries
-    implementation group: 'com.google.guava', name: 'guava', version: '27.0.1-jre'
+    implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
 
 
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.7'
