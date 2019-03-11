@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+
 public class ApiGatewayBasePathMappingTest {
     
     private static final String SAMPLE_REST_API_ID = "restApi";
@@ -42,7 +43,7 @@ public class ApiGatewayBasePathMappingTest {
     
     public ApiGatewayBasePathMappingTest() {
         apiGateway = Mockito.mock(AmazonApiGateway.class);
-        
+    
         when(apiGateway.createBasePathMapping(any())).thenAnswer((Answer<CreateBasePathMappingResult>) invocation -> {
             CreateBasePathMappingRequest request = invocation.getArgument(REQUEST_MESSAGE);
             CreateBasePathMappingResult result = new CreateBasePathMappingResult();
@@ -60,7 +61,7 @@ public class ApiGatewayBasePathMappingTest {
                 throw new NotFoundException(ERROR_MESSAGE);
             }
         });
-        
+    
         when(apiGateway.getBasePathMappings(any())).thenAnswer(invocation -> {
             GetBasePathMappingsRequest request = invocation.getArgument(REQUEST_MESSAGE);
             if (DOMAIN_NAME.equals(request.getDomainName())) {
@@ -69,7 +70,7 @@ public class ApiGatewayBasePathMappingTest {
                 throw new NotFoundException(ERROR_MESSAGE);
             }
         });
-        
+    
         when(apiGateway.getDomainName(any())).thenAnswer(invocation -> {
             GetDomainNameRequest request = invocation.getArgument(REQUEST_MESSAGE);
             if (DOMAIN_NAME.equals(request.getDomainName())) {
@@ -78,7 +79,7 @@ public class ApiGatewayBasePathMappingTest {
                 throw new NotFoundException(ERROR_MESSAGE);
             }
         });
-        
+    
         when(apiGateway.createDomainName(any())).thenReturn(new CreateDomainNameResult());
     }
     
