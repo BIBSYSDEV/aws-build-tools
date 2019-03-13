@@ -27,8 +27,6 @@ import java.util.stream.Stream;
 public class ApiGatewayBasePathMapping {
     
     private static final Logger logger = LoggerFactory.getLogger(ApiGatewayBasePathMapping.class);
-    private static final String NO_BASEPATH_MAPPINGS_FOUND_FOR_DOMAIN_NAME =
-        "No basepath mappings found for Domain Name:{}";
     private final transient AmazonApiGateway apiGatewayClient;
     private final transient String domainName;
     private final transient Stage stage;
@@ -107,7 +105,6 @@ public class ApiGatewayBasePathMapping {
                     domainName);
             return apiGatewayClient.getBasePathMappings(listBasePathsRequest).getItems().stream();
         } catch (NotFoundException e) {
-            logger.warn(NO_BASEPATH_MAPPINGS_FOUND_FOR_DOMAIN_NAME, domainName);
             return Stream.empty();
         }
     }

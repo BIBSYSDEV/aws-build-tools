@@ -23,7 +23,6 @@ import java.util.Optional;
 public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemplate<DeployEvent, O> {
 
     private static final Logger logger = LoggerFactory.getLogger(CodePipelineFunctionHandlerTemplate.class);
-    private static final String NEW_DEPLOY_EVENT_MSG = "new Deploy Event:{}";
     private final transient CodePipelineCommunicator codePipelineCommunicator;
     
     public CodePipelineFunctionHandlerTemplate(CodePipelineCommunicator codePipelineCommunicator) {
@@ -33,7 +32,6 @@ public abstract class CodePipelineFunctionHandlerTemplate<O> extends HandlerTemp
 
     @Override
     protected final DeployEvent parseInput(String inputString) throws IOException, UnsupportedEventException {
-        logger.info(NEW_DEPLOY_EVENT_MSG, inputString);
         return DeployEventBuilder.create(inputString);
     }
 
