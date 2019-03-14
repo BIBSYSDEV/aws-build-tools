@@ -5,12 +5,12 @@ import com.amazonaws.services.apigateway.model.GetExportRequest;
 import com.amazonaws.services.apigateway.model.GetExportResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 import no.bibsys.aws.cloudformation.Stage;
 import no.bibsys.aws.tools.JsonUtils;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,7 +33,7 @@ public class ApiGatewayInfo {
     public ApiGatewayInfo(Stage stage, AmazonApiGateway apiGatewayClient, String restApiId) {
         
         this.stage = stage;
-        Preconditions.checkNotNull(stage);
+        Objects.requireNonNull(stage);
         this.client = apiGatewayClient;
         this.restApiId = restApiId;
     }
