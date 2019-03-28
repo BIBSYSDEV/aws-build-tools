@@ -5,7 +5,7 @@ import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
-import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
+import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.bibsys.aws.tools.JsonUtils;
 
@@ -15,6 +15,7 @@ import java.util.Optional;
 
 public class AwsSecretsReader implements SecretsReader {
     
+    public static final String SECRET_NOT_FOUND_ERROR_MESSAGE = "Could not find secret with name %s and key %s";
     /**
      * Class for reading secrets from Amazon. It reads secrets from the AWS Secrets Manager and not encrypted parameters
      * from AWS SSM (System Manager).
@@ -41,9 +42,12 @@ public class AwsSecretsReader implements SecretsReader {
     
         if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
             String secret = getSecretValueResult.get().getSecretString();
-            return readValuesForKeyFromJson(secret).stream().findFirst().orElse(null);
+            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(
+                () -> new ResourceNotFoundException(
+                    String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey)));
+        } else {
+            throw new ResourceNotFoundException(String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey));
         }
-        return null;
     }
     
     private List<String> readValuesForKeyFromJson(String secret) throws IOException {
@@ -53,12 +57,6 @@ public class AwsSecretsReader implements SecretsReader {
     
     private Optional<GetSecretValueResult> readSecretsForName() {
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(secretName);
-        Optional<GetSecretValueResult> getSecretValueResult = Optional.empty();
-        try {
-            getSecretValueResult = Optional.ofNullable(client.getSecretValue(getSecretValueRequest));
-        } catch (InvalidRequestException e) {
-            getSecretValueResult = Optional.empty();
-        }
-        return getSecretValueResult;
+        return Optional.ofNullable(client.getSecretValue(getSecretValueRequest));
     }
 }
