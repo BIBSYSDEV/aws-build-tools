@@ -82,7 +82,7 @@ wrapper {
 dependencies {
 
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-api-gateway', version: '1.11.517'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-cloudformation', version: '1.11.517'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-cloudformation', version: '1.11.527'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-codepipeline', version: '1.11.517'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-route53', version: '1.11.517'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-secretsmanager', version: '1.11.517'
