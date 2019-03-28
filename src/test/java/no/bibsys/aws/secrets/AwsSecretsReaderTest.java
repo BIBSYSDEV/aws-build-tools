@@ -2,6 +2,9 @@ package no.bibsys.aws.secrets;
 
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
+import com.amazonaws.services.secretsmanager.model.InvalidParameterException;
+import com.amazonaws.services.secretsmanager.model.InvalidRequestException;
+import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,6 +17,8 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +37,7 @@ public class AwsSecretsReaderTest {
         
         AWSSecretsManager secretsManagerWithValue = Mockito.mock(AWSSecretsManager.class);
         when(secretsManagerWithValue.getSecretValue(any()))
-                .thenReturn(new GetSecretValueResult().withSecretString(keyJson));
+            .thenReturn(new GetSecretValueResult().withSecretString(keyJson));
         
         this.secretsReaderFindsValue = new AwsSecretsReader(secretsManagerWithValue, SECRET_NAME, SECRET_KEY);
     }
@@ -44,8 +49,61 @@ public class AwsSecretsReaderTest {
     }
     
     @Test
-    public void readSecret_nonExistingSecrte_excetption() throws IOException {
-        String value = secretsReaderFindsValue.readSecret();
-        assertThat(value, is(equalTo(SECRET_VALUE)));
+    public void readSecret_nonExistingSecret_exception() throws IOException {
+    
+        AWSSecretsManager secretsManagerWithoutValues = Mockito.mock(AWSSecretsManager.class);
+        String exception_message = "exception message";
+        when(secretsManagerWithoutValues.getSecretValue(any()))
+            .thenThrow(new ResourceNotFoundException(exception_message));
+        AwsSecretsReader secretsReaderWithNoValue =
+            new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
+    
+        ResourceNotFoundException thrown =
+            assertThrows(ResourceNotFoundException.class, () -> secretsReaderWithNoValue.readSecret());
+        assertThat(thrown.getMessage(), containsString(exception_message));
+    }
+    
+    @Test
+    public void readSecret_SecretInInvalidStatus_exception() {
+        
+        AWSSecretsManager secretsManagerWithoutValues = Mockito.mock(AWSSecretsManager.class);
+        String exception_message = "exception message";
+        when(secretsManagerWithoutValues.getSecretValue(any()))
+            .thenThrow(new InvalidParameterException(exception_message));
+        AwsSecretsReader secretsReaderWithNoValue =
+            new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
+        
+        InvalidParameterException thrown =
+            assertThrows(InvalidParameterException.class, secretsReaderWithNoValue::readSecret);
+        assertThat(thrown.getMessage(), containsString(exception_message));
+    }
+    
+    @Test
+    public void readSecret_invalidRequest_exception() {
+        
+        AWSSecretsManager secretsManagerWithoutValues = Mockito.mock(AWSSecretsManager.class);
+        String exception_message = "exception message";
+        when(secretsManagerWithoutValues.getSecretValue(any()))
+            .thenThrow(new InvalidRequestException(exception_message));
+        AwsSecretsReader secretsReaderWithNoValue =
+            new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
+        
+        InvalidRequestException thrown =
+            assertThrows(InvalidRequestException.class, secretsReaderWithNoValue::readSecret);
+        assertThat(thrown.getMessage(), containsString(exception_message));
+    }
+    
+    @Test
+    public void readSecret_nullStringSecret_exception() throws IOException {
+        
+        AWSSecretsManager secretsManagerWithoutValues = Mockito.mock(AWSSecretsManager.class);
+        when(secretsManagerWithoutValues.getSecretValue(any()))
+            .thenReturn(new GetSecretValueResult().withSecretString(null));
+        AwsSecretsReader secretsReaderWithNoValue =
+            new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
+        ResourceNotFoundException thrown =
+            assertThrows(ResourceNotFoundException.class, secretsReaderWithNoValue::readSecret);
+        String errorMessage = String.format(AwsSecretsReader.SECRET_NOT_FOUND_ERROR_MESSAGE, SECRET_NAME, SECRET_KEY);
+        assertThat(thrown.getMessage(), containsString(errorMessage));
     }
 }
