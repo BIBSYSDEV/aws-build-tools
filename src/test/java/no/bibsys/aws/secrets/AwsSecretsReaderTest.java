@@ -28,6 +28,8 @@ public class AwsSecretsReaderTest {
     private static final String SECRET_KEY = "github";
     private static final String SECRET_NAME = "github";
     private static final String SECRET_VALUE = "secretValue";
+    private static final String ANOTHER_KEY = "someKey";
+    private static final String ARBITRARY_VALUE = "someValue";
     private final SecretsReader secretsReaderFindsValue;
     
     public AwsSecretsReaderTest() throws JsonProcessingException {
@@ -59,7 +61,7 @@ public class AwsSecretsReaderTest {
             new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
     
         ResourceNotFoundException thrown =
-            assertThrows(ResourceNotFoundException.class, () -> secretsReaderWithNoValue.readSecret());
+            assertThrows(ResourceNotFoundException.class, secretsReaderWithNoValue::readSecret);
         assertThat(thrown.getMessage(), containsString(EXCEPTION_MESSAGE));
     }
     
@@ -104,4 +106,24 @@ public class AwsSecretsReaderTest {
         String errorMessage = String.format(AwsSecretsReader.SECRET_NOT_FOUND_ERROR_MESSAGE, SECRET_NAME, SECRET_KEY);
         assertThat(thrown.getMessage(), containsString(errorMessage));
     }
+    
+    @Test
+    public void readSecret_secretStringWithoutTheCorrectKey_exception() throws JsonProcessingException {
+        
+        ObjectMapper mapper = JsonUtils.newJsonParser();
+        AWSSecretsManager secretsManagerWithoutValues = Mockito.mock(AWSSecretsManager.class);
+        ObjectNode secretStringNode = mapper.createObjectNode();
+        secretStringNode.put(ANOTHER_KEY, ARBITRARY_VALUE);
+        String secretString = mapper.writeValueAsString(secretStringNode);
+        when(secretsManagerWithoutValues.getSecretValue(any()))
+            .thenReturn(new GetSecretValueResult().withSecretString(secretString));
+        AwsSecretsReader secretsReaderWithNoValue =
+            new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
+        ResourceNotFoundException thrown =
+            assertThrows(ResourceNotFoundException.class, secretsReaderWithNoValue::readSecret);
+        String errorMessage = String.format(AwsSecretsReader.SECRET_NOT_FOUND_ERROR_MESSAGE, SECRET_NAME, SECRET_KEY);
+        assertThat(thrown.getMessage(), containsString(errorMessage));
+    }
+    
+    
 }
