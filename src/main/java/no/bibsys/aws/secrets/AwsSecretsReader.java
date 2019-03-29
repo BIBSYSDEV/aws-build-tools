@@ -22,10 +22,10 @@ import java.util.Optional;
 public class AwsSecretsReader implements SecretsReader {
     
     public static final String SECRET_NOT_FOUND_ERROR_MESSAGE = "Could not find secret with name %s and key %s";
-    public static final String LOG_ERROR_READING_SECRET =
+    private static final String LOG_ERROR_READING_SECRET =
         "Error while trying to read secret with name {} and with key {}";
     
-    private final Logger logger = LoggerFactory.getLogger(AwsSecretsReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(AwsSecretsReader.class);
     private final transient AWSSecretsManager client;
     private final transient String secretName;
     private final transient String secretKey;
