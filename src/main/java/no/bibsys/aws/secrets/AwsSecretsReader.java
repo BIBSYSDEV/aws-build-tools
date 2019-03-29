@@ -8,19 +8,24 @@ import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.bibsys.aws.tools.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Class for reading secrets from Amazon. It reads secrets from the AWS Secrets Manager and not encrypted parameters
+ * from AWS SSM (System Manager).
+ */
 public class AwsSecretsReader implements SecretsReader {
     
     public static final String SECRET_NOT_FOUND_ERROR_MESSAGE = "Could not find secret with name %s and key %s";
-    /**
-     * Class for reading secrets from Amazon. It reads secrets from the AWS Secrets Manager and not encrypted parameters
-     * from AWS SSM (System Manager).
-     */
+    public static final String LOG_ERROR_READING_SECRET =
+        "Error while trying to read secret with name {} and with key {}";
     
+    private final Logger logger = LoggerFactory.getLogger(AwsSecretsReader.class);
     private final transient AWSSecretsManager client;
     private final transient String secretName;
     private final transient String secretKey;
@@ -37,15 +42,15 @@ public class AwsSecretsReader implements SecretsReader {
     
     @Override
     public String readSecret() throws IOException {
-    
+        
         Optional<GetSecretValueResult> getSecretValueResult = readSecretsForName();
-    
+        
         if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
             String secret = getSecretValueResult.get().getSecretString();
-            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(
-                () -> new ResourceNotFoundException(
-                    String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey)));
+            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(() -> new ResourceNotFoundException(
+                String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey)));
         } else {
+            logger.error(LOG_ERROR_READING_SECRET, secretName, secretKey);
             throw new ResourceNotFoundException(String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey));
         }
     }
@@ -56,7 +61,12 @@ public class AwsSecretsReader implements SecretsReader {
     }
     
     private Optional<GetSecretValueResult> readSecretsForName() {
-        GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(secretName);
-        return Optional.ofNullable(client.getSecretValue(getSecretValueRequest));
+        try {
+            GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(secretName);
+            return Optional.ofNullable(client.getSecretValue(getSecretValueRequest));
+        } catch (Exception e) {
+            logger.error(LOG_ERROR_READING_SECRET, secretName, secretKey);
+            throw e;
+        }
     }
 }
