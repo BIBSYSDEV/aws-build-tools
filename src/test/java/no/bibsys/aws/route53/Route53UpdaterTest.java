@@ -1,6 +1,7 @@
 package no.bibsys.aws.route53;
 
 import com.amazonaws.services.apigateway.AmazonApiGateway;
+import com.amazonaws.services.apigateway.model.BadRequestException;
 import com.amazonaws.services.apigateway.model.BasePathMapping;
 import com.amazonaws.services.apigateway.model.CreateDomainNameResult;
 import com.amazonaws.services.apigateway.model.GetBasePathMappingsResult;
@@ -65,9 +66,10 @@ public class Route53UpdaterTest {
     }
     
     @Test
-    public void updateRecordsSetsRequest_changeBatchWithOneChange() {
-        
-        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest(CERTIFICATE_ARN);
+    public void updateRecordsSetsRequest_certificateArn_changeBatchWithOneChange() {
+    
+        Optional<ChangeResourceRecordSetsRequest> requestOpt =
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
         assertTrue(requestOpt.isPresent());
         assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(EXACTLY_ONE_RECORDSET)));
     }
@@ -76,16 +78,29 @@ public class Route53UpdaterTest {
     public void createUpdateRequest_existingDomain_noException() {
         Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
             mockApiGatewayClientThrowingNotFoundExceptionForDeleteDomainName(), route53Client);
-        
-        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest(CERTIFICATE_ARN);
+    
+        Optional<ChangeResourceRecordSetsRequest> requestOpt =
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
         assertTrue(requestOpt.isPresent());
         assertThat(requestOpt.get().getChangeBatch().getChanges().size(), is(equalTo(EXACTLY_ONE_RECORDSET)));
     }
     
     @Test
-    public void updateRecordsSetsRequest_void_ChangeWithChangeActionUpsert() {
+    public void createUpdateRequest_invalidCertificateArn_emptyOptional() {
+        Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
+            mockApiGatewayClientThrowingBadRequestException(), mockRoute53Client(ZONE_NAME));
         
-        Optional<ChangeResourceRecordSetsRequest> requestOpt = route53Updater.createUpdateRequest(CERTIFICATE_ARN);
+        Optional<ChangeResourceRecordSetsRequest> result =
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
+        
+        assertThat(result.isPresent(), is(equalTo(false)));
+    }
+    
+    @Test
+    public void updateRecordsSetsRequest_void_ChangeWithChangeActionUpsert() {
+    
+        Optional<ChangeResourceRecordSetsRequest> requestOpt =
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
         
         assertTrue(requestOpt.isPresent());
         ChangeResourceRecordSetsRequest request = requestOpt.get();
@@ -132,7 +147,7 @@ public class Route53UpdaterTest {
     @Test
     public void executUpdateRequest_request_result() {
         Optional<ChangeResourceRecordSetsResult> result =
-            route53Updater.createUpdateRequest(CERTIFICATE_ARN).map(route53Updater::executeUpdateRequest);
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN).map(route53Updater::executeUpdateRequest);
         
         assertTrue(result.isPresent());
     }
@@ -158,6 +173,15 @@ public class Route53UpdaterTest {
             new GetDomainNameResult().withDomainName(DOMAIN_NAME).withRegionalDomainName(REGIONAL_DOMAIN_NAME));
         when(apiGateway.getBasePathMappings(any()))
             .thenReturn(new GetBasePathMappingsResult().withItems(new BasePathMapping().withBasePath(BASEPATH)));
+        return apiGateway;
+    }
+    
+    private AmazonApiGateway mockApiGatewayClientThrowingBadRequestException() {
+        AmazonApiGateway apiGateway = Mockito.mock(AmazonApiGateway.class);
+        when(apiGateway.getDomainName(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
+        when(apiGateway.getBasePathMappings(any())).thenThrow(new NotFoundException(NOT_FOUND_EXCEPTION_MESSAGE));
+        when(apiGateway.createDomainName(any()))
+            .thenThrow(new BadRequestException("Bad request when creating a Domain name"));
         return apiGateway;
     }
     
