@@ -47,8 +47,9 @@ public class AwsSecretsReader implements SecretsReader {
         
         if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
             String secret = getSecretValueResult.get().getSecretString();
-            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(() -> new ResourceNotFoundException(
-                String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey)));
+            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(
+                () -> new ResourceNotFoundException(
+                    String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey)));
         } else {
             logger.error(LOG_ERROR_READING_SECRET, secretName, secretKey);
             throw new ResourceNotFoundException(String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey));
