@@ -62,7 +62,7 @@ public class Route53Updater {
      * specified in the {@link StaticUrlInfo} field of the class. The entry will have the name given by {@link
      * StaticUrlInfo#getRecordSetName()} and will link to {@link StaticUrlInfo#getDomainName()}.
      *
-     * @param certificateArn
+     * @param certificateArn The ARN of a AWS Certificate in Certificate Manager
      * @return An {@link Optional} with a {@link ChangeResourceRecordSetsRequest} if the domain name exists and the
      *     certificate is valid.
      *     <p>
