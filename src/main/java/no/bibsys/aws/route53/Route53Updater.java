@@ -13,7 +13,6 @@ import com.amazonaws.services.route53.model.HostedZone;
 import com.amazonaws.services.route53.model.RRType;
 import com.amazonaws.services.route53.model.ResourceRecord;
 import com.amazonaws.services.route53.model.ResourceRecordSet;
-import com.google.common.base.Preconditions;
 import no.bibsys.aws.apigateway.ApiGatewayBasePathMapping;
 import no.bibsys.aws.cloudformation.Stage;
 import org.slf4j.Logger;
@@ -25,15 +24,15 @@ import java.util.stream.Collectors;
 
 public class Route53Updater {
     
-    public static final String PREPARED_CUSTOM_DOMAIN_NAME_DEBUG_MESSAGE = "prepared custom domain name";
+    public static final String HOSTED_ZONE_NOT_FOUND_MESSAGE =
+        "Either none or too many Route 53 hosted zones found for the url {}";
+    private static final String PREPARED_CUSTOM_DOMAIN_NAME_DEBUG_MESSAGE = "prepared custom domain name";
+    private static final String PREPARING_CUSTOM_DOMAIN_NAME_DEBUG_MESSAGE = "Preparing Custom Domain Name";
     private static final Logger log = LoggerFactory.getLogger(Route53Updater.class);
-    private static final String EXACTLY_ONE_ZONE_MESSAGE = "There should exist exactly one hosted zone with the name ";
     private static final int EXACTLY_ONE_ZONE = 1;
     private static final long STANDARD_TTL = 300L;
     private static final int SINGLE_ZONE_IN_ZONE_LIST = 0;
     private static final String NOT_EXISTING_BASEPATH_MAPPING_WARNING = "Not existing Basepath Mapping";
-    public static final String PREPARING_CUSTOM_DOMAIN_NAME_DEBUG_MESSAGE = "Preparing Custom Domain Name";
-    
     private final transient StaticUrlInfo staticUrlInfo;
     
     private final transient String apiGatewayRestApiId;
@@ -86,8 +85,26 @@ public class Route53Updater {
         }
         
         Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
-        return targetDomainName.map(this::updateRecordSetsRequest);
+        return targetDomainName.flatMap(this::updateRecordSetsRequest);
     }
+    
+    public Optional<ChangeResourceRecordSetsRequest> createDeleteRequest() {
+        
+        Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
+        return targetDomainName.flatMap(this::deleteRecordSetsRequest);
+    }
+    
+    public ChangeResourceRecordSetsResult executeUpdateRequest(ChangeResourceRecordSetsRequest request) {
+        log.info("Executing request:{}", request);
+        
+        return route53Client.changeResourceRecordSets(request);
+    }
+    
+    public ChangeResourceRecordSetsResult executeDeleteRequest(ChangeResourceRecordSetsRequest request) {
+        apiGatewayBasePathMapping.awsDeleteBasePathMappings();
+        return route53Client.changeResourceRecordSets(request);
+    }
+    
     
     private void prepareCustomDomainName(String certificateArn) {
         log.info(PREPARING_CUSTOM_DOMAIN_NAME_DEBUG_MESSAGE);
@@ -105,28 +122,14 @@ public class Route53Updater {
         }
     }
     
-    public Optional<ChangeResourceRecordSetsRequest> createDeleteRequest() {
-        
-        Optional<String> targetDomainName = apiGatewayBasePathMapping.awsGetTargetDomainName();
-        return targetDomainName.map(this::deleteRecordSetsRequest);
-    }
-    
-    public ChangeResourceRecordSetsResult executeUpdateRequest(ChangeResourceRecordSetsRequest request) {
-        log.info("Executing request:{}", request);
-        
-        return route53Client.changeResourceRecordSets(request);
-    }
-    
-    public ChangeResourceRecordSetsResult executeDeleteRequest(ChangeResourceRecordSetsRequest request) {
-        apiGatewayBasePathMapping.awsDeleteBasePathMappings();
-        return route53Client.changeResourceRecordSets(request);
-    }
-    
-    private HostedZone getHostedZone() {
+    private Optional<HostedZone> getHostedZone() {
         List<HostedZone> hostedZones = zonesMatchingStaticUrlInfoZoneName();
-        Preconditions.checkArgument(hostedZones.size() == EXACTLY_ONE_ZONE,
-            EXACTLY_ONE_ZONE_MESSAGE + staticUrlInfo.getZoneName());
-        return hostedZones.get(SINGLE_ZONE_IN_ZONE_LIST);
+        if (hostedZones.size() == EXACTLY_ONE_ZONE) {
+            return Optional.ofNullable(hostedZones.get(SINGLE_ZONE_IN_ZONE_LIST));
+        } else {
+            log.warn(HOSTED_ZONE_NOT_FOUND_MESSAGE, staticUrlInfo.getZoneName());
+            return Optional.empty();
+        }
     }
     
     private List<HostedZone> zonesMatchingStaticUrlInfoZoneName() {
@@ -138,25 +141,28 @@ public class Route53Updater {
         return zone.getName().equals(staticUrlInfo.getZoneName());
     }
     
-    private ChangeResourceRecordSetsRequest deleteRecordSetsRequest(String serverUrl) {
-        String hostZoneId = getHostedZone().getId();
+    private Optional<ChangeResourceRecordSetsRequest> deleteRecordSetsRequest(String serverUrl) {
+        final Optional<String> hostZoneId = getHostedZone().map(HostedZone::getId);
+        
         ResourceRecordSet recordSet = createRecordSet(serverUrl);
         Change change = createChange(recordSet, ChangeAction.DELETE);
-        ChangeResourceRecordSetsRequest request =
-            new ChangeResourceRecordSetsRequest().withChangeBatch(new ChangeBatch().withChanges(change))
-                                                 .withHostedZoneId(hostZoneId);
+        
+        Optional<ChangeResourceRecordSetsRequest> request = hostZoneId.map(
+            zoneId -> new ChangeResourceRecordSetsRequest().withChangeBatch(new ChangeBatch().withChanges(change))
+                                                           .withHostedZoneId(zoneId));
+        
         return request;
     }
     
-    private ChangeResourceRecordSetsRequest updateRecordSetsRequest(String serverUrl) {
-        String hostedZoneId = getHostedZone().getId();
+    private Optional<ChangeResourceRecordSetsRequest> updateRecordSetsRequest(String serverUrl) {
+        Optional<String> hostedZoneId = getHostedZone().map(HostedZone::getId);
         
         ResourceRecordSet recordSet = createRecordSet(serverUrl);
         Change change = createChange(recordSet, ChangeAction.UPSERT);
         ChangeBatch changeBatch = new ChangeBatch().withChanges(change);
-        ChangeResourceRecordSetsRequest request = new ChangeResourceRecordSetsRequest();
-        request.withChangeBatch(changeBatch).withHostedZoneId(hostedZoneId);
-        return request;
+        
+        return hostedZoneId
+            .map(zoneId -> new ChangeResourceRecordSetsRequest().withChangeBatch(changeBatch).withHostedZoneId(zoneId));
     }
     
     private Change createChange(ResourceRecordSet recordSet, ChangeAction changeAction) {

@@ -19,12 +19,14 @@ import no.bibsys.aws.cloudformation.Stage;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,8 +43,7 @@ public class Route53UpdaterTest {
     private static final String BASEPATH = "Basepath";
     private static final String CERTIFICATE_ARN = "certificate";
     private static final String NOT_FOUND_EXCEPTION_MESSAGE = "Not Found";
-    private static final int FAILURE = 1;
-    private static final String PRIVATE_METHOD = "deletePossiblyExistingMappings";
+    
     private static final int EXACTLY_ONE_RECORDSET = 1;
     
     private final transient AmazonRoute53 route53Client;
@@ -86,6 +87,16 @@ public class Route53UpdaterTest {
     }
     
     @Test
+    public void createUpdateRequest_notExistingDomain_emptyOptional() {
+        Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
+            mockApiGatewayClientThrowingNotFoundExceptionForGetDomainName(), route53Client);
+        
+        Optional<ChangeResourceRecordSetsRequest> requestOpt =
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
+        assertFalse(requestOpt.isPresent());
+    }
+    
+    @Test
     public void createUpdateRequest_invalidCertificateArn_emptyOptional() {
         Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
             mockApiGatewayClientThrowingBadRequestException(), mockRoute53Client(ZONE_NAME));
@@ -93,6 +104,17 @@ public class Route53UpdaterTest {
         Optional<ChangeResourceRecordSetsRequest> result =
             route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
         
+        assertThat(result.isPresent(), is(equalTo(false)));
+    }
+    
+    @Test
+    public void createUpdateRequest_notExistingHostedZone_emptyOptional() {
+        Route53Updater route53Updater =
+            new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID, mockApiGatewayClient(),
+                mockRoute53ClientWithoutHostedZoneName());
+        
+        Optional<ChangeResourceRecordSetsRequest> result =
+            route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN);
         assertThat(result.isPresent(), is(equalTo(false)));
     }
     
@@ -129,8 +151,7 @@ public class Route53UpdaterTest {
     @Test
     public void deleteRecordsSetRequest_nonExistingDomain_emptyOptional() {
         Route53Updater route53Updater = new Route53Updater(staticUrlInfo, SAMPLE_API_GATEWAY_REST_API_ID,
-            mockApiGatewayClientThrowingNotFoundExceptionForGetDomainName(),
-                route53Client);
+            mockApiGatewayClientThrowingNotFoundExceptionForGetDomainName(), route53Client);
         
         Optional<ChangeResourceRecordSetsRequest> result = route53Updater.createDeleteRequest();
         assertThat(result, is(equalTo(Optional.empty())));
@@ -145,7 +166,7 @@ public class Route53UpdaterTest {
     }
     
     @Test
-    public void executUpdateRequest_request_result() {
+    public void executeUpdateRequest_request_result() {
         Optional<ChangeResourceRecordSetsResult> result =
             route53Updater.createUpdateRequestForRecordSets(CERTIFICATE_ARN).map(route53Updater::executeUpdateRequest);
         
@@ -157,6 +178,12 @@ public class Route53UpdaterTest {
         route53Updater.setRoute53Client(null);
         assertThrows(NullPointerException.class,
             () -> route53Updater.createDeleteRequest().ifPresent(route53Updater::executeDeleteRequest));
+    }
+    
+    private AmazonRoute53 mockRoute53ClientWithoutHostedZoneName() {
+        AmazonRoute53 client = Mockito.mock(AmazonRoute53.class);
+        when(client.listHostedZones()).thenReturn(new ListHostedZonesResult().withHostedZones(Collections.emptyList()));
+        return client;
     }
     
     private AmazonRoute53 mockRoute53Client(String zoneName) {
