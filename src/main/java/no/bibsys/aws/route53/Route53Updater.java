@@ -143,26 +143,26 @@ public class Route53Updater {
     
     private Optional<ChangeResourceRecordSetsRequest> deleteRecordSetsRequest(String serverUrl) {
         final Optional<String> hostZoneId = getHostedZone().map(HostedZone::getId);
-        
+        return hostZoneId.map(zoneId -> createDeleteReousrceSetRecordRequest(serverUrl, zoneId));
+    }
+    
+    private ChangeResourceRecordSetsRequest createDeleteReousrceSetRecordRequest(String serverUrl, String zoneId) {
         ResourceRecordSet recordSet = createRecordSet(serverUrl);
         Change change = createChange(recordSet, ChangeAction.DELETE);
-        
-        Optional<ChangeResourceRecordSetsRequest> request = hostZoneId.map(
-            zoneId -> new ChangeResourceRecordSetsRequest().withChangeBatch(new ChangeBatch().withChanges(change))
-                                                           .withHostedZoneId(zoneId));
-        
-        return request;
+        ChangeBatch changeBatch = new ChangeBatch().withChanges(change);
+        return new ChangeResourceRecordSetsRequest().withChangeBatch(changeBatch).withHostedZoneId(zoneId);
     }
     
     private Optional<ChangeResourceRecordSetsRequest> updateRecordSetsRequest(String serverUrl) {
         Optional<String> hostedZoneId = getHostedZone().map(HostedZone::getId);
-        
+        return hostedZoneId.map(zoneId -> createChangeResourceRecordRequest(serverUrl, zoneId));
+    }
+    
+    private ChangeResourceRecordSetsRequest createChangeResourceRecordRequest(String serverUrl, String zoneId) {
         ResourceRecordSet recordSet = createRecordSet(serverUrl);
         Change change = createChange(recordSet, ChangeAction.UPSERT);
         ChangeBatch changeBatch = new ChangeBatch().withChanges(change);
-        
-        return hostedZoneId
-            .map(zoneId -> new ChangeResourceRecordSetsRequest().withChangeBatch(changeBatch).withHostedZoneId(zoneId));
+        return new ChangeResourceRecordSetsRequest().withChangeBatch(changeBatch).withHostedZoneId(zoneId);
     }
     
     private Change createChange(ResourceRecordSet recordSet, ChangeAction changeAction) {
