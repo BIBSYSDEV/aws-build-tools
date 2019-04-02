@@ -1,5 +1,6 @@
 package no.bibsys.aws.route53;
 
+import com.google.common.base.Preconditions;
 import no.bibsys.aws.cloudformation.Stage;
 
 /**
@@ -15,7 +16,9 @@ import no.bibsys.aws.cloudformation.Stage;
  * </p>
  */
 public class StaticUrlInfo {
-
+    
+    public static final String INVALID_ZONE_NAME_ERROR = "The zoneName %s should end with a \".\"";
+    public static final String INVALID_REDCORDSET_NAME_ERROR = "The address %s should end with a \".\"";
     private final transient String recordSetName;
     private final transient String domainName;
     private final transient String zoneName;
@@ -24,7 +27,10 @@ public class StaticUrlInfo {
 
     public StaticUrlInfo(String zoneName, String recordSetName, Stage stage) {
         this.zoneName = zoneName;
+        Preconditions.checkArgument(zoneName.endsWith("."), INVALID_ZONE_NAME_ERROR, zoneName);
+    
         this.recordSetName = recordSetName;
+        Preconditions.checkArgument(recordSetName.endsWith("."), INVALID_REDCORDSET_NAME_ERROR, recordSetName);
         this.domainName = recordSetName.substring(0, recordSetName.length() - 1);
         this.stage = stage;
     }
