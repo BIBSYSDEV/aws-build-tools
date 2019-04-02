@@ -88,7 +88,7 @@ dependencies {
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-secretsmanager', version: '1.11.517'
 
     // For reading and deleting logs (application functionality)
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-logs', version: '1.11.517'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-logs', version: '1.11.530'
 
     //this should be the same version as the one used by amazon
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.6.0'
