@@ -26,9 +26,11 @@ import java.util.stream.Stream;
 
 public class ApiGatewayBasePathMapping {
     
+    public static final String DELETING_OLD_BASEPATH_MAPPINGS_DEBUG_MESSAGE_START = "Deleting old basepath Mappings";
     private static final Logger logger = LoggerFactory.getLogger(ApiGatewayBasePathMapping.class);
     private static final String NO_BASEPATH_MAPPINGS_FOUND_FOR_DOMAIN_NAME =
         "No basepath mappings found for Domain Name:{}";
+    private static final String DELETING_OLD_BASEPATH_MAPPINGS_DEBUG_MESSAGE_END = "Deleted old basepath Mappings";
     private final transient AmazonApiGateway apiGatewayClient;
     private final transient String domainName;
     private final transient Stage stage;
@@ -52,14 +54,14 @@ public class ApiGatewayBasePathMapping {
     }
     
     public void awsDeleteBasePathMappings() throws NotFoundException {
-        logger.info("Deleting old basepath Mappings");
-        
-        Stream<DeleteBasePathMappingRequest> deleteRequests = awsGetBasePathMappings().map(
-                this::newDeleteBasePathRequest);
+        logger.info(DELETING_OLD_BASEPATH_MAPPINGS_DEBUG_MESSAGE_START);
+    
+        Stream<DeleteBasePathMappingRequest> deleteRequests =
+            awsGetBasePathMappings().map(this::newDeleteBasePathRequest);
         executeDeleteRequests(deleteRequests);
         DeleteDomainNameRequest deleteDomainNameRequest = new DeleteDomainNameRequest().withDomainName(domainName);
         apiGatewayClient.deleteDomainName(deleteDomainNameRequest);
-        
+        logger.info(DELETING_OLD_BASEPATH_MAPPINGS_DEBUG_MESSAGE_END);
     }
     
     /**
@@ -80,21 +82,21 @@ public class ApiGatewayBasePathMapping {
     
     /**
      * Creates a Custom Domain in AWS Api Gateway.
+     *
      * @param certifcateArn Certificate ARN. Certificate is stored in Certificate Manager
-     * @return an {@link Optional} of a  CreateDomainNameResult if the does not exist already or
-     * {@code Optional.empty} if the domain pre-exists
+     * @return an {@link Optional} of a  CreateDomainNameResult if the does not exist already or {@code Optional.empty}
+     *     if the domain pre-exists
      */
     public Optional<CreateDomainNameResult> awsCreateCustomDomainName(String certifcateArn) {
         if (!awsDomainExists()) {
             return Optional.of(awsCreateDomainName(certifcateArn));
-            
         }
         return Optional.empty();
     }
     
     private CreateBasePathMappingRequest newBasePathMappingRequest(String restApiId) {
-        return new CreateBasePathMappingRequest().withRestApiId(restApiId).withDomainName(domainName).withStage(
-                stage.toString());
+        return new CreateBasePathMappingRequest().withRestApiId(restApiId).withDomainName(domainName)
+                                                 .withStage(stage.toString());
     }
     
     private void executeDeleteRequests(Stream<DeleteBasePathMappingRequest> deleteRequests) {
@@ -103,8 +105,8 @@ public class ApiGatewayBasePathMapping {
     
     private Stream<BasePathMapping> awsGetBasePathMappings() {
         try {
-            GetBasePathMappingsRequest listBasePathsRequest = new GetBasePathMappingsRequest().withDomainName(
-                    domainName);
+            GetBasePathMappingsRequest listBasePathsRequest =
+                new GetBasePathMappingsRequest().withDomainName(domainName);
             return apiGatewayClient.getBasePathMappings(listBasePathsRequest).getItems().stream();
         } catch (NotFoundException e) {
             logger.warn(NO_BASEPATH_MAPPINGS_FOUND_FOR_DOMAIN_NAME, domainName);
@@ -116,16 +118,22 @@ public class ApiGatewayBasePathMapping {
         return new DeleteBasePathMappingRequest().withBasePath(item.getBasePath()).withDomainName(domainName);
     }
     
+    /**
+     * Creates a custom domain name. This custom domain name links the CNAME record with the Amazon generated URL of the
+     * current an API Gateway API-stage.
+     *
+     * @param certificateArn a ARN to a Domain Certificate (see AWS Certificate Manager)
+     * @return The result of the request.
+     */
     private CreateDomainNameResult awsCreateDomainName(String certificateArn) {
         CreateDomainNameRequest createDomainNameRequest = createCreateDomainNameRequest(certificateArn);
         return this.apiGatewayClient.createDomainName(createDomainNameRequest);
-    
     }
     
     private CreateDomainNameRequest createCreateDomainNameRequest(String certificateArn) {
         return new CreateDomainNameRequest().withRegionalCertificateArn(certificateArn).withDomainName(domainName)
                                             .withEndpointConfiguration(
-                                                    new EndpointConfiguration().withTypes(EndpointType.REGIONAL));
+                                                new EndpointConfiguration().withTypes(EndpointType.REGIONAL));
     }
     
     private boolean awsDomainExists() {

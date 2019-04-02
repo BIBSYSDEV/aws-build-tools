@@ -121,7 +121,8 @@ public class AwsSecretsReaderTest {
             new AwsSecretsReader(secretsManagerWithoutValues, SECRET_NAME, SECRET_KEY);
         ResourceNotFoundException thrown =
             assertThrows(ResourceNotFoundException.class, secretsReaderWithNoValue::readSecret);
-        String errorMessage = String.format(AwsSecretsReader.SECRET_NOT_FOUND_ERROR_MESSAGE, SECRET_NAME, SECRET_KEY);
+        String errorMessage =
+            String.format(AwsSecretsReader.NON_EXISTING_SECRET_KEY_ERROR_MESSAGE, SECRET_NAME, SECRET_KEY);
         assertThat(thrown.getMessage(), containsString(errorMessage));
     }
     

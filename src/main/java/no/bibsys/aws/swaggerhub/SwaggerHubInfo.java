@@ -16,8 +16,8 @@ public class SwaggerHubInfo {
     private final transient SecretsReader secretsReader;
     
     /**
-     *
      * SwaggerHub constructor.
+     *
      * @param apiId The id of the API in the SwaggerHub account
      * @param apiVersion The version of the API
      * @param swaggerOrganization The username of the account or the organization
