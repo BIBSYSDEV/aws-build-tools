@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 public class Route53UpdaterTest {
     
-    private static final String ZONE_NAME = "ZoneName";
+    private static final String ZONE_NAME = "Zone.Name.";
     private static final String ZONE_ID = "ZoneId";
     private static final String SAMPLE_RECORD_SET_NAME = "some.url.goes.here.";
     private static final String SAMPLE_API_GATEWAY_REST_API_ID = "apiGatewarRestApiId";
