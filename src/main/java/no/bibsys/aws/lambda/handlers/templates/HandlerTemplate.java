@@ -38,22 +38,38 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
     
     protected final transient ObjectMapper objectMapper = new ObjectMapper();
     private final transient Class<I> iclass;
-    protected transient LambdaLogger logger;
+    private transient LambdaLogger logger;
     protected transient OutputStream outputStream;
     
     public HandlerTemplate(Class<I> iclass) {
         this.iclass = iclass;
     }
     
-    protected void init(OutputStream outputStream, Context context) {
+    private void init(OutputStream outputStream, Context context) {
         this.outputStream = outputStream;
         
         this.logger = context.getLogger();
     }
     
-    protected abstract I parseInput(String inputString) throws IOException, UnsupportedEventException;
+    protected abstract I parseInput(String inputRequest) throws IOException, UnsupportedEventException;
     
-    protected abstract O processInput(I inputObject, String apiGatewayQuery, Context context)
+    /**
+     * A  function that maps the triple (inputObject, inputRequest,context)  to an output object. The input object of
+     * class {@code I} is the output of the abstract method {@link HandlerTemplate#parseInput).
+     * <p>
+     * The input request is the actual unparsed inputRequest. In the general case the inputObject may contain a subset
+     * of the inputRequest information. That is the reason we include the unparsed inputRequest.
+     * </p>
+     *
+     * @param inputObject The object that results from parsing the inputRequest with {@link
+     *     HandlerTemplate#parseInput}
+     * @param inputRequest The unparsed input request
+     * @param context the query context
+     * @return the output that is the response of the Lambda function.
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    protected abstract O processInput(I inputObject, String inputRequest, Context context)
             throws IOException, URISyntaxException;
     
     protected abstract void writeOutput(I input, O output) throws IOException;
@@ -67,7 +83,7 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
         String inputString = IoUtils.streamToString(input);
         try {
             inputObject = parseInput(inputString);
-            O response = null;
+            O response;
             response = processInput(inputObject, inputString, context);
             writeOutput(inputObject, response);
         } catch (Exception e) {
