@@ -4,25 +4,19 @@ import no.bibsys.aws.lambda.handlers.LocalTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 
-class SimplePipelineLambdaFunctionTest extends LocalTest {
+class SimplePipelineLambdaFunctionTest {
     
     private final transient String inputObject = "sample";
     private transient SimplePipelineLambdaFunction function;
     
-    public SimplePipelineLambdaFunctionTest() throws IOException {
-        super();
-    }
-    
     @BeforeEach
     public void init() {
-        CodePipelineCommunicator communicator = new MockCodePipelineCommunicator();
+        CodePipelineCommunicator communicator = new LocalTest.MockCodePipelineCommunicator();
         function = new SimplePipelineLambdaFunction(communicator);
     }
     
