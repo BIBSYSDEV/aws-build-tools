@@ -11,7 +11,6 @@ import static org.hamcrest.core.IsNot.not;
 
 class SimplePipelineLambdaFunctionTest {
     
-    private final transient String inputObject = "sample";
     private transient SimplePipelineLambdaFunction function;
     
     @BeforeEach
@@ -22,6 +21,7 @@ class SimplePipelineLambdaFunctionTest {
     
     @Test
     public void processInputShouldReturnAnNonNullOutput() {
+        String inputObject = "sample";
         Object output = function.processInput(inputObject, inputObject, null);
         assertThat(output, is(not(equalTo(null))));
     }
