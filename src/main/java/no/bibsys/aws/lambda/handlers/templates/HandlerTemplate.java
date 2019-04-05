@@ -66,8 +66,8 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
      * @param inputRequest The unparsed input request
      * @param context the query context
      * @return the output that is the response of the Lambda function.
-     * @throws IOException
-     * @throws URISyntaxException
+     * @throws IOException for I/O Errors.
+     * @throws URISyntaxException Some subclasses throw this error.
      */
     protected abstract O processInput(I inputObject, String inputRequest, Context context)
             throws IOException, URISyntaxException;
