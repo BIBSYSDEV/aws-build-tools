@@ -55,7 +55,7 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
     
     /**
      * A  function that maps the triple (inputObject, inputRequest,context)  to an output object. The input object of
-     * class {@code I} is the output of the abstract method {@link HandlerTemplate#parseInput).
+     * class {@code I} is the output of the abstract method {@link HandlerTemplate#parseInput}.
      * <p>
      * The input request is the actual unparsed inputRequest. In the general case the inputObject may contain a subset
      * of the inputRequest information. That is the reason we include the unparsed inputRequest.
