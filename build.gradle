@@ -101,7 +101,7 @@ dependencies {
     compile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
 
     //libraries for testing
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.25.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.26.0'
     testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
 
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.0')
