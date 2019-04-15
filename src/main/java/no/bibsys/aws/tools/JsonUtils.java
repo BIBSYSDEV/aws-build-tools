@@ -17,9 +17,7 @@ public final class JsonUtils {
     }
     
     public static String yamlToJson(String yaml) throws IOException {
-        ObjectMapper yamlParser = createYamlParser();
         JsonNode root = yamlParser.readTree(yaml);
-        ObjectMapper jsonParser = newJsonParser();
         return jsonParser.writeValueAsString(root);
     }
     
