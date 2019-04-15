@@ -59,8 +59,7 @@ public abstract class ApiGatewayHandlerTemplate<I, O> extends HandlerTemplate<I,
         return processInput(input, headers, context);
     }
     
-    protected abstract O processInput(I input, Map<String, String> headers, Context context)
-            throws IOException, URISyntaxException;
+    protected abstract O processInput(I input, Map<String, String> headers, Context context) throws Exception;
     
     /**
      * This is the message for the sucess case. Sends a JSON string containing the response that APIGateway will send to
