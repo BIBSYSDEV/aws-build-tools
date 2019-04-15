@@ -18,7 +18,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 
 
-def versionString = "1.4.6"
+def versionString = "1.4.7"
 version = "${versionString}"
 
 bintray {
@@ -95,19 +95,17 @@ dependencies {
 
     // useful java libraries
     implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
-    
-    implementation('io.symphonia:lambda-logging:1.0.3')
 
+    implementation('io.symphonia:lambda-logging:1.0.3')
+    
     compile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
 
     //libraries for testing
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.25.0'
     testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
-
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.0')
     testImplementation('org.junit.jupiter:junit-jupiter-params:5.4.0')
     testImplementation('org.junit.jupiter:junit-jupiter-engine:5.3.2')
-
 }
 
 test {
@@ -123,15 +121,11 @@ test {
     }
 
     jacoco {
-
         excludes['*SecretsReader*']
-
     }
 
     failFast = true
-
 }
-
 
 checkstyle {
     configFile = rootProject.resources.text.fromFile('config/checkstyle/checkstyle.xml').asFile()
@@ -156,7 +150,6 @@ pmd {
 }
 
 jacocoTestReport {
-
     reports {
         xml.enabled false
         csv.enabled false
@@ -166,8 +159,6 @@ jacocoTestReport {
 
 jacoco {
     toolVersion = "0.8.3"
-
-
 }
 
 
@@ -202,7 +193,3 @@ shadowJar {
     exclude('org.apache.tomcat.embed:*')
 }
 task fatJar(dependsOn: shadowJar) {}
-
-
-
-
