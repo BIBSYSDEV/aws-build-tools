@@ -18,7 +18,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 
 
-def versionString = "1.4.6"
+def versionString = "1.4.7"
 version = "${versionString}"
 
 bintray {
@@ -98,6 +98,7 @@ dependencies {
     
     implementation('io.symphonia:lambda-logging:1.0.3')
 
+    
     compile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
 
     //libraries for testing

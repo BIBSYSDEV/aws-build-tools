@@ -10,37 +10,58 @@ import java.io.IOException;
 
 public final class JsonUtils {
     
+    public static final ObjectMapper jsonParser = createJsonParser();
+    public static final ObjectMapper yamlParser = createYamlParser();
+    
     private JsonUtils() {
     }
     
     public static String yamlToJson(String yaml) throws IOException {
-        ObjectMapper yamlParser = newYamlParser();
+        ObjectMapper yamlParser = createYamlParser();
         JsonNode root = yamlParser.readTree(yaml);
         ObjectMapper jsonParser = newJsonParser();
         return jsonParser.writeValueAsString(root);
     }
     
+    /**
+     * Use the field directly. It is thread safe.
+     *
+     * @return the public static field {@code jsonParser}
+     */
+    @Deprecated
     public static ObjectMapper newJsonParser() {
-        JsonFactory jsonFactory =
-                new JsonFactory().configure(Feature.ALLOW_COMMENTS, true).configure(Feature.ALLOW_YAML_COMMENTS, true);
-        return new ObjectMapper(jsonFactory);
+        return jsonParser;
     }
     
+    /**
+     * Use the field directly. It is thread safe.
+     *
+     * @return the public static field {@code yamlParser}
+     */
+    @Deprecated
     public static ObjectMapper newYamlParser() {
-        YAMLFactory factory = new YAMLFactory();
-        return new ObjectMapper(factory);
+        return yamlParser;
     }
     
     public static String jsonToYaml(String yaml) throws IOException {
-        ObjectMapper jsonParser = newJsonParser();
         JsonNode root = jsonParser.readTree(yaml);
-        ObjectMapper yamlParser = newYamlParser();
         return yamlParser.writeValueAsString(root);
     }
     
     public static String removeComments(String jsonWithComments) throws IOException {
-        ObjectMapper mapper = newJsonParser();
-        JsonNode jsonNode = mapper.readTree(jsonWithComments);
-        return mapper.writeValueAsString(jsonNode);
+        JsonNode jsonNode = jsonParser.readTree(jsonWithComments);
+        return jsonParser.writeValueAsString(jsonNode);
+    }
+    
+    private static ObjectMapper createYamlParser() {
+        YAMLFactory factory = new YAMLFactory();
+        return new ObjectMapper(factory);
+    }
+    
+    private static ObjectMapper createJsonParser() {
+        JsonFactory jsonFactory =
+            new JsonFactory().configure(Feature.ALLOW_COMMENTS, true).configure(Feature.ALLOW_YAML_COMMENTS, true)
+                             .configure(Feature.ALLOW_SINGLE_QUOTES, true);
+        return new ObjectMapper(jsonFactory);
     }
 }

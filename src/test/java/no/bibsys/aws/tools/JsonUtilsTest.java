@@ -31,7 +31,7 @@ public class JsonUtilsTest {
         String json = JsonUtils.yamlToJson(yaml);
         ObjectMapper parser = JsonUtils.newJsonParser();
         ObjectNode jsonRoot = parser.readValue(json, ObjectNode.class);
-        ObjectNode yamlRoot = JsonUtils.newYamlParser().readValue(yaml, ObjectNode.class);
+        ObjectNode yamlRoot = JsonUtils.createYamlParser().readValue(yaml, ObjectNode.class);
         assertThat(jsonRoot, is(equalTo(yamlRoot)));
         
     }
@@ -39,8 +39,8 @@ public class JsonUtilsTest {
     @Test
     public void jsonToYaml_json_yaml() throws IOException {
         String json = JsonUtils.yamlToJson(yaml);
-        
-        ObjectMapper parser = JsonUtils.newYamlParser();
+    
+        ObjectMapper parser = JsonUtils.createYamlParser();
         String newYaml = JsonUtils.jsonToYaml(json);
         ObjectNode yamlRoot = parser.readValue(yaml, ObjectNode.class);
         ObjectNode newYamlRoot = parser.readValue(newYaml, ObjectNode.class);
