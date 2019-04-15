@@ -79,33 +79,36 @@ wrapper {
     gradleVersion = "5.3.1"
 }
 
-dependencies {
 
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-api-gateway', version: '1.11.517'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-cloudformation', version: '1.11.517'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-codepipeline', version: '1.11.517'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-route53', version: '1.11.517'
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-secretsmanager', version: '1.11.517'
+def awsSdkVersion = "1.11.534"
+def jupiterVersion = "5.4.2"
+
+dependencies {
+    implementation ("com.amazonaws:aws-java-sdk-api-gateway:${awsSdkVersion}")
+    implementation ("com.amazonaws:aws-java-sdk-cloudformation:${awsSdkVersion}")
+    implementation ("com.amazonaws:aws-java-sdk-codepipeline:${awsSdkVersion}")
+    implementation ("com.amazonaws:aws-java-sdk-route53:${awsSdkVersion}")
+    implementation ("com.amazonaws:aws-java-sdk-secretsmanager:${awsSdkVersion}")
 
     // For reading and deleting logs (application functionality)
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-logs', version: '1.11.517'
+    implementation ("com.amazonaws:aws-java-sdk-logs:${awsSdkVersion}")
 
     //this should be the same version as the one used by amazon
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.6.0'
+    implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.0")
 
     // useful java libraries
-    implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+    implementation ("com.google.guava:guava:27.1-jre")
 
     implementation('io.symphonia:lambda-logging:1.0.3')
-    
-    compile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.3'
+
+    compile ("org.jacoco:org.jacoco.core:0.8.3")
 
     //libraries for testing
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.25.0'
-    testImplementation('org.hamcrest:java-hamcrest:2.0.0.0')
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.0')
-    testImplementation('org.junit.jupiter:junit-jupiter-params:5.4.0')
-    testImplementation('org.junit.jupiter:junit-jupiter-engine:5.3.2')
+    testImplementation ("org.mockito:mockito-core:2.27.0")
+    testImplementation("org.hamcrest:java-hamcrest:2.0.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
 }
 
 test {
