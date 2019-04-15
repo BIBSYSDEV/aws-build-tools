@@ -54,8 +54,7 @@ public abstract class ApiGatewayHandlerTemplate<I, O> extends HandlerTemplate<I,
      * @throws URISyntaxException when processing fails
      */
     @Override
-    protected final O processInput(I input, String apiGatewayInputString, Context context)
-            throws IOException, URISyntaxException {
+    protected final O processInput(I input, String apiGatewayInputString, Context context) throws Exception {
         Map<String, String> headers = inputParser.getHeadersFromJson(apiGatewayInputString);
         return processInput(input, headers, context);
     }

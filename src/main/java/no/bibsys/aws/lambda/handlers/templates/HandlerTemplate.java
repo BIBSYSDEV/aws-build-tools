@@ -69,8 +69,7 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
      * @throws IOException for I/O Errors.
      * @throws URISyntaxException Some subclasses throw this error.
      */
-    protected abstract O processInput(I inputObject, String inputRequest, Context context)
-            throws IOException, URISyntaxException;
+    protected abstract O processInput(I inputObject, String inputRequest, Context context) throws Exception;
     
     protected abstract void writeOutput(I input, O output) throws IOException;
     
