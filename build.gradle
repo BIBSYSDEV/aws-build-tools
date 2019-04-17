@@ -80,7 +80,7 @@ wrapper {
 }
 
 
-def awsSdkVersion = "1.11.534"
+def awsSdkVersion = "1.11.535"
 def jupiterVersion = "5.4.2"
 
 dependencies {
