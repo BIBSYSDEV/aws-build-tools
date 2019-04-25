@@ -82,36 +82,37 @@ class StackResourcesTest {
     
     @Test
     public void stackExists_nonExistingStack_false() {
-        AmazonCloudFormation client = mock(AmazonCloudFormation.class);
+        AmazonCloudFormation cloudFormation = mock(AmazonCloudFormation.class);
         StackSummary stackSummary1 = new StackSummary().withStackName(ANOTHER_STACK_NAME);
         StackSummary stackSummary2 = new StackSummary().withStackName(THIRD_STACK_NAME);
-        when(client.listStacks()).thenReturn(new ListStacksResult().withStackSummaries(stackSummary1, stackSummary2));
+        when(cloudFormation.listStacks())
+            .thenReturn(new ListStacksResult().withStackSummaries(stackSummary1, stackSummary2));
     
-        StackResources stackResources = new StackResources(SOME_STACK_NAME, client);
+        StackResources stackResources = new StackResources(SOME_STACK_NAME, cloudFormation);
         assertThat(stackResources.stackExists(), is(false));
     }
     
     @Test
     public void stackExists_deletedStack_false() {
-        AmazonCloudFormation client = mock(AmazonCloudFormation.class);
+        AmazonCloudFormation cloudFormation = mock(AmazonCloudFormation.class);
         StackSummary stackSummary1 =
             new StackSummary().withStackName(SOME_STACK_NAME).withStackStatus(StackStatus.DELETE_COMPLETE);
         StackSummary stackSummary2 = new StackSummary().withStackName(ANOTHER_STACK_NAME);
         StackSummary stackSummary3 = new StackSummary().withStackName(THIRD_STACK_NAME);
-        when(client.listStacks())
+        when(cloudFormation.listStacks())
             .thenReturn(new ListStacksResult().withStackSummaries(stackSummary1, stackSummary2, stackSummary3));
-        
-        StackResources stackResources = new StackResources(SOME_STACK_NAME, client);
+    
+        StackResources stackResources = new StackResources(SOME_STACK_NAME, cloudFormation);
         assertThat(stackResources.stackExists(), is(false));
     }
     
     @Test
     public void stackExists_stackWithNoStatus_true() {
-        AmazonCloudFormation client = mock(AmazonCloudFormation.class);
+        AmazonCloudFormation cloudFormation = mock(AmazonCloudFormation.class);
         StackSummary stackSummary1 = new StackSummary().withStackName(SOME_STACK_NAME);
-        when(client.listStacks()).thenReturn(new ListStacksResult().withStackSummaries(stackSummary1));
-        
-        StackResources stackResources = new StackResources(SOME_STACK_NAME, client);
+        when(cloudFormation.listStacks()).thenReturn(new ListStacksResult().withStackSummaries(stackSummary1));
+    
+        StackResources stackResources = new StackResources(SOME_STACK_NAME, cloudFormation);
         assertThat(stackResources.stackExists(), is(true));
     }
 }
