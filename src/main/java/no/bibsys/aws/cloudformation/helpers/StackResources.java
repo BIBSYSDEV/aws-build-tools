@@ -22,6 +22,11 @@ public class StackResources {
         this.client = client;
     }
     
+    public boolean stackExists() {
+        return client.listStacks().getStackSummaries().stream()
+                     .filter(stackSummary -> stackSummary.getStackName().equals(stackName)).findAny().isPresent();
+    }
+    
     public List<StackResource> getResources(ResourceType resourceType) {
         return getResourcesStream(resourceType).collect(Collectors.toList());
     }
@@ -37,12 +42,4 @@ public class StackResources {
         return result.getStackResources().stream()
             .filter(resource -> resource.getResourceType().equals(resourceType.toString()));
     }
-    
-    /**
-     * Lists the physical ids of the resources for a specific {@link ResourceType}.
-     *
-     * @param resourceType the {@link ResourceType}
-     * @return A list with the Physical Resource ids of resources with the specified resource type
-     */
-    
 }
