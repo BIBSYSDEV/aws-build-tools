@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
  * expects the
  * client not to send the api-key, but to send a sha1 hash value of the concatenation of the secret value and the
  * request body. In short it works as follows:
+ * 
  * <p><b>Input:</b>
  * <ul>
  * <li>{@code secret}: Secret value stored in AWS Secret Manager</li>
