@@ -13,14 +13,12 @@ import java.io.IOException;
  * <li>repository: The name of the repository</li>
  * <li>branch: Branch we are interested in</li>
  * </ul>
- * <p>
- * Example: <br/> https://github.com/BIBSYSDEV/authority-registry-infrastructure/
+ *
+ * <p>Example: <br> https://github.com/BIBSYSDEV/authority-registry-infrastructure/
  * <ul>
  * <li>owner:BIBSYSDEV</li>
  * <li>repository:authority-registry-infrastructure</li>
  * </ul>
- * </p>
- * </p>
  */
 
 public class GithubConf implements GitInfo {
