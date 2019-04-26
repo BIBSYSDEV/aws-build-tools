@@ -28,7 +28,7 @@ cache:
     - $HOME/.gradle/wrapper/
 deploy:
   provider: script
-  script: ./gradlew clean build uploadBintray
+  script: ./gradlew clean build -i
   user: "Bintray user"
   key: "Bintray API key"
   skip_cleanup: true # to upload artifacts created during the build
