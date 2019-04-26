@@ -16,20 +16,15 @@ import java.net.URISyntaxException;
  * Template for making it easier to use a POJO Lambda handler. The Amazon template RequestHandler does not behave well
  * with ApiGateway.
  *
- * <p>
- * Each class extending the HandlerTemplate should implement the following methods:
- * </p>
+ * <p>Each class extending the HandlerTemplate should implement the following methods:
  *
- * <p>
  * <ul>
- * <li>Method {@code parseInput} parses an {@code InputStream} into an object of class {@code <I>}</li>.
- * <li>Method {@code processInput} processes an {@code  <I>} into class {@code <O>}</li>.
- * <li>Method {@code writeOutput} writes a success message in the {@code OutputStream}</li>.
- * <li>Method {@code writeFailure} writes a failure message in the {@code OutputStream}</li>.
+ * <li>Method {@code parseInput} parses an {@code InputStream} into an object of class {@code <I>}</li>
+ * <li>Method {@code processInput} processes an {@code  <I>} into class {@code <O>}</li>
+ * <li>Method {@code writeOutput} writes a success message in the {@code OutputStream}</li>
+ * <li>Method {@code writeFailure} writes a failure message in the {@code OutputStream}</li>
  * </ul>
  *
- *
- * </p>
  *
  * @param <I> Input class
  * @param <O> Output class
@@ -69,8 +64,7 @@ public abstract class HandlerTemplate<I, O> implements RequestStreamHandler {
      * @throws IOException for I/O Errors.
      * @throws URISyntaxException Some subclasses throw this error.
      */
-    protected abstract O processInput(I inputObject, String inputRequest, Context context)
-            throws IOException, URISyntaxException;
+    protected abstract O processInput(I inputObject, String inputRequest, Context context) throws Exception;
     
     protected abstract void writeOutput(I input, O output) throws IOException;
     

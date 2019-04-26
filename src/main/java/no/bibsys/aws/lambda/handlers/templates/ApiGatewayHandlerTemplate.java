@@ -18,7 +18,7 @@ import java.util.Optional;
  *
  * @param <I> Class of the object in the body field of the ApiGateway message.
  * @param <O> Class of the response object.
- * @see <a href="https://github.com/awslabs/aws-serverless-java-container">The aws-serverless-container </a> for
+ * @see <a href="https://github.com/awslabs/aws-serverless-java-container">aws-serverless-container</a> for
  *         alternative solutions.
  */
 public abstract class ApiGatewayHandlerTemplate<I, O> extends HandlerTemplate<I, O> {
@@ -54,14 +54,12 @@ public abstract class ApiGatewayHandlerTemplate<I, O> extends HandlerTemplate<I,
      * @throws URISyntaxException when processing fails
      */
     @Override
-    protected final O processInput(I input, String apiGatewayInputString, Context context)
-            throws IOException, URISyntaxException {
+    protected final O processInput(I input, String apiGatewayInputString, Context context) throws Exception {
         Map<String, String> headers = inputParser.getHeadersFromJson(apiGatewayInputString);
         return processInput(input, headers, context);
     }
     
-    protected abstract O processInput(I input, Map<String, String> headers, Context context)
-            throws IOException, URISyntaxException;
+    protected abstract O processInput(I input, Map<String, String> headers, Context context) throws Exception;
     
     /**
      * This is the message for the sucess case. Sends a JSON string containing the response that APIGateway will send to

@@ -18,15 +18,15 @@ import java.security.NoSuchAlgorithmException;
  * expects the
  * client not to send the api-key, but to send a sha1 hash value of the concatenation of the secret value and the
  * request body. In short it works as follows:
- * <p>
- * <b>Input:</b>
+ * 
+ * <p><b>Input:</b>
  * <ul>
  * <li>{@code secret}: Secret value stored in AWS Secret Manager</li>
  * <li>{@code request-body} : The request body sent by a (REST) client</li>
  * <li>{@code client-signature}: An sha1 hash value for the concatenation of the {@code secret} and the
  * {@code request-body}</li>
  * </ul>
- * <br/>
+ * <br>
  * <b>Output:</b>
  * <ul>
  * <li>true if the client's signature matches the signature calculated by {@link GithubSignatureChecker}</li>
@@ -36,7 +36,6 @@ import java.security.NoSuchAlgorithmException;
  *
  * This class is used mainly to decode the Signature sent by Github webhooks.
  *
- * </p>
  */
 public class GithubSignatureChecker {
 

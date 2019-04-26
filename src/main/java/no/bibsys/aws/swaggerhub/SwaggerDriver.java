@@ -57,7 +57,9 @@ public class SwaggerDriver {
      * It retrieves the OpenAPI specification stored in SwaggerHub for the API specified in the {@code swaggerHubInfo}
      * field.
      *
+     * @param apiKey The API key
      * @return The OpenAPI specification stored in SwaggerHub for a specific API.
+     * @throws URISyntaxException is thrown if URI incorrectly formatted
      */
     public HttpGet getSpecificationRequest(String apiKey) throws URISyntaxException {
         SwaggerHubUrlFormatter swaggerHubUrlFormatter =
