@@ -32,7 +32,7 @@ public class EnvironmentTest {
 
     @Test
     public void getEnv_existingVariable_envVariableValue() {
-        Map<String, String> envVariable = randoEnvVariable();
+        Map<String, String> envVariable = randomEnvVariable();
         String key = envVariable.keySet().iterator().next();
         String expectedValue = envVariable.get(key);
     
@@ -42,7 +42,7 @@ public class EnvironmentTest {
     
     @Test
     public void getEnvOpt_existingVariable_envVariableValue() {
-        Map<String, String> envVariable = randoEnvVariable();
+        Map<String, String> envVariable = randomEnvVariable();
         
         String key = envVariable.keySet().iterator().next();
         String expectedValue = envVariable.get(key);
@@ -53,8 +53,7 @@ public class EnvironmentTest {
         assertThat(actualValue.get(), is(equalTo(expectedValue)));
     }
     
-
-    private Map<String, String> randoEnvVariable() {
+    private Map<String, String> randomEnvVariable() {
         Map<String, String> map = System.getenv();
         assertFalse(map.isEmpty());
 
