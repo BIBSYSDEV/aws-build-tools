@@ -7,6 +7,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version "1.8.4"
     id 'jacoco'
+    id 'com.gradle.build-scan' version '2.1'
 }
 
 apply plugin: 'com.jfrog.bintray'
@@ -16,6 +17,8 @@ apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
+apply plugin: 'com.gradle.build-scan'
+
 
 
 def versionString = "1.5.3"
@@ -196,3 +199,12 @@ shadowJar {
     exclude('org.apache.tomcat.embed:*')
 }
 task fatJar(dependsOn: shadowJar) {}
+
+
+
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
+
