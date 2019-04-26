@@ -19,6 +19,8 @@ matrix:
     - os: osx
       language: java
       jdk: openjdk11
+env:
+  - ANY_NAME=any_value_for_get_env_tests
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
