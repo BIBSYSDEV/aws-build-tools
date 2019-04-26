@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EnvironmentTest {
 
     Environment environment = new Environment();
-
+    
     @Test()
     public void getEnv_nonExistingEnvVariable_throwsException() {
 
@@ -45,8 +45,9 @@ public class EnvironmentTest {
         Map<String, String> envVariable = randomEnvVariable();
         
         String key = envVariable.keySet().iterator().next();
+        System.out.println("*************KEY" + key);
         String expectedValue = envVariable.get(key);
-        
+        System.out.println("*************VALUE" + expectedValue);
         Optional<String> actualValue = environment.readEnvOpt(key);
         
         assertTrue(actualValue.isPresent());
@@ -60,7 +61,7 @@ public class EnvironmentTest {
         String value = null;
         String key = null;
         Iterator<String> keys = map.keySet().iterator();
-        while (value == null) {
+        while (value == null || value.isEmpty()) {
             key = keys.next();
             value = map.get(key);
         }
