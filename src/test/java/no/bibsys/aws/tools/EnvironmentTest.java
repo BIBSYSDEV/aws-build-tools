@@ -45,9 +45,7 @@ public class EnvironmentTest {
         Map<String, String> envVariable = randomEnvVariable();
         
         String key = envVariable.keySet().iterator().next();
-        System.out.println("*************KEY" + key);
         String expectedValue = envVariable.get(key);
-        System.out.println("*************VALUE" + expectedValue);
         Optional<String> actualValue = environment.readEnvOpt(key);
         
         assertTrue(actualValue.isPresent());
