@@ -25,7 +25,7 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 after_failure:
-  - if [ -f home/travis/build/BIBSYSDEV/aws-build-tools/build/reports/tests/test/index.html ]; then lynx -dump home/travis/build/BIBSYSDEV/aws-build-tools/build/reports/tests/test/index.html; fi
+  - if [ -f /home/travis/build/BIBSYSDEV/aws-build-tools/build/reports/tests/test/index.html ]; then lynx -dump /home/travis/build/BIBSYSDEV/aws-build-tools/build/reports/tests/test/index.html; fi
 
 deploy:
   provider: script
