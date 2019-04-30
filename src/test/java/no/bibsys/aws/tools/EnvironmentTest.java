@@ -60,7 +60,7 @@ public class EnvironmentTest {
         String value = null;
         String key = null;
         Iterator<String> keys = map.keySet().iterator();
-        while (value == null) {
+        while (value == null || value.isEmpty()) {
             key = keys.next();
             value = map.get(key);
         }
