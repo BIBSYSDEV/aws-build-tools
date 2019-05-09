@@ -44,9 +44,9 @@ public class AwsSecretsReader implements SecretsReader {
     
     @Override
     public String readSecret() throws IOException {
-        
+        logger.info("Trying to read secret:{},{}",secretName,secretKey);
+
         Optional<GetSecretValueResult> getSecretValueResult = readSecretsForName();
-        
         if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
             String secret = getSecretValueResult.get().getSecretString();
             return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(
