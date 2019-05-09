@@ -26,6 +26,7 @@ public class AwsSecretsReader implements SecretsReader {
         "Error while trying to read secret with name {} and with key {}";
     
     private static final Logger logger = LoggerFactory.getLogger(AwsSecretsReader.class);
+
     public static final String NON_EXISTING_SECRET_KEY_ERROR_MESSAGE =
         "Secret name %s exists, but secretKey %s does not.";
     private final transient AWSSecretsManager client;
@@ -45,17 +46,18 @@ public class AwsSecretsReader implements SecretsReader {
     @Override
     public String readSecret() throws IOException {
         logger.info("Trying to read secret:{},{}",secretName,secretKey);
+        return "secretKey";
 
-        Optional<GetSecretValueResult> getSecretValueResult = readSecretsForName();
-        if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
-            String secret = getSecretValueResult.get().getSecretString();
-            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(
-                () -> new ResourceNotFoundException(
-                    String.format(NON_EXISTING_SECRET_KEY_ERROR_MESSAGE, secretName, secretKey)));
-        } else {
-            logger.error(LOG_ERROR_READING_SECRET, secretName, secretKey);
-            throw new ResourceNotFoundException(String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey));
-        }
+//        Optional<GetSecretValueResult> getSecretValueResult = readSecretsForName();
+//        if (getSecretValueResult.map(GetSecretValueResult::getSecretString).isPresent()) {
+//            String secret = getSecretValueResult.get().getSecretString();
+//            return readValuesForKeyFromJson(secret).stream().findFirst().orElseThrow(
+//                () -> new ResourceNotFoundException(
+//                    String.format(NON_EXISTING_SECRET_KEY_ERROR_MESSAGE, secretName, secretKey)));
+//        } else {
+//            logger.error(LOG_ERROR_READING_SECRET, secretName, secretKey);
+//            throw new ResourceNotFoundException(String.format(SECRET_NOT_FOUND_ERROR_MESSAGE, secretName, secretKey));
+//        }
     }
     
     private List<String> readValuesForKeyFromJson(String secret) throws IOException {
