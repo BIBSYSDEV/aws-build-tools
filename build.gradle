@@ -104,7 +104,7 @@ dependencies {
 
     implementation('io.symphonia:lambda-logging:1.0.3')
 
-    compile ("org.jacoco:org.jacoco.core:0.8.3")
+    compile ("org.jacoco:org.jacoco.core:0.8.4")
 
     //libraries for testing
     testImplementation ("org.mockito:mockito-core:2.27.0")
