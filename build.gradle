@@ -107,7 +107,7 @@ dependencies {
     compile ("org.jacoco:org.jacoco.core:0.8.3")
 
     //libraries for testing
-    testImplementation ("org.mockito:mockito-core:2.27.0")
+    testImplementation ("org.mockito:mockito-core:3.1.0")
     testImplementation("org.hamcrest:java-hamcrest:2.0.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
