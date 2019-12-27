@@ -100,7 +100,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.0")
 
     // useful java libraries
-    implementation ("com.google.guava:guava:27.1-jre")
+    implementation ("com.google.guava:guava:28.2-jre")
 
     implementation('io.symphonia:lambda-logging:1.0.3')
 
