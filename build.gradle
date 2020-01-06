@@ -97,7 +97,7 @@ dependencies {
     implementation ("com.amazonaws:aws-java-sdk-logs:${awsSdkVersion}")
 
     //this should be the same version as the one used by amazon
-    implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.0")
+    implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.2")
 
     // useful java libraries
     implementation ("com.google.guava:guava:27.1-jre")
