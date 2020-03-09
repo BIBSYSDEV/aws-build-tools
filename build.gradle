@@ -105,6 +105,7 @@ dependencies {
     // useful java libraries
     implementation("com.google.guava:guava:27.1-jre")
 
+    // TODO: Should we use System.out instead?
     implementation('io.symphonia:lambda-logging:1.0.3')
 
     compile("org.jacoco:org.jacoco.core:0.8.3")
