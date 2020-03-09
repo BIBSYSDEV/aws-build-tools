@@ -1,13 +1,12 @@
 plugins {
     id 'java'
     id 'base'
-    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'checkstyle'
     id 'pmd'
     id 'maven-publish'
     id 'com.jfrog.bintray' version "1.8.4"
     id 'jacoco'
-    id 'com.gradle.build-scan' version '2.1'
 }
 
 apply plugin: 'com.jfrog.bintray'
@@ -17,8 +16,6 @@ apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
-apply plugin: 'com.gradle.build-scan'
-
 
 
 def versionString = "1.5.3"
@@ -79,35 +76,35 @@ repositories {
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "5.3.1"
+    gradleVersion = "6.2.2"
 }
 
 
-def awsSdkVersion = "1.11.542"
-def jupiterVersion = "5.4.2"
+def awsSdkVersion = "1.11.739"
+def jupiterVersion = "5.6.0"
 
 dependencies {
-    implementation ("com.amazonaws:aws-java-sdk-api-gateway:${awsSdkVersion}")
-    implementation ("com.amazonaws:aws-java-sdk-cloudformation:${awsSdkVersion}")
-    implementation ("com.amazonaws:aws-java-sdk-codepipeline:${awsSdkVersion}")
-    implementation ("com.amazonaws:aws-java-sdk-route53:${awsSdkVersion}")
-    implementation ("com.amazonaws:aws-java-sdk-secretsmanager:${awsSdkVersion}")
+    implementation("com.amazonaws:aws-java-sdk-api-gateway:${awsSdkVersion}")
+    implementation("com.amazonaws:aws-java-sdk-cloudformation:${awsSdkVersion}")
+    implementation("com.amazonaws:aws-java-sdk-codepipeline:${awsSdkVersion}")
+    implementation("com.amazonaws:aws-java-sdk-route53:${awsSdkVersion}")
+    implementation("com.amazonaws:aws-java-sdk-secretsmanager:${awsSdkVersion}")
 
     // For reading and deleting logs (application functionality)
-    implementation ("com.amazonaws:aws-java-sdk-logs:${awsSdkVersion}")
+    implementation("com.amazonaws:aws-java-sdk-logs:${awsSdkVersion}")
 
     //this should be the same version as the one used by amazon
-    implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.3")
 
     // useful java libraries
-    implementation ("com.google.guava:guava:27.1-jre")
+    implementation("com.google.guava:guava:27.1-jre")
 
     implementation('io.symphonia:lambda-logging:1.0.3')
 
-    compile ("org.jacoco:org.jacoco.core:0.8.3")
+    compile("org.jacoco:org.jacoco.core:0.8.3")
 
     //libraries for testing
-    testImplementation ("org.mockito:mockito-core:2.27.0")
+    testImplementation("org.mockito:mockito-core:3.3.0")
     testImplementation("org.hamcrest:java-hamcrest:2.0.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
@@ -202,9 +199,4 @@ task fatJar(dependsOn: shadowJar) {}
 
 
 
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-}
 
