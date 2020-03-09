@@ -5,6 +5,7 @@ plugins {
 
 gradleEnterprise {
     buildScan {
-        // plugin configuration
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
     }
 }
