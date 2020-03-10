@@ -3,12 +3,6 @@ matrix:
   include:
   - os: linux
     language: java
-    jdk: oraclejdk8
-  - os: linux
-    language: java
-    jdk: openjdk8
-  - os: linux
-    language: java
     jdk: openjdk11
 script: "bash ./gradlew clean build --scan -s"
 before_cache:
@@ -18,13 +12,4 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
-deploy:
-  provider: script
-  script: "bash ./gradlew bintrayUpload"
-  user: brinxmat
-  key:
-    secure: WuJ9ct4sACFkwYzp30DW+FpcLJjmlruvQm4XrpeFzA5OxGFKFoDT5CrSPE4oHeIMRmZvcyPk4HnjrV4h81KRJ9ZF1VxdG0MIQdyYFU0FaiTuqhT1jT27GuzpuSRvJKz34u/whbQE/l0uPXNb4oDjERNJX2A44wku/dJGXTtyDnyQdElQQINO2L8I9aAM9uj95jt0JrISfNzEK8Ls1t3kjbuh1FGomyCRHvLyU1yl20v3znbeURLW6VjZIfmGB2+SOgQJlY6g+qWstq1OSs4YfSDZpyzRo/SoKV+mrEdtSXN/dylGfxc0DssILYm0mY/T6mMfrRgBUq+ly0ikyXmYWHCxZF6WGLNHWdNlHKFyJwjrill7iWi7IX79St4Yg/50+hgvaitZohl5rdQ0Dm3iecXAYcAtl06JAfLCBwKayuYrCiyaWW1ST+cMUDtBE+x4Yllg/v7+LftNGpW3VDuP75pAcNfoqDax0tGAaMsr/g6eA52tVJ3Y5/409sUvFg1ekdybTBrbzzWhnmycFDVsdo3S+7sQvXdo6tt3BnyVPOAUpjifFxlOfov61jCmYjtOEY4uhZ5k5jRZXBOSGv5lp6nw9ke3MQuoHtnbPbCY0bj9ZqVz3E9Ld5HbK0A4Ffa8nkPNbLmuI8pUe1Of1ityerN036iYC4q4+TAu4ED8NpA=
-  skip_cleanup: true
-  dry-run: true
-  on:
-    branch: master
+
