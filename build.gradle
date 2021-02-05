@@ -87,7 +87,7 @@ wrapper {
 
 
 def awsSdkVersion = "1.11.739"
-def jupiterVersion = "5.6.0"
+def jupiterVersion = "5.7.1"
 
 dependencies {
     implementation("com.amazonaws:aws-java-sdk-api-gateway:${awsSdkVersion}")
