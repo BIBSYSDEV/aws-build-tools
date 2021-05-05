@@ -108,7 +108,7 @@ dependencies {
     // TODO: Should we use System.out instead?
     implementation('io.symphonia:lambda-logging:1.0.3')
 
-    compile("org.jacoco:org.jacoco.core:0.8.3")
+    compile("org.jacoco:org.jacoco.core:0.8.7")
 
     testImplementation("org.mockito:mockito-core:3.3.0")
     testImplementation("org.hamcrest:java-hamcrest:2.0.0.0")
